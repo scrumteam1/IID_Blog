@@ -1,4 +1,4 @@
-package intecbrussel.be.iddblog;
+package be.intecbrussel.iddblog;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
