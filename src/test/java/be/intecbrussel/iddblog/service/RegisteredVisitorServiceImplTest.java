@@ -4,13 +4,18 @@ import be.intecbrussel.iddblog.domain.RegisteredVisitor;
 import be.intecbrussel.iddblog.repository.RegisteredVisitorRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class RegisteredVisitorServiceImplTest {
 
     RegisteredVisitorServiceImpl visitorService;
@@ -20,7 +25,7 @@ class RegisteredVisitorServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
 
         visitorService = new RegisteredVisitorServiceImpl(visitorRepository);
     }
@@ -28,8 +33,9 @@ class RegisteredVisitorServiceImplTest {
     @Test
     void saveVisitor() {
         //given
-        RegisteredVisitor visitor = new RegisteredVisitor();
-        visitor.setId(2L);
+        RegisteredVisitor visitor = RegisteredVisitor.builder().id(2L).username("akyare")
+                .firstName("Abdel").lastName("Khyare").password("123456").confirmPassword("123456")
+                .emailAddress("akhyare@gmail.com").gender("Male").build();
 
         when(visitorRepository.save(any())).thenReturn(visitor);
 
@@ -40,6 +46,20 @@ class RegisteredVisitorServiceImplTest {
         assertEquals(Long.valueOf(2L), savedVisitor.getId());
         verify(visitorRepository, times(1)).save(any(RegisteredVisitor.class));
 
+    }
+
+    @Test
+    void findById() {
+        //given
+        RegisteredVisitor returnVisitor = RegisteredVisitor.builder().id(2L).build();
+
+        when(visitorRepository.findById(anyLong())).thenReturn(Optional.of(returnVisitor));
+
+        //when
+        RegisteredVisitor visitor = visitorService.findById(2L);
+
+        //then
+        assertEquals(Long.valueOf(2L), visitor.getId());
     }
 
 

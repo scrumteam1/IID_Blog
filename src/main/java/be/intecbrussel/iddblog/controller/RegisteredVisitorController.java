@@ -28,7 +28,7 @@ public class RegisteredVisitorController {
     }
 
     @PostMapping("registeredvisitor")
-    public String saveOrUpdate(@ModelAttribute("registeredvisitor") RegisteredVisitor registeredVisitor, BindingResult bindingResult){
+    public String save(@ModelAttribute("registeredvisitor") RegisteredVisitor registeredVisitor, BindingResult bindingResult){
 
         if(bindingResult.hasErrors()){
 
@@ -36,11 +36,11 @@ public class RegisteredVisitorController {
                 log.debug(objectError.toString());
             });
 
-            return "index";
+            return "redirect:/index";
         }
 
         RegisteredVisitor savedVisitor = registeredVisitorService.saveVisitor(registeredVisitor);
 
-        return "redirect:index";
+        return "redirect:/index";
     }
 }
