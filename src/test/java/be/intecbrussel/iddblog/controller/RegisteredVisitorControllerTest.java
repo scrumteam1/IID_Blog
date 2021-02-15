@@ -52,7 +52,7 @@ class RegisteredVisitorControllerTest {
 
         mockMvc.perform(post("/registeredvisitor"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:index"))
+                .andExpect(view().name("redirect:/index"))
                 .andExpect(model().attributeExists("registeredvisitor"));
 
         verify(visitorService).saveVisitor(ArgumentMatchers.any());
