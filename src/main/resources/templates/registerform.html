@@ -91,18 +91,17 @@
             <div class="col-sm-6">
                 <div class="row">
                     <div class="col-sm-6">
-                        <label class="radio-inline">
-                            <input th:field="*{isWriter}" type="radio" id="isNotWriterRadio" value="false">Not a Writer
-                        </label>
-                        <label class="radio-inline">
-                            <input th:field="*{isWriter}" type="radio" id="isWriterRadio" value="true">Writer
-                        </label>
+                        <div>
+                            <label th:for="${#ids.next('writer')}">Writer</label>
+                            <input type="checkbox" th:field="*{isWriter}"/>
+                        </div>
                     </div>
 
                 </div>
             </div>
 
         </div>
+
 
         <div class="form-group">
             <div class="col-md-2 col-sm-offset-3">
