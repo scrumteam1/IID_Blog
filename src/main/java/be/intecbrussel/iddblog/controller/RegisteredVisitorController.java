@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import javax.validation.Valid;
+
 @Slf4j
 @Controller
 public class RegisteredVisitorController {
@@ -28,7 +30,7 @@ public class RegisteredVisitorController {
     }
 
     @PostMapping("registeredvisitor")
-    public String save(@ModelAttribute("registeredvisitor") RegisteredVisitor registeredVisitor, BindingResult bindingResult){
+    public String save(@ModelAttribute("registeredvisitor") @Valid RegisteredVisitor registeredVisitor, BindingResult bindingResult){
 
         if(bindingResult.hasErrors()){
 
@@ -36,7 +38,7 @@ public class RegisteredVisitorController {
                 log.debug(objectError.toString());
             });
 
-            return "redirect:/index";
+            return "registerform";
         }
 
         RegisteredVisitor savedVisitor = registeredVisitorService.saveVisitor(registeredVisitor);
