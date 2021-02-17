@@ -1,5 +1,8 @@
 package be.intecbrussel.iddblog.service;
 
+import be.intecbrussel.iddblog.command.RegisteredVisitorCommand;
+import be.intecbrussel.iddblog.converter.RegisteredVisitorCommandToRegisteredVisitor;
+import be.intecbrussel.iddblog.converter.RegisteredVisitorToRegisteredVisitorCommand;
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
 import be.intecbrussel.iddblog.repository.RegisteredVisitorRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,11 +26,17 @@ class RegisteredVisitorServiceImplTest {
     @Mock
     RegisteredVisitorRepository visitorRepository;
 
+    @Mock
+    RegisteredVisitorToRegisteredVisitorCommand visitorToRegisteredVisitorCommand;
+
+    @Mock
+    RegisteredVisitorCommandToRegisteredVisitor registeredVisitorCommandToRegisteredVisitor;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        visitorService = new RegisteredVisitorServiceImpl(visitorRepository);
+        visitorService = new RegisteredVisitorServiceImpl(visitorRepository, registeredVisitorCommandToRegisteredVisitor, visitorToRegisteredVisitorCommand);
     }
 
     @Test

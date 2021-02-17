@@ -1,7 +1,6 @@
 package be.intecbrussel.iddblog.domain;
 
 import be.intecbrussel.iddblog.validation.PasswordConstraintValidator;
-import be.intecbrussel.iddblog.validation.PasswordMatches;
 import be.intecbrussel.iddblog.validation.ValidPassword;
 import lombok.*;
 
@@ -12,7 +11,6 @@ import javax.persistence.Id;
 import javax.validation.Constraint;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Entity
@@ -20,7 +18,6 @@ import javax.validation.constraints.Size;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@PasswordMatches
 public class RegisteredVisitor {
 
     @Id
@@ -46,7 +43,7 @@ public class RegisteredVisitor {
     @ValidPassword
     private String password;
 
-    @NotNull
+    @ValidPassword
     private String confirmPassword;
 
     private String gender;
