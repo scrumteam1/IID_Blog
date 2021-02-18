@@ -24,10 +24,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     }
 
+    //the h2-console is now attainable by the devs but also a random user
+    //remove this for end product
     @Override
     protected void configure (final HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeRequests()
-                    .antMatchers("/", "/index","/registerform","/registeredvisitor/new").permitAll()
+                    .antMatchers("/", "/index/**","/registerform/**","/registeredvisitor/**").permitAll()
                     .and()
                     .authorizeRequests().antMatchers("/h2-console/**").permitAll()
                     .anyRequest().authenticated()
