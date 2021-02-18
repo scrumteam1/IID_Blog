@@ -24,6 +24,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private DataSource dataSource;
 
     @Bean
+    @Override
     public UserDetailsService userDetailsService(){
         return new RegisteredVisitorDetailsService();
     }

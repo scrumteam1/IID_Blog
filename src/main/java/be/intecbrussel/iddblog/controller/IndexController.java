@@ -24,7 +24,6 @@ public class IndexController {
 
         return "login";
     }
-
     @RequestMapping("/login-error")
     public String loginError(Model model){
         model.addAttribute("loginError", true);

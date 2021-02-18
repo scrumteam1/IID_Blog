@@ -15,6 +15,7 @@
             crossorigin="anonymous" th:src="@{/webjars/bootstrap/3.3.7-1/js/bootstrap.min.js}"></script>
 </head>
 <body>
+<div class ="container text-center">
 <h1>LOGIN PAGE TEST</h1>
 <p th:if="${loginError}" class="error"> wrong user or password</p>
 <form th:action="@{/login}" method="post">
@@ -24,6 +25,7 @@
     <input type="password" id="password" name="password" /> <br />
     <input type="submit" value="lgo in" />
 </form>
+</div>
 
 </body>
 </html>
