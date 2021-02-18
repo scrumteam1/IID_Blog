@@ -1,23 +1,25 @@
 package be.intecbrussel.iddblog.controller;
 
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.security.RolesAllowed;
 
-@Controller
+@RestController
 public class LoginController {
 
+
+
     @RolesAllowed({"USER", "ADMIN"})
-    @RequestMapping("/index")
+    @RequestMapping("/*")
     public String getUser(){
-        return "welcome to the user page.";
+        return "login";
     }
 
     @RolesAllowed("ADMIN")
     @RequestMapping("/admin")
     public String getAdmin(){
-        return "admin page.";
+        return "login";
     }
 
 }

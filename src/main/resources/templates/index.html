@@ -1,12 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>welcome to intec brussels blog sa mere</title>
 </head>
 <body>
-    <h1>Index Form: Welcome</h1>
-
+    <h1>iNTEC lbog : Welcome</h1>
+    <a href="index.html" th:href="@{/}">Home</a>
+    <a href="login.html" th:href="@{/login}">Log in</a>
+    <a href="#" th:href="@{/logout}">Log out</a>
+    <a href="registerform.html" th:href="@{/registeredvisitor/new}">Register</a>
 
 </body>
 </html>

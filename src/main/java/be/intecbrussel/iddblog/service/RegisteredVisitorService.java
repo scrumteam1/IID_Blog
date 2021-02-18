@@ -1,7 +1,7 @@
 package be.intecbrussel.iddblog.service;
 
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
-import org.springframework.stereotype.Service;
+
 
 public interface RegisteredVisitorService {
 
