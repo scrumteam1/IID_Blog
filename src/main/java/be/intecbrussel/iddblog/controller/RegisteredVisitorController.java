@@ -3,6 +3,7 @@ package be.intecbrussel.iddblog.controller;
 import be.intecbrussel.iddblog.command.RegisteredVisitorCommand;
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
+import be.intecbrussel.iddblog.validation.error.UserAlreadyExistException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -29,18 +30,22 @@ public class RegisteredVisitorController {
     }
 
     @PostMapping("registeredvisitor")
-    public String save(@ModelAttribute("registeredvisitor") @Valid RegisteredVisitor registeredVisitor, BindingResult bindingResult){
+    public String save(@ModelAttribute("registeredvisitor") @Valid RegisteredVisitor registeredVisitor, BindingResult bindingResult
+            , Model model){
 
         if(bindingResult.hasErrors()){
 
-            bindingResult.getAllErrors().forEach(objectError -> {
-                log.debug(objectError.toString());
-            });
+            bindingResult.getAllErrors().forEach(objectError -> log.debug(objectError.toString()));
 
             return "registerform";
         }
 
-        RegisteredVisitor savedVisitor = registeredVisitorService.saveVisitor(registeredVisitor);
+        try {
+            RegisteredVisitor savedVisitor = registeredVisitorService.saveVisitor(registeredVisitor);
+        } catch (UserAlreadyExistException uaeEx) {
+            model.addAttribute("message", "An account for that username/email already exists.");
+            return "registerform";
+        }
 
         return "redirect:/index";
     }

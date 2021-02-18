@@ -41,6 +41,10 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
             throw new UserAlreadyExistException("There is an user with that email address: " + registeredVisitor.getEmailAddress());
         }
 
+        if (usernameExists(registeredVisitor.getUsername())) {
+            throw new UserAlreadyExistException("There is an user with that username: " + registeredVisitor.getUsername());
+        }
+
         // Only the encoded password (not the password and confirm password) will be saved to the db
         String encodedPwd = passwordEncoder.encode(registeredVisitor.getPassword());
         registeredVisitor.setEncodedPassword(encodedPwd);
@@ -70,6 +74,10 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
 
     private boolean emailExists(final String email) {
         return registeredVisitorRepository.findByEmailAddress(email) != null;
+    }
+
+    private boolean usernameExists(final String username) {
+        return registeredVisitorRepository.findByUsername(username) != null;
     }
 
 }
