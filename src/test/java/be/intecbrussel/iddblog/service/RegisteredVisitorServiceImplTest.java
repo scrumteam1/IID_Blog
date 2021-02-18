@@ -5,6 +5,8 @@ import be.intecbrussel.iddblog.converter.RegisteredVisitorCommandToRegisteredVis
 import be.intecbrussel.iddblog.converter.RegisteredVisitorToRegisteredVisitorCommand;
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
 import be.intecbrussel.iddblog.repository.RegisteredVisitorRepository;
+import be.intecbrussel.iddblog.validation.error.UserAlreadyExistException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,20 +38,23 @@ class RegisteredVisitorServiceImplTest {
     @Mock
     RegisteredVisitorCommandToRegisteredVisitor registeredVisitorCommandToRegisteredVisitor;
 
+    RegisteredVisitor visitor;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
         visitorService = new RegisteredVisitorServiceImpl(visitorRepository, registeredVisitorCommandToRegisteredVisitor,
                 visitorToRegisteredVisitorCommand, passwordEncoder);
+
+        visitor = RegisteredVisitor.builder().id(2L).username("akyare")
+                .firstName("Abdel").lastName("Khyare").password("123456").confirmPassword("123456")
+                .emailAddress("akhyare@gmail.com").gender("Male").build();
     }
 
     @Test
     void saveVisitor() {
-        //given
-        RegisteredVisitor visitor = RegisteredVisitor.builder().id(2L).username("akyare")
-                .firstName("Abdel").lastName("Khyare").password("123456").confirmPassword("123456")
-                .emailAddress("akhyare@gmail.com").gender("Male").build();
+        //given the visitor declare on setup()
 
         when(passwordEncoder.encode(any())).thenReturn("encoded password");
         when(visitorRepository.save(any())).thenReturn(visitor);
@@ -60,6 +65,35 @@ class RegisteredVisitorServiceImplTest {
         //then
         assertEquals(Long.valueOf(2L), savedVisitor.getId());
         verify(visitorRepository, times(1)).save(any());
+    }
+
+    @Test
+    void saveVisitorEmailExists(){
+        //given the visitor declare on setup()
+
+        when(visitorRepository.findByEmailAddress(any())).thenReturn(RegisteredVisitor.builder()
+                .emailAddress("blabla").build());
+
+        //then
+        Throwable exception = assertThrows(UserAlreadyExistException.class,
+                () -> visitorService.saveVisitor(visitor));
+
+        assertTrue(exception.getMessage().contains("There is an user with that email address"));
+
+    }
+
+    @Test
+    void saveVisitorUsernameExists(){
+        //given the visitor declare on setup()
+
+        when(visitorRepository.findByUsername(any())).thenReturn(RegisteredVisitor.builder()
+                .username("blabla").build());
+
+        //then
+        Throwable exception = assertThrows(UserAlreadyExistException.class,
+                () -> visitorService.saveVisitor(visitor));
+
+        assertTrue(exception.getMessage().contains("There is an user with that username"));
 
     }
 
