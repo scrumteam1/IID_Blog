@@ -28,6 +28,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure (final HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeRequests()
                     .antMatchers("/", "/index","/registerform","/registeredvisitor/new").permitAll()
+                    .and()
+                    .authorizeRequests().antMatchers("/h2-console/**").permitAll()
                     .anyRequest().authenticated()
                     .and()
                     .formLogin()
@@ -38,6 +40,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .logout()
                     .logoutSuccessUrl("/index")
                     .permitAll();
+        httpSecurity.csrf().disable();
+        httpSecurity.headers().frameOptions().disable();
 
     }
 

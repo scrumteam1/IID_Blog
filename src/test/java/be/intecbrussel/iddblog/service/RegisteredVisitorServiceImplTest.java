@@ -1,5 +1,8 @@
 package be.intecbrussel.iddblog.service;
 
+import be.intecbrussel.iddblog.command.RegisteredVisitorCommand;
+import be.intecbrussel.iddblog.converter.RegisteredVisitorCommandToRegisteredVisitor;
+import be.intecbrussel.iddblog.converter.RegisteredVisitorToRegisteredVisitorCommand;
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
 import be.intecbrussel.iddblog.repository.RegisteredVisitorRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
@@ -21,13 +25,23 @@ class RegisteredVisitorServiceImplTest {
     RegisteredVisitorServiceImpl visitorService;
 
     @Mock
+    PasswordEncoder passwordEncoder;
+
+    @Mock
     RegisteredVisitorRepository visitorRepository;
+
+    @Mock
+    RegisteredVisitorToRegisteredVisitorCommand visitorToRegisteredVisitorCommand;
+
+    @Mock
+    RegisteredVisitorCommandToRegisteredVisitor registeredVisitorCommandToRegisteredVisitor;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        visitorService = new RegisteredVisitorServiceImpl(visitorRepository);
+        visitorService = new RegisteredVisitorServiceImpl(visitorRepository, registeredVisitorCommandToRegisteredVisitor,
+                visitorToRegisteredVisitorCommand, passwordEncoder);
     }
 
     @Test
@@ -37,6 +51,7 @@ class RegisteredVisitorServiceImplTest {
                 .firstName("Abdel").lastName("Khyare").password("123456").confirmPassword("123456")
                 .emailAddress("akhyare@gmail.com").gender("Male").build();
 
+        when(passwordEncoder.encode(any())).thenReturn("encoded password");
         when(visitorRepository.save(any())).thenReturn(visitor);
 
         //when
@@ -44,7 +59,7 @@ class RegisteredVisitorServiceImplTest {
 
         //then
         assertEquals(Long.valueOf(2L), savedVisitor.getId());
-        verify(visitorRepository, times(1)).save(any(RegisteredVisitor.class));
+        verify(visitorRepository, times(1)).save(any());
 
     }
 

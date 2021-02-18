@@ -5,10 +5,7 @@ import be.intecbrussel.iddblog.validation.PasswordMatches;
 import be.intecbrussel.iddblog.validation.ValidPassword;
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.Constraint;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -44,9 +41,15 @@ public class RegisteredVisitor {
     private String emailAddress;
 
     @ValidPassword
+    @Transient
     private String password;
 
+    @Column(name = "password")
+    private String encodedPassword;
+
     @NotNull
+    @Size(min = 1)
+    @Transient
     private String confirmPassword;
 
     private String gender;

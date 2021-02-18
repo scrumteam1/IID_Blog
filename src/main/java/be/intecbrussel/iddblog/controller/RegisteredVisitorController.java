@@ -1,14 +1,14 @@
 package be.intecbrussel.iddblog.controller;
 
+import be.intecbrussel.iddblog.command.RegisteredVisitorCommand;
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
+import be.intecbrussel.iddblog.validation.error.UserAlreadyExistException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -30,19 +30,38 @@ public class RegisteredVisitorController {
     }
 
     @PostMapping("registeredvisitor")
-    public String save(@ModelAttribute("registeredvisitor") @Valid RegisteredVisitor registeredVisitor, BindingResult bindingResult){
+    public String save(@ModelAttribute("registeredvisitor") @Valid RegisteredVisitor registeredVisitor, BindingResult bindingResult
+            , Model model){
 
         if(bindingResult.hasErrors()){
 
-            bindingResult.getAllErrors().forEach(objectError -> {
-                log.debug(objectError.toString());
-            });
+            bindingResult.getAllErrors().forEach(objectError -> log.debug(objectError.toString()));
 
             return "registerform";
         }
 
-        RegisteredVisitor savedVisitor = registeredVisitorService.saveVisitor(registeredVisitor);
+        try {
+            RegisteredVisitor savedVisitor = registeredVisitorService.saveVisitor(registeredVisitor);
+        } catch (UserAlreadyExistException uaeEx) {
+            model.addAttribute("message", "An account for that username/email already exists.");
+            return "registerform";
+        }
 
         return "redirect:/index";
     }
+
+    @GetMapping
+    @RequestMapping("registeredvisitor/{id}/update")
+    public String updateRegisteredVisitor (@PathVariable String id, Model model) {
+        model.addAttribute("registeredvisitor", registeredVisitorService.findById(Long.valueOf(id)));
+        return "profile";
+    }
+
+    @PostMapping
+    @RequestMapping("updatevisitor")
+    public String UpdateRegisteredVisitor(@ModelAttribute RegisteredVisitorCommand command){
+        RegisteredVisitorCommand updatedCommand = registeredVisitorService.updateVisitorCommand(command);
+        return "redirect:/registeredvisitor/" + updatedCommand.getId() + "/show";
+    }
+
 }
