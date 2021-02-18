@@ -6,8 +6,10 @@ import be.intecbrussel.iddblog.converter.RegisteredVisitorCommandToRegisteredVis
 import be.intecbrussel.iddblog.converter.RegisteredVisitorToRegisteredVisitorCommand;
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
 import be.intecbrussel.iddblog.repository.RegisteredVisitorRepository;
+import be.intecbrussel.iddblog.validation.error.UserAlreadyExistException;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,17 +21,29 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
     private final RegisteredVisitorCommandToRegisteredVisitor registeredVisitorCommandToRegisteredVisitor;
     private final RegisteredVisitorToRegisteredVisitorCommand registeredVisitorToRegisteredVisitorCommand;
 
+    private final PasswordEncoder passwordEncoder;
 
     public RegisteredVisitorServiceImpl(RegisteredVisitorRepository registeredVisitorRepository, RegisteredVisitorCommandToRegisteredVisitor registeredVisitorCommandToRegisteredVisitor,
-                                        RegisteredVisitorToRegisteredVisitorCommand registeredVisitorToRegisteredVisitorCommand) {
+                                        RegisteredVisitorToRegisteredVisitorCommand registeredVisitorToRegisteredVisitorCommand,
+                                        PasswordEncoder passwordEncoder) {
+
         this.registeredVisitorRepository = registeredVisitorRepository;
         this.registeredVisitorCommandToRegisteredVisitor = registeredVisitorCommandToRegisteredVisitor;
         this.registeredVisitorToRegisteredVisitorCommand = registeredVisitorToRegisteredVisitorCommand;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     @Transactional
     public RegisteredVisitor saveVisitor(RegisteredVisitor registeredVisitor) {
+
+        if (emailExists(registeredVisitor.getEmailAddress())) {
+            throw new UserAlreadyExistException("There is an user with that email address: " + registeredVisitor.getEmailAddress());
+        }
+
+        // Only the encoded password (not the password and confirm password) will be saved to the db
+        String encodedPwd = passwordEncoder.encode(registeredVisitor.getPassword());
+        registeredVisitor.setEncodedPassword(encodedPwd);
 
         RegisteredVisitor savedVisitor = registeredVisitorRepository.save(registeredVisitor);
         log.debug("Saved VisitorId:" + savedVisitor.getId());
@@ -52,6 +66,10 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
         log.debug("Updated RecipeId: " + updateVisitor.getId());
 
         return registeredVisitorToRegisteredVisitorCommand.convert(updateVisitor);
+    }
+
+    private boolean emailExists(final String email) {
+        return registeredVisitorRepository.findByEmailAddress(email) != null;
     }
 
 }

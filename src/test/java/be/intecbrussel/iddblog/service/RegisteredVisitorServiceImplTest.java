@@ -11,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
@@ -22,6 +23,9 @@ import static org.mockito.Mockito.*;
 class RegisteredVisitorServiceImplTest {
 
     RegisteredVisitorServiceImpl visitorService;
+
+    @Mock
+    PasswordEncoder passwordEncoder;
 
     @Mock
     RegisteredVisitorRepository visitorRepository;
@@ -36,7 +40,8 @@ class RegisteredVisitorServiceImplTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        visitorService = new RegisteredVisitorServiceImpl(visitorRepository, registeredVisitorCommandToRegisteredVisitor, visitorToRegisteredVisitorCommand);
+        visitorService = new RegisteredVisitorServiceImpl(visitorRepository, registeredVisitorCommandToRegisteredVisitor,
+                visitorToRegisteredVisitorCommand, passwordEncoder);
     }
 
     @Test
@@ -46,6 +51,7 @@ class RegisteredVisitorServiceImplTest {
                 .firstName("Abdel").lastName("Khyare").password("123456").confirmPassword("123456")
                 .emailAddress("akhyare@gmail.com").gender("Male").build();
 
+        when(passwordEncoder.encode(any())).thenReturn("encoded password");
         when(visitorRepository.save(any())).thenReturn(visitor);
 
         //when
@@ -53,7 +59,7 @@ class RegisteredVisitorServiceImplTest {
 
         //then
         assertEquals(Long.valueOf(2L), savedVisitor.getId());
-        verify(visitorRepository, times(1)).save(any(RegisteredVisitor.class));
+        verify(visitorRepository, times(1)).save(any());
 
     }
 
