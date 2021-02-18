@@ -43,7 +43,9 @@ public class RegisteredVisitorController {
         try {
             RegisteredVisitor savedVisitor = registeredVisitorService.saveVisitor(registeredVisitor);
         } catch (UserAlreadyExistException uaeEx) {
+
             model.addAttribute("message", "An account for that username/email already exists.");
+
             return "registerform";
         }
 
