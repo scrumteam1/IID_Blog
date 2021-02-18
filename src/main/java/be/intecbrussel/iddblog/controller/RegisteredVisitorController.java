@@ -49,7 +49,14 @@ public class RegisteredVisitorController {
             return "registerform";
         }
 
-        return "redirect:/index";
+        RegisteredVisitor savedVisitor = registeredVisitorService.saveVisitor(registeredVisitor);
+        return "redirect:/registeredvisitor/"+ savedVisitor.getId() +"/show";
+    }
+
+    @GetMapping("registeredvisitor/{id}/show")
+    public String showById (@PathVariable String id, Model model) {
+        model.addAttribute("registeredvisitor", registeredVisitorService.findById(Long.valueOf(id)));
+        return "profileview";
     }
 
     @GetMapping
