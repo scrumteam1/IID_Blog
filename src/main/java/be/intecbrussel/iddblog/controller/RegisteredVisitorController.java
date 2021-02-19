@@ -83,15 +83,16 @@ public class RegisteredVisitorController {
             return "profile";
         }
 
-        try {
+        // TODO: uncomment after the todo on the updateVisitorWithoutPwd method is done.
+//        try {
             registeredVisitorService.updateVisitorWithoutPwd(visitor);
-
-        } catch (UserAlreadyExistException uaeEx) {
-
-            model.addAttribute("message", "An account for that username/email already exists.");
-
-            return "registerform";
-        }
+//
+//        } catch (UserAlreadyExistException uaeEx) {
+//
+//            model.addAttribute("message", "An account for that username/email already exists.");
+//
+//            return "profile";
+//        }
 
         log.info(visitor.getPassword());
         log.info(visitor.getConfirmPassword());
