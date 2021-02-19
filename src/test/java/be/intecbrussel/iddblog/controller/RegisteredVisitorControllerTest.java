@@ -57,9 +57,11 @@ class RegisteredVisitorControllerTest {
     }
 
     @Test
-    void save() throws Exception {
+    void saveWithoutErrors() throws Exception {
 
         when(visitorService.saveVisitor(ArgumentMatchers.any())).thenReturn(savedVisitor);
+        //To improve and add the setId in the when(...)...
+        savedVisitor.setId(1L);
 
         mockMvc.perform(post("/registeredvisitor")
                 .param("firstName","Abdel")
@@ -69,7 +71,7 @@ class RegisteredVisitorControllerTest {
                 .param("password","uD45Pj6J*@cH$u")
                 .param("confirmPassword","uD45Pj6J*@cH$u"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/index"))
+                .andExpect(view().name("redirect:/registeredvisitor/1/show"))
                 .andExpect(model().attributeExists("registeredvisitor"));
 
         verify(visitorService).saveVisitor(ArgumentMatchers.any());
@@ -137,5 +139,23 @@ class RegisteredVisitorControllerTest {
                 .andExpect(view().name("registerform"))
                 .andExpect(model().attributeExists("message"));
 
+    }
+
+    @Test
+    void saveWithAllErrors() throws Exception {
+
+        mockMvc.perform(post("/registeredvisitor")
+                .param("firstName","")
+                .param("lastName","")
+                .param("username","ak")
+                .param("emailAddress","akhotmail")
+                .param("password","123")
+                .param("confirmPassword","123"))
+                .andExpect(model().errorCount(7))
+                .andExpect(status().isOk())
+                .andExpect(view().name("registerform"))
+                .andExpect(model().attributeExists("registeredvisitor"));
+
+        verify(visitorService, times(0)).saveVisitor(ArgumentMatchers.any());
     }
 }
