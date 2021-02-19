@@ -1,6 +1,5 @@
 package be.intecbrussel.iddblog.controller;
 
-import be.intecbrussel.iddblog.command.RegisteredVisitorCommand;
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
 import be.intecbrussel.iddblog.validation.error.UserAlreadyExistException;
@@ -33,6 +32,8 @@ public class RegisteredVisitorController {
     public String save(@ModelAttribute("registeredvisitor") @Valid RegisteredVisitor registeredVisitor, BindingResult bindingResult
             , Model model){
 
+        RegisteredVisitor savedVisitor;
+
         if(bindingResult.hasErrors()){
 
             bindingResult.getAllErrors().forEach(objectError -> log.debug(objectError.toString()));
@@ -41,7 +42,7 @@ public class RegisteredVisitorController {
         }
 
         try {
-            RegisteredVisitor savedVisitor = registeredVisitorService.saveVisitor(registeredVisitor);
+             savedVisitor = registeredVisitorService.saveVisitor(registeredVisitor);
         } catch (UserAlreadyExistException uaeEx) {
 
             model.addAttribute("message", "An account for that username/email already exists.");
@@ -49,7 +50,6 @@ public class RegisteredVisitorController {
             return "registerform";
         }
 
-        RegisteredVisitor savedVisitor = registeredVisitorService.saveVisitor(registeredVisitor);
         return "redirect:/registeredvisitor/"+ savedVisitor.getId() +"/show";
     }
 
@@ -68,9 +68,11 @@ public class RegisteredVisitorController {
 
     @PostMapping
     @RequestMapping("updatevisitor")
-    public String UpdateRegisteredVisitor(@ModelAttribute RegisteredVisitorCommand command){
-        RegisteredVisitorCommand updatedCommand = registeredVisitorService.updateVisitorCommand(command);
-        return "redirect:/registeredvisitor/" + updatedCommand.getId() + "/show";
+    public String UpdateRegisteredVisitor(@ModelAttribute RegisteredVisitor visitor){
+         registeredVisitorService.updateVisitorWithPwd(visitor.getId(), visitor.getUsername(),
+                                            visitor.getFirstName(), visitor.getLastName(), visitor.getEmailAddress(), visitor.getIsWriter());
+//        RegisteredVisitor updatedVisitor = registeredVisitorService.findById(visitor.getId());
+        return "redirect:/registeredvisitor/show";
     }
 
 }

@@ -1,9 +1,5 @@
 package be.intecbrussel.iddblog.service;
 
-
-import be.intecbrussel.iddblog.command.RegisteredVisitorCommand;
-import be.intecbrussel.iddblog.converter.RegisteredVisitorCommandToRegisteredVisitor;
-import be.intecbrussel.iddblog.converter.RegisteredVisitorToRegisteredVisitorCommand;
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
 import be.intecbrussel.iddblog.repository.RegisteredVisitorRepository;
 import be.intecbrussel.iddblog.validation.error.UserAlreadyExistException;
@@ -18,18 +14,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
 
     private final RegisteredVisitorRepository registeredVisitorRepository;
-    private final RegisteredVisitorCommandToRegisteredVisitor registeredVisitorCommandToRegisteredVisitor;
-    private final RegisteredVisitorToRegisteredVisitorCommand registeredVisitorToRegisteredVisitorCommand;
 
     private final PasswordEncoder passwordEncoder;
 
-    public RegisteredVisitorServiceImpl(RegisteredVisitorRepository registeredVisitorRepository, RegisteredVisitorCommandToRegisteredVisitor registeredVisitorCommandToRegisteredVisitor,
-                                        RegisteredVisitorToRegisteredVisitorCommand registeredVisitorToRegisteredVisitorCommand,
-                                        PasswordEncoder passwordEncoder) {
-
+    public RegisteredVisitorServiceImpl(RegisteredVisitorRepository registeredVisitorRepository, PasswordEncoder passwordEncoder) {
         this.registeredVisitorRepository = registeredVisitorRepository;
-        this.registeredVisitorCommandToRegisteredVisitor = registeredVisitorCommandToRegisteredVisitor;
-        this.registeredVisitorToRegisteredVisitorCommand = registeredVisitorToRegisteredVisitorCommand;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -57,19 +46,16 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
     @Override
     @Transactional
     public RegisteredVisitor findById(Long id) {
-
         return registeredVisitorRepository.findById(id).get();
     }
 
+
+
+
     @Override
     @Transactional
-    public RegisteredVisitorCommand updateVisitorCommand(RegisteredVisitorCommand command) {
-        RegisteredVisitor detachedVisitor = registeredVisitorCommandToRegisteredVisitor.convert(command);
-
-        RegisteredVisitor updateVisitor = registeredVisitorRepository.save(detachedVisitor);
-        log.debug("Updated RecipeId: " + updateVisitor.getId());
-
-        return registeredVisitorToRegisteredVisitorCommand.convert(updateVisitor);
+    public void updateVisitorWithPwd(Long id, String username, String firstName, String lastName, String email, Boolean writer) {
+        registeredVisitorRepository.updateVisitorWithPwd(id, username, firstName, lastName, email, writer);
     }
 
     private boolean emailExists(final String email) {
