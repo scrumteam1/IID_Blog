@@ -73,24 +73,25 @@ public class RegisteredVisitorController {
     }
 
     @PostMapping("registeredvisitor/edit/{id}")
-    public String UpdateRegisteredVisitor(@PathVariable("id") long id, @ModelAttribute("registeredvisitor") RegisteredVisitor visitor,
-                                          @ModelAttribute("defaultPwd") String defaultPwd,BindingResult bindingResult, Model model) {
-
-
+    public String UpdateRegisteredVisitor(@PathVariable("id") long id, @ModelAttribute("registeredvisitor") @Valid RegisteredVisitor visitor
+            ,BindingResult bindingResult, Model model) {
 
         if (bindingResult.hasErrors()) {
 
-            log.info("defaultpwd: " +defaultPwd);
-
             bindingResult.getAllErrors().forEach(objectError -> log.debug(objectError.toString()));
+
+            return "profile";
+        }
+
+        try {
+            registeredVisitorService.updateVisitorWithoutPwd(visitor);
+
+        } catch (UserAlreadyExistException uaeEx) {
+
+            model.addAttribute("message", "An account for that username/email already exists.");
 
             return "registerform";
         }
-
-
-        registeredVisitorService.updateVisitorWithoutPwd(visitor.getId(), visitor.getUsername(),
-                visitor.getFirstName(), visitor.getLastName(), visitor.getEmailAddress(),
-                visitor.getIsWriter(), visitor.getGender());
 
         log.info(visitor.getPassword());
         log.info(visitor.getConfirmPassword());

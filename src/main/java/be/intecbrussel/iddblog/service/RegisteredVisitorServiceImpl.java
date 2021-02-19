@@ -51,8 +51,20 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
 
     @Override
     @Transactional
-    public void updateVisitorWithoutPwd(Long id, String username, String firstName, String lastName, String email, Boolean writer, String gender) {
-        registeredVisitorRepository.updateVisitorWithoutPwd(id, username, firstName, lastName, email, writer, gender);
+    public void updateVisitorWithoutPwd(RegisteredVisitor registeredVisitor) {
+
+        if (emailExists(registeredVisitor.getEmailAddress())) {
+            throw new UserAlreadyExistException("There is an user with that email address: " + registeredVisitor.getEmailAddress());
+        }
+
+        if (usernameExists(registeredVisitor.getUsername())) {
+            throw new UserAlreadyExistException("There is an user with that username: " + registeredVisitor.getUsername());
+        }
+
+        registeredVisitorRepository.updateVisitorWithoutPwd(registeredVisitor.getId(),
+                registeredVisitor.getUsername(), registeredVisitor.getFirstName(),
+                registeredVisitor.getLastName(), registeredVisitor.getEmailAddress(),
+                registeredVisitor.getIsWriter(), registeredVisitor.getGender());
     }
 
     @Override

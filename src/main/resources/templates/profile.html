@@ -48,7 +48,10 @@
 <!--            <label for="password" class="col-sm-3 control-label">Password</label>-->
 <!--            <div class="col-sm-4">-->
 <!--                <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="text-danger"></span>-->
-<!--                <input th:field="*{password}" type="password" id="password" placeholder="Password" class="form-control">-->
+                    <input name="password"
+                           th:value="*{password}!=null? *{password} : ${defaultPwd}"
+                           type="hidden" id="password"
+                           placeholder="Password" class="form-control" autocomplete="off" >
 <!--            </div>-->
 <!--        </div>-->
 
@@ -56,7 +59,10 @@
 <!--            <label for="confirmPassword" class="col-sm-3 control-label">Confirm Password</label>-->
 <!--            <div class="col-sm-4">-->
 <!--                <span th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}" class="text-danger"></span>-->
-<!--                <input th:field="*{confirmPassword}" type="password" id="confirmPassword" placeholder="Confirm Password" class="form-control">-->
+                    <input name="confirmPassword"
+                           th:value="*{confirmPassword}!=null? *{confirmPassword} :${defaultPwd}"
+                           type="hidden" id="confirmPassword"
+                           placeholder="Confirm Password" class="form-control" >
 <!--            </div>-->
 <!--        </div>-->
 
