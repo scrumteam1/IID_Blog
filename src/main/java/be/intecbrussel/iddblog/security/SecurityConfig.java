@@ -20,30 +20,30 @@ import javax.sql.DataSource;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-//    @Autowired
-//    private DataSource dataSource;
-//
-//    @Bean
-//    @Override
-//    public UserDetailsService userDetailsService(){
-//        return new RegisteredVisitorDetailsService();
-//    }
+    @Autowired
+    private DataSource dataSource;
 
-//    @Bean
-//    public DaoAuthenticationProvider authenticationProvider(){
-//        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-//        authenticationProvider.setUserDetailsService(userDetailsService());
-//        authenticationProvider.setPasswordEncoder(passwordEncoder());
-//
-//        return authenticationProvider;
-//    }
+    @Bean
+    @Override
+    public UserDetailsService userDetailsService(){
+        return new RegisteredVisitorDetailsService();
+    }
 
-//    @Override
-//    protected void configure(final AuthenticationManagerBuilder amb) throws Exception {
-//
-//        amb.authenticationProvider(authenticationProvider());
-//
-//    }
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider(){
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+        authenticationProvider.setUserDetailsService(userDetailsService());
+        authenticationProvider.setPasswordEncoder(passwordEncoder());
+
+        return authenticationProvider;
+    }
+
+    @Override
+    protected void configure(final AuthenticationManagerBuilder amb) throws Exception {
+
+        amb.authenticationProvider(authenticationProvider());
+
+    }
 
     //the h2-console is now attainable by the devs but also a random user
     //remove this for end product
@@ -54,33 +54,33 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
 
-//        httpSecurity.authorizeRequests()
-//                    .antMatchers("/", "/index/**","/registerform/**","/registeredvisitor/**").permitAll()
-//                    .and()
-//                    .authorizeRequests().antMatchers("/h2-console/**").permitAll()
-//                    .anyRequest().authenticated()
-//                    .and()
-//                    .formLogin()
-//                    .loginPage("/login")
-//                    .usernameParameter("username")
-//                    .passwordParameter("password")
-//                    .failureUrl("/login-error")
-//                    .permitAll()
-//                    .and()
-//                    .logout()
-//                    .logoutSuccessUrl("/index")
-//                    .permitAll();
-//        httpSecurity.csrf().disable();
-//        httpSecurity.headers().frameOptions().disable();
+        httpSecurity.authorizeRequests()
+                    .antMatchers("/", "/index/**","/registerform/**","/registeredvisitor/**").permitAll()
+                    .and()
+                    .authorizeRequests().antMatchers("/h2-console/**").permitAll()
+                    .anyRequest().authenticated()
+                    .and()
+                    .formLogin()
+                    .loginPage("/login")
+                    .usernameParameter("username")
+                    .passwordParameter("password")
+                    .failureUrl("/login-error")
+                    .permitAll()
+                    .and()
+                    .logout()
+                    .logoutSuccessUrl("/index")
+                    .permitAll();
+        httpSecurity.csrf().disable();
+        httpSecurity.headers().frameOptions().disable();
 
     }
 
-//    @Override
-//    public void configure(WebSecurity web) throws Exception {
-//        web
-//                .ignoring()
-//                .antMatchers("/resources/**", "/static/**","/webjars/**");
-//    }
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web
+                .ignoring()
+                .antMatchers("/resources/**", "/static/**","/webjars/**");
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder(){
