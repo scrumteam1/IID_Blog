@@ -2,7 +2,7 @@ package be.intecbrussel.iddblog.service;
 
 
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
-
+import org.springframework.data.repository.query.Param;
 
 
 public interface RegisteredVisitorService {
@@ -11,9 +11,13 @@ public interface RegisteredVisitorService {
 
     RegisteredVisitor findById(Long id);
 
+    void updateVisitorWithoutPwd( Long id,  String username,
+                               String firstName,  String lastName,
+                               String email, Boolean writer, String gender);
+
     void updateVisitorWithPwd( Long id,  String username,
                                String firstName,  String lastName,
                                String email,
-                               Boolean writer);
+                               Boolean writer, String password);
 
 }

@@ -49,13 +49,16 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
         return registeredVisitorRepository.findById(id).get();
     }
 
-
-
+    @Override
+    @Transactional
+    public void updateVisitorWithoutPwd(Long id, String username, String firstName, String lastName, String email, Boolean writer, String gender) {
+        registeredVisitorRepository.updateVisitorWithoutPwd(id, username, firstName, lastName, email, writer, gender);
+    }
 
     @Override
     @Transactional
-    public void updateVisitorWithPwd(Long id, String username, String firstName, String lastName, String email, Boolean writer) {
-        registeredVisitorRepository.updateVisitorWithPwd(id, username, firstName, lastName, email, writer);
+    public void updateVisitorWithPwd(Long id, String username, String firstName, String lastName, String email, Boolean writer, String password) {
+        registeredVisitorRepository.updateVisitorWithPwd(id, username, firstName, lastName, email, writer, passwordEncoder.encode(password));
     }
 
     private boolean emailExists(final String email) {

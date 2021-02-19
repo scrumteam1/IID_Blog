@@ -20,7 +20,7 @@
 <body>
 <!--/*@thymesVar id="registeredVisitor" type="be.intecbrussel.iddblog.domain.RegisteredVisitor"*/-->
 <div class="container text-center text-center">
-    <form class="form-horizontal" role="form" th:object="${registeredvisitor}" th:action="@{/updatevisitor/}" method="post">
+    <form class="form-horizontal" role="form"  th:action="@{/registeredvisitor/edit/{id}(id=${id})}" th:object="${registeredvisitor}" method="post">
         <center>  <h2>Register Form</h2>  </center>
 
         <div class="form-group">
@@ -44,25 +44,28 @@
             </div>
         </div>
 
+        <div class="form-group">
+            <label for="password" class="col-sm-3 control-label">Password</label>
+            <div class="col-sm-4">
+                <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="text-danger"></span>
+                <input th:field="*{password}" type="password" id="password" placeholder="Password" class="form-control">
+            </div>
+        </div>
+
 <!--        <div class="form-group">-->
-<!--            <label for="password" class="col-sm-3 control-label">Password</label>-->
+<!--            <label for="confirmPassword" class="col-sm-3 control-label">Confirm Password</label>-->
 <!--            <div class="col-sm-4">-->
-<!--                <input th:field="*{password}" type="password" id="password" placeholder="Password" class="form-control">-->
-<!--            </div>-->
-<!--        </div>-->
-<!--        <div class="form-group">-->
-<!--            <label for="Confirm Password" class="col-sm-3 control-label">Confirm Password</label>-->
-<!--            <div class="col-sm-4">-->
-<!--                <input th:field="*{confirmPassword}" type="password" id="Confirm Password" placeholder="Confirm Password" class="form-control">-->
+<!--                <span th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}" class="text-danger"></span>-->
+<!--                <input th:field="*{confirmPassword}" type="password" id="confirmPassword" placeholder="Confirm Password" class="form-control">-->
 <!--            </div>-->
 <!--        </div>-->
 
-        <div class="form-group">
-            <label for="Email" class="col-sm-3 control-label">Email</label>
-            <div class="col-sm-4">
-                <input th:field="*{emailAddress}" type="text" id="Email" placeholder="Email Address" class="form-control">
-            </div>
-        </div>
+<!--        <div class="form-group">-->
+<!--            <label for="Email" class="col-sm-3 control-label">Email</label>-->
+<!--            <div class="col-sm-4">-->
+<!--                <input th:field="*{emailAddress}" type="text" id="Email" placeholder="Email Address" class="form-control">-->
+<!--            </div>-->
+<!--        </div>-->
 
         <div class="form-group">
             <label class="control-label col-sm-3">Gender</label>
