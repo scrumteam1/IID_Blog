@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
       integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"
       th:href="@{/webjars/bootstrap/3.3.7-1/css/bootstrap.min.css}" />
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
 
 <script src="/webjars/jquery/1.11.1/jquery.min.js"></script>
 
@@ -19,11 +20,20 @@
 
 <body>
 <div class="container text-center">
-    <h1>iNTEC lbog : Welcome</h1>
-    <a href="index.html" th:href="@{/}">Home</a>
-    <a href="login.html" th:href="@{/login}">Log in</a>
-    <a href="#" th:href="@{/logout}">Log out</a>
-    <a href="registerform.html" th:href="@{/registeredvisitor/new}">Register</a>
+    <h1>INTEC blog : Welcome</h1>
+
+    <span style="font-weight: bold; font-size: large;">Home <a th:href="@{/index}" class="btn btn-primary"><i class="fas fa-home ml-2"></i></a></span>
+    <span style="font-weight: bold; font-size: large;">Login <a th:href="@{/login}" class="btn btn-primary"><i class="fas fa-user ml-2"></i></a></span>
+    <span style="font-weight: bold; font-size: large;">Register <a th:href="@{/registeredvisitor/new}" class="btn btn-primary"><i class="fas fa-user-plus ml-2"></i></a></span>
+    <span style="font-weight: bold; font-size: large;">Update <a th:href="@{/registeredvisitor/update/1}" class="btn btn-primary"><i class="fas fa-user-edit ml-2"></i></a></span>
+    <span style="font-weight: bold; font-size: large;">Show Profile <a th:href="@{/registeredvisitor/1/show}" class="btn btn-primary"><i class="fas fa-user ml-2"></i></a></span>
+    <span style="font-weight: bold; font-size: large;">Logout <a th:href="@{/logout}" class="btn btn-primary"><i class="fas fa-sign-out-alt ml-2"></i></a></span>
+
+
+<!--    <a href="index.html" th:href="@{/}">Home</a>-->
+<!--    <a href="login.html" th:href="@{/login}">Log in</a>-->
+<!--    <a href="#" th:href="@{/logout}">Log out</a>-->
+<!--    <a href="registerform.html" th:href="@{/registeredvisitor/new}">Register</a>-->
 </div>
 
 </body>
