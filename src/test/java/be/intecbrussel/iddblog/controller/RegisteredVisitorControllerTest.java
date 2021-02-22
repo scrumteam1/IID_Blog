@@ -158,4 +158,16 @@ class RegisteredVisitorControllerTest {
 
         verify(visitorService, times(0)).saveVisitor(ArgumentMatchers.any());
     }
+
+    @Test
+    void showById() throws Exception {
+        when(visitorService.findById(ArgumentMatchers.any())).thenReturn(savedVisitor);
+
+        mockMvc.perform(get("/registeredvisitor/1/show"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("profileview"))
+                .andExpect(model().attributeExists("registeredvisitor"));
+
+
+    }
 }
