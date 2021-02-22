@@ -5,6 +5,8 @@ import be.intecbrussel.iddblog.password.RandomPasswordGenerator;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
 import be.intecbrussel.iddblog.validation.error.UserAlreadyExistException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,6 +22,12 @@ public class RegisteredVisitorController {
 
     public RegisteredVisitorController(RegisteredVisitorService registeredVisitorService) {
         this.registeredVisitorService = registeredVisitorService;
+    }
+
+    @GetMapping({"/","/index"})
+    public String showUserList(Model model) {
+
+        return "index";
     }
 
     @GetMapping("registeredvisitor/new")
