@@ -71,7 +71,7 @@ public class RegisteredVisitorController {
         model.addAttribute("registeredvisitor", registeredVisitorService.findById(id));
         model.addAttribute("defaultPwd", DEFAULT_PWD);
 
-        return "profile";
+        return "updateprofile";
     }
 
     @PostMapping("registeredvisitor/edit/{id}")
@@ -82,9 +82,8 @@ public class RegisteredVisitorController {
 
             bindingResult.getAllErrors().forEach(objectError -> log.debug(objectError.toString()));
 
-            return "profile";
+            return "updateprofile";
         }
-
 
         try {
             registeredVisitorService.updateVisitorWithoutPwd(visitor);
@@ -93,7 +92,7 @@ public class RegisteredVisitorController {
 
             model.addAttribute("message", "An account for that username/email already exists.");
 
-            return "profile";
+            return "updateprofile";
         }
 
         log.info(visitor.getPassword());
