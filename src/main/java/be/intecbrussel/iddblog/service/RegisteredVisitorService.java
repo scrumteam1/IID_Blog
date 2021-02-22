@@ -18,4 +18,6 @@ public interface RegisteredVisitorService {
                                String email,
                                Boolean writer, String password);
 
+//    void changeVisitorPassword(String password, String confirmPassword);
+
 }
