@@ -1,9 +1,5 @@
 package be.intecbrussel.iddblog.service;
 
-
-import be.intecbrussel.iddblog.command.RegisteredVisitorCommand;
-import be.intecbrussel.iddblog.converter.RegisteredVisitorCommandToRegisteredVisitor;
-import be.intecbrussel.iddblog.converter.RegisteredVisitorToRegisteredVisitorCommand;
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
 import be.intecbrussel.iddblog.repository.RegisteredVisitorRepository;
 import be.intecbrussel.iddblog.validation.error.UserAlreadyExistException;
@@ -18,18 +14,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
 
     private final RegisteredVisitorRepository registeredVisitorRepository;
-    private final RegisteredVisitorCommandToRegisteredVisitor registeredVisitorCommandToRegisteredVisitor;
-    private final RegisteredVisitorToRegisteredVisitorCommand registeredVisitorToRegisteredVisitorCommand;
 
     private final PasswordEncoder passwordEncoder;
 
-    public RegisteredVisitorServiceImpl(RegisteredVisitorRepository registeredVisitorRepository, RegisteredVisitorCommandToRegisteredVisitor registeredVisitorCommandToRegisteredVisitor,
-                                        RegisteredVisitorToRegisteredVisitorCommand registeredVisitorToRegisteredVisitorCommand,
-                                        PasswordEncoder passwordEncoder) {
-
+    public RegisteredVisitorServiceImpl(RegisteredVisitorRepository registeredVisitorRepository, PasswordEncoder passwordEncoder) {
         this.registeredVisitorRepository = registeredVisitorRepository;
-        this.registeredVisitorCommandToRegisteredVisitor = registeredVisitorCommandToRegisteredVisitor;
-        this.registeredVisitorToRegisteredVisitorCommand = registeredVisitorToRegisteredVisitorCommand;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -57,19 +46,31 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
     @Override
     @Transactional
     public RegisteredVisitor findById(Long id) {
-
         return registeredVisitorRepository.findById(id).get();
     }
 
     @Override
     @Transactional
-    public RegisteredVisitorCommand updateVisitorCommand(RegisteredVisitorCommand command) {
-        RegisteredVisitor detachedVisitor = registeredVisitorCommandToRegisteredVisitor.convert(command);
+    public void updateVisitorWithoutPwd(RegisteredVisitor registeredVisitor) {
 
-        RegisteredVisitor updateVisitor = registeredVisitorRepository.save(detachedVisitor);
-        log.debug("Updated RecipeId: " + updateVisitor.getId());
+        if (emailExistsForIdOtherThanCurrentId(registeredVisitor.getEmailAddress(),registeredVisitor.getId())) {
+            throw new UserAlreadyExistException("There is an user with that email address: " + registeredVisitor.getEmailAddress());
+        }
 
-        return registeredVisitorToRegisteredVisitorCommand.convert(updateVisitor);
+        if (usernameExistsForIdOtherThanCurrentId(registeredVisitor.getUsername(),registeredVisitor.getId())) {
+            throw new UserAlreadyExistException("There is an user with that username: " + registeredVisitor.getUsername());
+        }
+
+        registeredVisitorRepository.updateVisitorWithoutPwd(registeredVisitor.getId(),
+                registeredVisitor.getUsername(), registeredVisitor.getFirstName(),
+                registeredVisitor.getLastName(), registeredVisitor.getEmailAddress(),
+                registeredVisitor.getIsWriter(), registeredVisitor.getGender());
+    }
+
+    @Override
+    @Transactional
+    public void updateVisitorWithPwd(Long id, String username, String firstName, String lastName, String email, Boolean writer, String password) {
+        registeredVisitorRepository.updateVisitorWithPwd(id, username, firstName, lastName, email, writer, passwordEncoder.encode(password));
     }
 
     private boolean emailExists(final String email) {
@@ -78,6 +79,16 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
 
     private boolean usernameExists(final String username) {
         return registeredVisitorRepository.findByUsername(username) != null;
+    }
+
+    private boolean emailExistsForIdOtherThanCurrentId(final String email, final Long id) {
+        int sizeUsers = registeredVisitorRepository.findByEmailNotEqualToId(email, id).size();
+        return  sizeUsers > 0;
+    }
+
+    private boolean usernameExistsForIdOtherThanCurrentId(final String username, final Long id) {
+        int sizeUsers = registeredVisitorRepository.findByUsernameNotEqualToId(username, id).size();
+        return  sizeUsers > 0;
     }
 
 }

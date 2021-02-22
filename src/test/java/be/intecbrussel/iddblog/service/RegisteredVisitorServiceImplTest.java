@@ -1,12 +1,8 @@
 package be.intecbrussel.iddblog.service;
 
-import be.intecbrussel.iddblog.command.RegisteredVisitorCommand;
-import be.intecbrussel.iddblog.converter.RegisteredVisitorCommandToRegisteredVisitor;
-import be.intecbrussel.iddblog.converter.RegisteredVisitorToRegisteredVisitorCommand;
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
 import be.intecbrussel.iddblog.repository.RegisteredVisitorRepository;
 import be.intecbrussel.iddblog.validation.error.UserAlreadyExistException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,11 +28,6 @@ class RegisteredVisitorServiceImplTest {
     @Mock
     RegisteredVisitorRepository visitorRepository;
 
-    @Mock
-    RegisteredVisitorToRegisteredVisitorCommand visitorToRegisteredVisitorCommand;
-
-    @Mock
-    RegisteredVisitorCommandToRegisteredVisitor registeredVisitorCommandToRegisteredVisitor;
 
     RegisteredVisitor visitor;
 
@@ -44,8 +35,7 @@ class RegisteredVisitorServiceImplTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        visitorService = new RegisteredVisitorServiceImpl(visitorRepository, registeredVisitorCommandToRegisteredVisitor,
-                visitorToRegisteredVisitorCommand, passwordEncoder);
+        visitorService = new RegisteredVisitorServiceImpl(visitorRepository, passwordEncoder);
 
         visitor = RegisteredVisitor.builder().id(2L).username("akyare")
                 .firstName("Abdel").lastName("Khyare").password("123456").confirmPassword("123456")

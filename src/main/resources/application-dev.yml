@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/blog_dev
+    url: jdbc:mysql://localhost:3306/blog_dev?serverTimezone=UTC
     username: blog_dev_user
     password: intec
     platform: mysql

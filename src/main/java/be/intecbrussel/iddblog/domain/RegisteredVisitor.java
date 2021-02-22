@@ -1,12 +1,10 @@
 package be.intecbrussel.iddblog.domain;
 
-import be.intecbrussel.iddblog.validation.PasswordConstraintValidator;
 import be.intecbrussel.iddblog.validation.PasswordMatches;
 import be.intecbrussel.iddblog.validation.ValidPassword;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.Constraint;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;

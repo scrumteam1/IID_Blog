@@ -49,6 +49,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     //remove this for end product
     @Override
     protected void configure (final HttpSecurity httpSecurity) throws Exception {
+        //disable security to not asking to login at this time (not needed for signup)
+        httpSecurity.httpBasic().disable();
+
+
+
         httpSecurity.authorizeRequests()
                     .antMatchers("/", "/index/**","/registerform/**","/registeredvisitor/**").permitAll()
                     .and()

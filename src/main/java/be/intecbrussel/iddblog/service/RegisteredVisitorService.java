@@ -1,7 +1,8 @@
 package be.intecbrussel.iddblog.service;
 
-import be.intecbrussel.iddblog.command.RegisteredVisitorCommand;
+
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
+import org.springframework.data.repository.query.Param;
 
 
 public interface RegisteredVisitorService {
@@ -10,6 +11,11 @@ public interface RegisteredVisitorService {
 
     RegisteredVisitor findById(Long id);
 
-    RegisteredVisitorCommand  updateVisitorCommand(RegisteredVisitorCommand command);
+    void updateVisitorWithoutPwd( RegisteredVisitor registeredVisitor);
+
+    void updateVisitorWithPwd( Long id,  String username,
+                               String firstName,  String lastName,
+                               String email,
+                               Boolean writer, String password);
 
 }

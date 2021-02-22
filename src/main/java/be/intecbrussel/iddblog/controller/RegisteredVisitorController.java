@@ -1,7 +1,7 @@
 package be.intecbrussel.iddblog.controller;
 
-import be.intecbrussel.iddblog.command.RegisteredVisitorCommand;
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
+import be.intecbrussel.iddblog.password.RandomPasswordGenerator;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
 import be.intecbrussel.iddblog.validation.error.UserAlreadyExistException;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,7 @@ public class RegisteredVisitorController {
     }
 
     @GetMapping("registeredvisitor/new")
-    public String newMember(Model model){
+    public String newMember(Model model) {
         model.addAttribute("registeredvisitor", new RegisteredVisitor());
 
         return "registerform";
@@ -31,11 +31,11 @@ public class RegisteredVisitorController {
 
     @PostMapping("registeredvisitor")
     public String save(@ModelAttribute("registeredvisitor") @Valid RegisteredVisitor registeredVisitor, BindingResult bindingResult
-            , Model model){
+            , Model model) {
 
         RegisteredVisitor savedVisitor;
 
-        if(bindingResult.hasErrors()){
+        if (bindingResult.hasErrors()) {
 
             bindingResult.getAllErrors().forEach(objectError -> log.debug(objectError.toString()));
 
@@ -51,27 +51,56 @@ public class RegisteredVisitorController {
             return "registerform";
         }
 
-        return "redirect:/registeredvisitor/"+ savedVisitor.getId() +"/show";
+        return "redirect:/registeredvisitor/" + savedVisitor.getId() + "/show";
     }
 
     @GetMapping("registeredvisitor/{id}/show")
-    public String showById (@PathVariable String id, Model model) {
+    public String showById(@PathVariable String id, Model model) {
         model.addAttribute("registeredvisitor", registeredVisitorService.findById(Long.valueOf(id)));
         return "profileview";
     }
 
-    @GetMapping
-    @RequestMapping("registeredvisitor/{id}/update")
-    public String updateRegisteredVisitor (@PathVariable String id, Model model) {
-        model.addAttribute("registeredvisitor", registeredVisitorService.findById(Long.valueOf(id)));
+    @GetMapping("registeredvisitor/update/{id}")
+    public String updateRegisteredVisitor(@PathVariable long id, Model model) {
+
+        // DEFAULT_PWD set to password and confirmPassword and used in thymeleaf if the password is not changed
+        // reason is to pass the validations (password not null and password matches confirmPassword)
+        RandomPasswordGenerator passGen = new RandomPasswordGenerator();
+        final String DEFAULT_PWD = passGen.generatePassayPassword();
+
+        model.addAttribute("registeredvisitor", registeredVisitorService.findById(id));
+        model.addAttribute("defaultPwd", DEFAULT_PWD);
+
         return "profile";
     }
 
-    @PostMapping
-    @RequestMapping("updatevisitor")
-    public String UpdateRegisteredVisitor(@ModelAttribute RegisteredVisitorCommand command){
-        RegisteredVisitorCommand updatedCommand = registeredVisitorService.updateVisitorCommand(command);
-        return "redirect:/registeredvisitor/" + updatedCommand.getId() + "/show";
+    @PostMapping("registeredvisitor/edit/{id}")
+    public String UpdateRegisteredVisitor(@PathVariable("id") long id, @ModelAttribute("registeredvisitor") @Valid RegisteredVisitor visitor
+            ,BindingResult bindingResult, Model model) {
+
+        if (bindingResult.hasErrors()) {
+
+            bindingResult.getAllErrors().forEach(objectError -> log.debug(objectError.toString()));
+
+            return "profile";
+        }
+
+
+        try {
+            registeredVisitorService.updateVisitorWithoutPwd(visitor);
+
+        } catch (UserAlreadyExistException uaeEx) {
+
+            model.addAttribute("message", "An account for that username/email already exists.");
+
+            return "profile";
+        }
+
+        log.info(visitor.getPassword());
+        log.info(visitor.getConfirmPassword());
+        log.info(visitor.getEncodedPassword());
+
+        return "redirect:/registeredvisitor/"+visitor.getId()+"/show";
     }
 
 }
