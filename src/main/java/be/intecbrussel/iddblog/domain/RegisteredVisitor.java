@@ -10,7 +10,10 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-@Entity
+//Spring security needs a table authorities with properties: username, authority
+//Spring security needs a table users with properties: username, password, enabled
+@Entity(name="RegisteredVisitor")
+@Table(name="users")//Spring security needs a tables: authorities and users. Names of tables should be authorities and users.
 @Data
 @Builder
 @NoArgsConstructor
@@ -25,6 +28,9 @@ public class RegisteredVisitor {
     @NotBlank(message = "user name is mandatory.")
     @Size(min = 3, max = 20)
     private String username;
+
+    @OneToOne(mappedBy = "registeredVisitor")
+    private Authority authority;
 
     @NotBlank(message = "first name is mandatory.")
     @Size(min = 1, max = 20)
