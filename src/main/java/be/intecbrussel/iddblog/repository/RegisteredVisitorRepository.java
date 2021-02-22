@@ -14,7 +14,6 @@ public interface RegisteredVisitorRepository extends CrudRepository<RegisteredVi
 
     RegisteredVisitor findByEmailAddress(String email);
 
-    @Query("SELECT u FROM RegisteredVisitor u WHERE u.username = ?1")
     RegisteredVisitor findByUsername(String username);
 
     @Modifying

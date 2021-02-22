@@ -16,6 +16,7 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 @AllArgsConstructor
 @PasswordMatches
+@Table(name="users")
 public class RegisteredVisitor {
 
     @Id

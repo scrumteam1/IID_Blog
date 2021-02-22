@@ -23,25 +23,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private DataSource dataSource;
 
-    @Bean
-    @Override
-    public UserDetailsService userDetailsService(){
-        return new RegisteredVisitorDetailsService();
-    }
 
-    @Bean
-    public DaoAuthenticationProvider authenticationProvider(){
-        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(userDetailsService());
-        authenticationProvider.setPasswordEncoder(passwordEncoder());
-
-        return authenticationProvider;
-    }
 
     @Override
     protected void configure(final AuthenticationManagerBuilder amb) throws Exception {
-
-        amb.authenticationProvider(authenticationProvider());
+        amb.jdbcAuthentication()
+                .dataSource(dataSource);
 
     }
 
@@ -62,14 +49,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .and()
                     .formLogin()
                     .loginPage("/login")
-                    .usernameParameter("username")
-                    .passwordParameter("password")
-                    .failureUrl("/login-error")
                     .permitAll()
                     .and()
                     .logout()
-                    .logoutSuccessUrl("/index")
-                    .permitAll();
+                    .logoutSuccessUrl("/index");
+
         httpSecurity.csrf().disable();
         httpSecurity.headers().frameOptions().disable();
 
