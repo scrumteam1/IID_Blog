@@ -33,6 +33,8 @@ public class RegisteredVisitorController {
     public String save(@ModelAttribute("registeredvisitor") @Valid RegisteredVisitor registeredVisitor, BindingResult bindingResult
             , Model model){
 
+        RegisteredVisitor savedVisitor;
+
         if(bindingResult.hasErrors()){
 
             bindingResult.getAllErrors().forEach(objectError -> log.debug(objectError.toString()));
@@ -41,7 +43,7 @@ public class RegisteredVisitorController {
         }
 
         try {
-            RegisteredVisitor savedVisitor = registeredVisitorService.saveVisitor(registeredVisitor);
+            savedVisitor = registeredVisitorService.saveVisitor(registeredVisitor);
         } catch (UserAlreadyExistException uaeEx) {
 
             model.addAttribute("message", "An account for that username/email already exists.");
@@ -49,7 +51,6 @@ public class RegisteredVisitorController {
             return "registerform";
         }
 
-        RegisteredVisitor savedVisitor = registeredVisitorService.saveVisitor(registeredVisitor);
         return "redirect:/registeredvisitor/"+ savedVisitor.getId() +"/show";
     }
 
