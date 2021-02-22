@@ -1,6 +1,7 @@
 package be.intecbrussel.iddblog.controller;
 
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
+import be.intecbrussel.iddblog.password.RandomPasswordGenerator;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
 import be.intecbrussel.iddblog.validation.error.UserAlreadyExistException;
 import lombok.extern.slf4j.Slf4j;
@@ -62,9 +63,10 @@ public class RegisteredVisitorController {
     @GetMapping("registeredvisitor/update/{id}")
     public String updateRegisteredVisitor(@PathVariable long id, Model model) {
 
-        // default password and confirmPassword to use in thymeleaf if the password is not changed
-        // reason is to pass the validations (password not null and password matches confirmPassword
-        final String DEFAULT_PWD = "!nXkTT7C4#DNiU";
+        // DEFAULT_PWD set to password and confirmPassword and used in thymeleaf if the password is not changed
+        // reason is to pass the validations (password not null and password matches confirmPassword)
+        RandomPasswordGenerator passGen = new RandomPasswordGenerator();
+        final String DEFAULT_PWD = passGen.generatePassayPassword();
 
         model.addAttribute("registeredvisitor", registeredVisitorService.findById(id));
         model.addAttribute("defaultPwd", DEFAULT_PWD);
