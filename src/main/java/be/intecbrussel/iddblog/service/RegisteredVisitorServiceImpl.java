@@ -53,7 +53,6 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
     @Transactional
     public void updateVisitorWithoutPwd(RegisteredVisitor registeredVisitor) {
 
-        //TODO: uncomment and correct the condition: condition is not correct as we should exclude the email address from the registeredVisitor
         if (emailExistsForIdOtherThanCurrentId(registeredVisitor.getEmailAddress(),registeredVisitor.getId())) {
             throw new UserAlreadyExistException("There is an user with that email address: " + registeredVisitor.getEmailAddress());
         }

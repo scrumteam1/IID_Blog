@@ -83,7 +83,7 @@ public class RegisteredVisitorController {
             return "profile";
         }
 
-        // TODO: uncomment after the todo on the updateVisitorWithoutPwd method is done.
+
         try {
             registeredVisitorService.updateVisitorWithoutPwd(visitor);
 
