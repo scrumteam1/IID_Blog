@@ -54,13 +54,13 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
     public void updateVisitorWithoutPwd(RegisteredVisitor registeredVisitor) {
 
         //TODO: uncomment and correct the condition: condition is not correct as we should exclude the email address from the registeredVisitor
-//        if (emailExists(registeredVisitor.getEmailAddress())) {
-//            throw new UserAlreadyExistException("There is an user with that email address: " + registeredVisitor.getEmailAddress());
-//        }
-//
-//        if (usernameExists(registeredVisitor.getUsername())) {
-//            throw new UserAlreadyExistException("There is an user with that username: " + registeredVisitor.getUsername());
-//        }
+        if (emailExistsForIdOtherThanCurrentId(registeredVisitor.getEmailAddress(),registeredVisitor.getId())) {
+            throw new UserAlreadyExistException("There is an user with that email address: " + registeredVisitor.getEmailAddress());
+        }
+
+        if (usernameExistsForIdOtherThanCurrentId(registeredVisitor.getUsername(),registeredVisitor.getId())) {
+            throw new UserAlreadyExistException("There is an user with that username: " + registeredVisitor.getUsername());
+        }
 
         registeredVisitorRepository.updateVisitorWithoutPwd(registeredVisitor.getId(),
                 registeredVisitor.getUsername(), registeredVisitor.getFirstName(),
@@ -80,6 +80,16 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
 
     private boolean usernameExists(final String username) {
         return registeredVisitorRepository.findByUsername(username) != null;
+    }
+
+    private boolean emailExistsForIdOtherThanCurrentId(final String email, final Long id) {
+        int sizeUsers = registeredVisitorRepository.findByEmailNotEqualToId(email, id).size();
+        return  sizeUsers > 0;
+    }
+
+    private boolean usernameExistsForIdOtherThanCurrentId(final String username, final Long id) {
+        int sizeUsers = registeredVisitorRepository.findByUsernameNotEqualToId(username, id).size();
+        return  sizeUsers > 0;
     }
 
 }
