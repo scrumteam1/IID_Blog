@@ -142,6 +142,24 @@ class RegisteredVisitorControllerTest {
     }
 
     @Test
+    void saveErrorUserAlreadyExistUsername() throws Exception {
+
+        when(visitorService.saveVisitor(any())).thenThrow(new UserAlreadyExistException("There is an user with that username: "));
+
+        mockMvc.perform(post("/registeredvisitor")
+                .param("firstName","Abdel")
+                .param("lastName","Khy")
+                .param("username","akhyare")
+                .param("emailAddress","ak@hotmail.com")
+                .param("password","uD45Pj6J*@cH$u")
+                .param("confirmPassword","uD45Pj6J*@cH$u"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("registerform"))
+                .andExpect(model().attributeExists("message"));
+
+    }
+
+    @Test
     void saveWithAllErrors() throws Exception {
 
         mockMvc.perform(post("/registeredvisitor")
@@ -168,6 +186,96 @@ class RegisteredVisitorControllerTest {
                 .andExpect(view().name("profileview"))
                 .andExpect(model().attributeExists("registeredvisitor"));
 
+    }
+
+    @Test
+    void UpdateVisitorGetForm() throws Exception {
+        RegisteredVisitor visitorFound = new RegisteredVisitor();
+        visitorFound.setId(1L);
+
+        when(visitorService.findById(ArgumentMatchers.any())).thenReturn(visitorFound);
+
+        mockMvc.perform(get("/registeredvisitor/update/1"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("updateprofile"))
+                .andExpect(model().attributeExists("registeredvisitor"))
+                .andExpect(model().attributeExists("defaultPwd"));
+
+        verify(visitorService, times(1)).findById(ArgumentMatchers.any());
+    }
+
+    @Test
+    void UpdateVisitorPost() throws Exception {
+        savedVisitor.setId(1L);
+
+        mockMvc.perform(post("/registeredvisitor/edit/1")
+                .param("firstName","Abdel")
+                .param("lastName","Khy")
+                .param("username","akhyare")
+                .param("emailAddress","ak@hotmail.com")
+                .param("password","uD45Pj6J*@cH$u")
+                .param("confirmPassword","uD45Pj6J*@cH$u")
+                .param("gender","Male")
+                .param("isWriter","false"))
+                .andExpect(model().errorCount(0))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/registeredvisitor/1/show"))
+                .andExpect(model().attributeExists("registeredvisitor"));
+
+        verify(visitorService, times(1)).updateVisitorWithoutPwd(savedVisitor);
+    }
+
+    @Test
+    void updateWithAllErrors() throws Exception {
+
+        mockMvc.perform(post("/registeredvisitor/edit/1")
+                .param("firstName","")
+                .param("lastName","")
+                .param("username","ak")
+                .param("emailAddress","akhotmail")
+                .param("password","123")
+                .param("confirmPassword","123"))
+                .andExpect(model().errorCount(7))
+                .andExpect(status().isOk())
+                .andExpect(view().name("updateprofile"))
+                .andExpect(model().attributeExists("registeredvisitor"));
+
+        verify(visitorService, times(0)).updateVisitorWithoutPwd(ArgumentMatchers.any());
+    }
+
+    @Test
+    void updateErrorUserAlreadyExistEmail() throws Exception {
+
+        doThrow(new UserAlreadyExistException("There is an user with that email address: ")).when(visitorService).updateVisitorWithoutPwd(any());
+
+        mockMvc.perform(post("/registeredvisitor/edit/1")
+                .param("firstName","Abdel")
+                .param("lastName","Khy")
+                .param("username","akhyare")
+                .param("emailAddress","ak@hotmail.com")
+                .param("password","uD45Pj6J*@cH$u")
+                .param("confirmPassword","uD45Pj6J*@cH$u"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("updateprofile"))
+                .andExpect(model().attributeExists("message"));
+
+    }
+
+    @Test
+    void updateErrorUserAlreadyExistUsername() throws Exception {
+
+        doThrow(new UserAlreadyExistException("There is an user with that username: ")).when(visitorService).updateVisitorWithoutPwd(any());
+
+        mockMvc.perform(post("/registeredvisitor/edit/1")
+                .param("firstName","Abdel")
+                .param("lastName","Khy")
+                .param("username","akhyare")
+                .param("emailAddress","ak@hotmail.com")
+                .param("password","uD45Pj6J*@cH$u")
+                .param("confirmPassword","uD45Pj6J*@cH$u"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("updateprofile"))
+                .andExpect(model().attributeExists("message"));
 
     }
 }

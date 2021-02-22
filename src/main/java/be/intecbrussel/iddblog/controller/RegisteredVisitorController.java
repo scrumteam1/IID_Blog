@@ -99,7 +99,7 @@ public class RegisteredVisitorController {
         log.info(visitor.getConfirmPassword());
         log.info(visitor.getEncodedPassword());
 
-        return "redirect:/registeredvisitor/"+visitor.getId()+"/show";
+        return "redirect:/registeredvisitor/"+id+"/show";
     }
 
 }
