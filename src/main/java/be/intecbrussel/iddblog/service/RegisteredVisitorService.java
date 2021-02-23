@@ -18,6 +18,10 @@ public interface RegisteredVisitorService {
                                String email,
                                Boolean writer, String password);
 
+    void updateUserPwd(@Param(value = "id") Long id, @Param(value = "password") String password);
+
+    boolean checkIfValidOldPassword(RegisteredVisitor visitor, String oldPassword);
+
 //    void changeVisitorPassword(String password, String confirmPassword);
 
 }

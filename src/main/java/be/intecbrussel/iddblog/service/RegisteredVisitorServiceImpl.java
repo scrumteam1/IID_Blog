@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
+@Transactional
 public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
 
     private final RegisteredVisitorRepository registeredVisitorRepository;
@@ -21,6 +22,7 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
         this.registeredVisitorRepository = registeredVisitorRepository;
         this.passwordEncoder = passwordEncoder;
     }
+
 
     @Override
     @Transactional
@@ -71,6 +73,16 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
     @Transactional
     public void updateVisitorWithPwd(Long id, String username, String firstName, String lastName, String email, Boolean writer, String password) {
         registeredVisitorRepository.updateVisitorWithPwd(id, username, firstName, lastName, email, writer, passwordEncoder.encode(password));
+    }
+
+    @Override
+    public void updateUserPwd(Long id, String password) {
+        registeredVisitorRepository.updateUserPwd(id, passwordEncoder.encode(password));
+    }
+
+    public boolean checkIfValidOldPassword(RegisteredVisitor visitor, String oldPassword) {
+
+        return passwordEncoder.matches(oldPassword,visitor.getEncodedPassword());
     }
 
     private boolean emailExists(final String email) {

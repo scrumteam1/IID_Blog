@@ -92,7 +92,7 @@ class RegisteredVisitorServiceImplTest {
         //given
         RegisteredVisitor returnVisitor = RegisteredVisitor.builder().id(2L).build();
 
-        when(visitorRepository.findById(anyLong())).thenReturn(Optional.of(returnVisitor));
+        when(visitorRepository.findById(anyLong())).thenReturn(Optional.ofNullable(returnVisitor));
 
         //when
         RegisteredVisitor visitor = visitorService.findById(2L);
