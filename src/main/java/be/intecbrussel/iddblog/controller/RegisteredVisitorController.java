@@ -75,16 +75,18 @@ public class RegisteredVisitorController {
 
     @GetMapping("registeredvisitor/update/{id}")
     public String updateRegisteredVisitor(@PathVariable String id, Model model) {
+        RegisteredVisitor visitor = registeredVisitorService.findById(Long.valueOf(id));
 
         // DEFAULT_PWD set to password and confirmPassword and used in thymeleaf if the password is not changed
         // reason is to pass the validations (password not null and password matches confirmPassword)
         RandomPasswordGenerator passGen = new RandomPasswordGenerator();
         final String DEFAULT_PWD = passGen.generatePassayPassword();
+        visitor.setPassword(DEFAULT_PWD);
+        visitor.setConfirmPassword(DEFAULT_PWD);
 
         log.warn("id getupdateRegisteredVisitor: " + id);
 
-        model.addAttribute("registeredvisitor", registeredVisitorService.findById(Long.valueOf(id)));
-        model.addAttribute("defaultPwd", DEFAULT_PWD);
+        model.addAttribute("registeredvisitor", visitor);
 
         return "updateprofile";
     }
@@ -95,7 +97,7 @@ public class RegisteredVisitorController {
 
         if (bindingResult.hasErrors()) {
 
-            bindingResult.getAllErrors().forEach(objectError -> log.debug(objectError.toString()));
+            bindingResult.getAllErrors().forEach(objectError -> log.warn(objectError.toString()));
 
             return "updateprofile";
         }
