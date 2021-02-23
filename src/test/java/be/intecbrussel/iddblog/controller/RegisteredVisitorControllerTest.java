@@ -47,6 +47,15 @@ class RegisteredVisitorControllerTest {
     }
 
     @Test
+    void getIndexTest() throws Exception {
+        mockMvc.perform(get("/"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("index"));
+
+        verifyNoInteractions(visitorService);
+    }
+
+    @Test
     void newMember() throws Exception {
         mockMvc.perform(get("/registeredvisitor/new"))
                 .andExpect(status().isOk())
@@ -198,8 +207,7 @@ class RegisteredVisitorControllerTest {
         mockMvc.perform(get("/registeredvisitor/update/1"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("updateprofile"))
-                .andExpect(model().attributeExists("registeredvisitor"))
-                .andExpect(model().attributeExists("defaultPwd"));
+                .andExpect(model().attributeExists("registeredvisitor"));
 
         verify(visitorService, times(1)).findById(ArgumentMatchers.any());
     }
@@ -276,6 +284,94 @@ class RegisteredVisitorControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("updateprofile"))
                 .andExpect(model().attributeExists("message"));
+
+    }
+
+    @Test
+    void UpdatePwdVisitorGetForm() throws Exception {
+        RegisteredVisitor visitorFound = new RegisteredVisitor();
+        visitorFound.setId(1L);
+
+        when(visitorService.findById(ArgumentMatchers.any())).thenReturn(visitorFound);
+
+        mockMvc.perform(get("/registeredvisitor/update password/1"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("changepassword"))
+                .andExpect(model().attributeExists("registeredvisitor"));
+
+        verify(visitorService, times(1)).findById(ArgumentMatchers.any());
+    }
+
+    @Test
+    void UpdatePwdVisitorPost() throws Exception {
+        RegisteredVisitor visitorFound = new RegisteredVisitor();
+        visitorFound.setId(1L);
+
+        when(visitorService.checkIfValidOldPassword(ArgumentMatchers.any(),ArgumentMatchers.any())).thenReturn(true);
+
+        mockMvc.perform(post("/registeredvisitor/edit password/1")
+                .param("oldPassword","uD45Pj6J*@cH$u")
+                .param("password","uD45Pj6J*@cH$u")
+                .param("confirmPassword","uD45Pj6J*@cH$u")
+                .param("firstName","Abdel")
+                .param("lastName","Khy")
+                .param("username","akhyare")
+                .param("emailAddress","ak@hotmail.com"))
+                .andExpect(model().errorCount(0))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/index"))
+                .andExpect(model().attributeExists("registeredvisitor"));
+
+        verify(visitorService, times(1)).findById(ArgumentMatchers.any());
+        verify(visitorService, times(1)).updateUserPwd(ArgumentMatchers.any(),ArgumentMatchers.any());
+        verify(visitorService, times(1)).checkIfValidOldPassword(ArgumentMatchers.any(),ArgumentMatchers.any());
+
+    }
+
+    @Test
+    void updateWithAllPwdErrors() throws Exception {
+
+        mockMvc.perform(post("/registeredvisitor/edit password/1")
+                .param("oldPassword","123")
+                .param("password","123")
+                .param("confirmPassword","")
+                .param("firstName","Abdel")
+                .param("lastName","Khy")
+                .param("username","akhyare")
+                .param("emailAddress","ak@hotmail.com"))
+                .andExpect(model().errorCount(3))
+                .andExpect(status().isOk())
+                .andExpect(view().name("changepassword"))
+                .andExpect(model().attributeExists("registeredvisitor"));
+
+        verify(visitorService, times(0)).findById(ArgumentMatchers.any());
+        verify(visitorService, times(0)).updateUserPwd(ArgumentMatchers.any(),ArgumentMatchers.any());
+        verify(visitorService, times(0)).checkIfValidOldPassword(ArgumentMatchers.any(),ArgumentMatchers.any());
+
+    }
+
+    @Test
+    void updateWithOldPwdInvalid() throws Exception {
+
+        when(visitorService.checkIfValidOldPassword(ArgumentMatchers.any(),ArgumentMatchers.any())).thenReturn(false);
+
+        mockMvc.perform(post("/registeredvisitor/edit password/1")
+                .param("oldPassword","123")
+                .param("password","uD45Pj6J*@cH$u")
+                .param("confirmPassword","uD45Pj6J*@cH$u")
+                .param("firstName","Abdel")
+                .param("lastName","Khy")
+                .param("username","akhyare")
+                .param("emailAddress","ak@hotmail.com"))
+                .andExpect(model().errorCount(0))
+                .andExpect(status().isOk())
+                .andExpect(view().name("changepassword"))
+                .andExpect(model().attributeExists("registeredvisitor"))
+                .andExpect(model().attributeExists("messageInvalidOldPwd"));
+
+        verify(visitorService, times(1)).findById(ArgumentMatchers.any());
+        verify(visitorService, times(0)).updateUserPwd(ArgumentMatchers.any(),ArgumentMatchers.any());
+        verify(visitorService, times(1)).checkIfValidOldPassword(ArgumentMatchers.any(),ArgumentMatchers.any());
 
     }
 }

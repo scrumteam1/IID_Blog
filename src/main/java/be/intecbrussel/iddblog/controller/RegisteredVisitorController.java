@@ -30,7 +30,7 @@ public class RegisteredVisitorController {
     }
 
     @GetMapping({"/","/index"})
-    public String showUserList(Model model) {
+    public String getIndex(Model model) {
 
         return "index";
     }
@@ -147,8 +147,8 @@ public class RegisteredVisitorController {
 
         RegisteredVisitor userDb = registeredVisitorService.findById(id);
 
-        boolean isOldPwdOk = passwordEncoder.matches(visitor.getOldPassword(), userDb.getEncodedPassword());
-        log.warn("is old pwd ok: " + isOldPwdOk);
+//        boolean isOldPwdOk = passwordEncoder.matches(visitor.getOldPassword(), userDb.getEncodedPassword());
+  //      log.warn("is old pwd ok: " + isOldPwdOk);
 
         if (!registeredVisitorService.checkIfValidOldPassword(userDb, visitor.getOldPassword())) {
             log.warn("the old password is not correct.");
