@@ -44,7 +44,7 @@ public class SecSecurityConfig extends WebSecurityConfigurerAdapter {
         security
                 .authorizeRequests()
                 .antMatchers("/", "/index", "/registeredvisitor/**",
-                        "/login","/webjars/**","/css/**").permitAll()
+                        "/login","registeredvisitor/edit password/**","/webjars/**","/css/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()

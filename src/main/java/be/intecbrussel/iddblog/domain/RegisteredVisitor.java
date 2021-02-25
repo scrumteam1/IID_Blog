@@ -57,6 +57,9 @@ public class RegisteredVisitor {
     @Transient
     private String confirmPassword;
 
+    @Transient
+    private String oldPassword;
+
     private String gender;
 
     private Boolean isWriter;

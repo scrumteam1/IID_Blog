@@ -5,9 +5,11 @@ import be.intecbrussel.iddblog.password.RandomPasswordGenerator;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
 import be.intecbrussel.iddblog.validation.error.UserAlreadyExistException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,6 +22,9 @@ import javax.validation.Valid;
 @Slf4j
 @Controller
 public class RegisteredVisitorController {
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     private final RegisteredVisitorService registeredVisitorService;
 
@@ -34,6 +39,7 @@ public class RegisteredVisitorController {
 
         return "index";
     }
+
 
     @RequestMapping(value="/logout", method = RequestMethod.GET)
     public String logOut(HttpServletRequest request, HttpServletResponse response){
@@ -83,15 +89,19 @@ public class RegisteredVisitorController {
     }
 
     @GetMapping("registeredvisitor/update/{id}")
-    public String updateRegisteredVisitor(@PathVariable long id, Model model) {
+    public String updateRegisteredVisitor(@PathVariable String id, Model model) {
+        RegisteredVisitor visitor = registeredVisitorService.findById(Long.valueOf(id));
 
         // DEFAULT_PWD set to password and confirmPassword and used in thymeleaf if the password is not changed
         // reason is to pass the validations (password not null and password matches confirmPassword)
         RandomPasswordGenerator passGen = new RandomPasswordGenerator();
         final String DEFAULT_PWD = passGen.generatePassayPassword();
+        visitor.setPassword(DEFAULT_PWD);
+        visitor.setConfirmPassword(DEFAULT_PWD);
 
-        model.addAttribute("registeredvisitor", registeredVisitorService.findById(id));
-        model.addAttribute("defaultPwd", DEFAULT_PWD);
+        log.warn("id getupdateRegisteredVisitor: " + id);
+
+        model.addAttribute("registeredvisitor", visitor);
 
         return "updateprofile";
     }
@@ -102,7 +112,7 @@ public class RegisteredVisitorController {
 
         if (bindingResult.hasErrors()) {
 
-            bindingResult.getAllErrors().forEach(objectError -> log.debug(objectError.toString()));
+            bindingResult.getAllErrors().forEach(objectError -> log.warn(objectError.toString()));
 
             return "updateprofile";
         }
@@ -122,6 +132,50 @@ public class RegisteredVisitorController {
         log.info(visitor.getEncodedPassword());
 
         return "redirect:/registeredvisitor/"+id+"/show";
+    }
+
+    @GetMapping("registeredvisitor/update password/{id}")
+    public String updatePwdRegisteredVisitor(@PathVariable long id, Model model) {
+
+        RegisteredVisitor user = registeredVisitorService.findById(id);
+
+        model.addAttribute("registeredvisitor", user);
+
+        log.warn("id from getupdatePwdRegisteredVisitor: " + user.getId());
+
+        return "changepassword";
+    }
+
+    @PostMapping("registeredvisitor/edit password/{id}")
+    public String UpdatePwdRegisteredVisitor(@PathVariable("id") long id, @ModelAttribute("registeredvisitor") @Valid RegisteredVisitor visitor
+            ,BindingResult bindingResult, Model model) {
+
+        log.warn("pwd from postUpdatePwd: " + visitor.getPassword());
+        log.warn("oldPwd from postUpdatePwd: " + visitor.getOldPassword());
+        log.warn("confirmPwd from postUpdatePwd: " + visitor.getConfirmPassword());
+
+        if (bindingResult.hasErrors()) {
+            bindingResult.getAllErrors().forEach(objectError -> log.warn(objectError.toString()));
+            return "changepassword";
+        }
+
+
+        RegisteredVisitor userDb = registeredVisitorService.findById(id);
+
+//        boolean isOldPwdOk = passwordEncoder.matches(visitor.getOldPassword(), userDb.getEncodedPassword());
+  //      log.warn("is old pwd ok: " + isOldPwdOk);
+
+        if (!registeredVisitorService.checkIfValidOldPassword(userDb, visitor.getOldPassword())) {
+            log.warn("the old password is not correct.");
+            model.addAttribute("messageInvalidOldPwd", "The old password is invalid.");
+            return "changepassword";
+        }
+
+        log.warn("validation on old password is ok.");
+
+        registeredVisitorService.updateUserPwd(id, visitor.getPassword());
+
+        return "redirect:/index";
     }
 
 }
