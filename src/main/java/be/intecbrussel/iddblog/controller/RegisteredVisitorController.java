@@ -35,7 +35,14 @@ public class RegisteredVisitorController {
     @GetMapping({"/","/index"})
     public String showUserList(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        model.addAttribute("loggedinuser", authentication.getName());
+
+
+        String loggedinuser="error in authentication!";
+        if(authentication!=null) {
+            loggedinuser = authentication.getName();
+        }
+
+        model.addAttribute("loggedinuser", loggedinuser);
 
         return "index";
     }
