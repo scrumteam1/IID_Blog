@@ -42,7 +42,7 @@ public class RegisteredVisitorController {
 
         RegisteredVisitor user;
 
-        if(!authentication.getName().equals("anonymousUser")) {
+        if(authentication!=null && !authentication.getName().equals("anonymousUser")) {
             user = registeredVisitorService.findByUsername(authentication.getName());
             loggedinuser = authentication.getName();
             idUser = user.getId().toString();
