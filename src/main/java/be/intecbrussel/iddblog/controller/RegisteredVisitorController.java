@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.security.Principal;
 
 @Slf4j
 @Controller
@@ -36,13 +37,19 @@ public class RegisteredVisitorController {
     public String showUserList(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
+        String loggedinuser="visitor";
+        String idUser = "";
 
-        String loggedinuser="error in authentication!";
-        if(authentication!=null) {
+        RegisteredVisitor user;
+
+        if(!authentication.getName().equals("anonymousUser")) {
+            user = registeredVisitorService.findByUsername(authentication.getName());
             loggedinuser = authentication.getName();
+            idUser = user.getId().toString();
         }
 
         model.addAttribute("loggedinuser", loggedinuser);
+        model.addAttribute("idUser", idUser);
 
         return "index";
     }

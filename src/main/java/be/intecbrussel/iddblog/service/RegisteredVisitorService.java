@@ -11,6 +11,8 @@ public interface RegisteredVisitorService {
 
     RegisteredVisitor findById(Long id);
 
+    RegisteredVisitor findByUsername(String username);
+
     void updateVisitorWithoutPwd( RegisteredVisitor registeredVisitor);
 
     void updateVisitorWithPwd( Long id,  String username,
