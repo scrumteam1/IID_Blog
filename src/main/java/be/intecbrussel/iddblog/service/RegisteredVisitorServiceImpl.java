@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
+@Transactional
 public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
 
     private final RegisteredVisitorRepository registeredVisitorRepository;
@@ -22,8 +23,8 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
         this.passwordEncoder = passwordEncoder;
     }
 
+
     @Override
-    @Transactional
     public RegisteredVisitor saveVisitor(RegisteredVisitor registeredVisitor) {
 
         if (emailExists(registeredVisitor.getEmailAddress())) {
@@ -44,13 +45,16 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
     }
 
     @Override
-    @Transactional
     public RegisteredVisitor findById(Long id) {
         return registeredVisitorRepository.findById(id).get();
     }
 
     @Override
-    @Transactional
+    public RegisteredVisitor findByUsername(String username) {
+        return registeredVisitorRepository.findByUsername(username);
+    }
+
+    @Override
     public void updateVisitorWithoutPwd(RegisteredVisitor registeredVisitor) {
 
         if (emailExistsForIdOtherThanCurrentId(registeredVisitor.getEmailAddress(),registeredVisitor.getId())) {
@@ -68,9 +72,18 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
     }
 
     @Override
-    @Transactional
     public void updateVisitorWithPwd(Long id, String username, String firstName, String lastName, String email, Boolean writer, String password) {
         registeredVisitorRepository.updateVisitorWithPwd(id, username, firstName, lastName, email, writer, passwordEncoder.encode(password));
+    }
+
+    @Override
+    public void updateUserPwd(Long id, String password) {
+        registeredVisitorRepository.updateUserPwd(id, passwordEncoder.encode(password));
+    }
+
+    public boolean checkIfValidOldPassword(RegisteredVisitor visitor, String oldPassword) {
+
+        return passwordEncoder.matches(oldPassword,visitor.getEncodedPassword());
     }
 
     private boolean emailExists(final String email) {

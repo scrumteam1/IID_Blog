@@ -4,6 +4,7 @@ spring:
     username: blog_dev_user
     password: intec
     platform: mysql
+    initialization-mode: always
   jpa:
     hibernate:
       ddl-auto: validate

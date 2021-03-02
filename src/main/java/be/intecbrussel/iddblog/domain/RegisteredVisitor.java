@@ -13,12 +13,13 @@ import javax.validation.constraints.Size;
 //Spring security needs a table authorities with properties: username, authority
 //Spring security needs a table users with properties: username, password, enabled
 @Entity(name="RegisteredVisitor")
-@Table(name="users")//Spring security needs a tables: authorities and users. Names of tables should be authorities and users.
+//Spring security needs a tables: authorities and users. Names of tables should be authorities and users.
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @PasswordMatches
+@Table(name="users")
 public class RegisteredVisitor {
 
     @Id
@@ -55,6 +56,9 @@ public class RegisteredVisitor {
     @Size(min = 1)
     @Transient
     private String confirmPassword;
+
+    @Transient
+    private String oldPassword;
 
     private String gender;
 

@@ -8,13 +8,15 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface RegisteredVisitorRepository extends CrudRepository<RegisteredVisitor, Long> {
 
+    Optional<RegisteredVisitor> findById(Long id);
+
     RegisteredVisitor findByEmailAddress(String email);
 
-    @Query("SELECT u FROM RegisteredVisitor u WHERE u.username = ?1")
     RegisteredVisitor findByUsername(String username);
 
     @Modifying
@@ -30,6 +32,10 @@ public interface RegisteredVisitorRepository extends CrudRepository<RegisteredVi
                            @Param(value = "firstName") String firstName, @Param(value = "lastName") String lastName,
                            @Param(value = "email") String email,
                            @Param(value = "writer") Boolean writer, @Param(value = "password") String password);
+
+    @Modifying
+    @Query("update RegisteredVisitor u set u.encodedPassword = :password where u.id = :id")
+    void updateUserPwd(@Param(value = "id") Long id, @Param(value = "password") String password);
 
     @Query("select u from RegisteredVisitor u where u.emailAddress = :email and u.id <> :id")
     List<RegisteredVisitor> findByEmailNotEqualToId(@Param(value = "email") String email, @Param(value = "id") Long id);

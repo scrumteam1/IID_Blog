@@ -11,12 +11,18 @@ public interface RegisteredVisitorService {
 
     RegisteredVisitor findById(Long id);
 
+    RegisteredVisitor findByUsername(String username);
+
     void updateVisitorWithoutPwd( RegisteredVisitor registeredVisitor);
 
     void updateVisitorWithPwd( Long id,  String username,
                                String firstName,  String lastName,
                                String email,
                                Boolean writer, String password);
+
+    void updateUserPwd(@Param(value = "id") Long id, @Param(value = "password") String password);
+
+    boolean checkIfValidOldPassword(RegisteredVisitor visitor, String oldPassword);
 
 //    void changeVisitorPassword(String password, String confirmPassword);
 
