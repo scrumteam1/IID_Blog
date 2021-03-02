@@ -34,6 +34,10 @@
                             <div class="col-md-3">
                                 <h5 th:text="*{registeredvisitor.username}">username</h5>
                             </div>
+                            <div>
+                                <img style="width: 100px" th:src="@{'data:image/png;base64,'+${registeredvisitor.avatar}}"th:if="${registeredvisitor.avatar!= null}"/>
+                            </div>
+
                         </div>
                         <div class="row">
                             <div class="col-md-3">

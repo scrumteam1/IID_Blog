@@ -12,7 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -185,7 +185,7 @@ class RegisteredVisitorControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("profileview"))
                 .andExpect(model().attributeExists("registeredvisitor"));
-
+        verify(visitorService, times(1)).findById(ArgumentMatchers.any());
     }
 
     @Test
@@ -278,4 +278,24 @@ class RegisteredVisitorControllerTest {
                 .andExpect(model().attributeExists("message"));
 
     }
+
+    @Test
+    void resolveException() throws Exception{
+        lenient().when(visitorService.saveVisitor(any())).thenThrow(new MaxUploadSizeExceededException(450000L));
+
+        mockMvc.perform(post("/registeredvisitor")
+                .param("firstName","Abdel")
+                .param("lastName","Khy")
+                .param("username","akhyare")
+                .param("emailAddress","ak@hotmail.com")
+                .param("password","uD45Pj6J*@cH$u")
+                .param("confirmPassword","uD45Pj6J*@cH$u"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("registerform"))
+                .andExpect(model().attributeExists("error"));
+
+        verify(visitorService, times(0)).saveVisitor(ArgumentMatchers.any());
+
+    }
+
 }
