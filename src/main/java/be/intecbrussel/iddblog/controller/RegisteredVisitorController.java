@@ -40,13 +40,16 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
     }
 
     @PostMapping("registeredvisitor")
-    public String save(@ModelAttribute("registeredvisitor") @Valid RegisteredVisitor registeredVisitor, @RequestParam("image") MultipartFile multipartFile, BindingResult bindingResult
-            , Model model) throws IOException {
+    public String save(@RequestParam("image") MultipartFile multipartFile,
+                       @ModelAttribute("registeredvisitor") @Valid RegisteredVisitor registeredVisitor,
+                       BindingResult bindingResult, Model model) throws IOException {
+
         RegisteredVisitor savedVisitor;
 
         if (bindingResult.hasErrors()) {
 
             bindingResult.getAllErrors().forEach(objectError -> log.debug(objectError.toString()));
+            log.warn("number of binding errors: " + bindingResult.getAllErrors().size());
 
             return "registerform";
         }
