@@ -6,6 +6,7 @@ import be.intecbrussel.iddblog.service.RegisteredVisitorService;
 import be.intecbrussel.iddblog.validation.error.UserAlreadyExistException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
@@ -14,37 +15,43 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.HandlerExceptionResolver;
+
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.security.Principal;
+import java.io.IOException;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @Controller
-public class RegisteredVisitorController {
+public class RegisteredVisitorController implements HandlerExceptionResolver {
+
+    private final RegisteredVisitorService registeredVisitorService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-
-    private final RegisteredVisitorService registeredVisitorService;
 
     public RegisteredVisitorController(RegisteredVisitorService registeredVisitorService) {
         this.registeredVisitorService = registeredVisitorService;
     }
 
-    @GetMapping({"/","/index"})
+    @GetMapping({"/", "/index"})
     public String showUserList(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        String loggedinuser="visitor";
+        String loggedinuser = "visitor";
         String idUser = "";
 
-        RegisteredVisitor user;
+        RegisteredVisitor user = registeredVisitorService.findByUsername(authentication.getName());;
 
-        if(authentication!=null && !authentication.getName().equals("anonymousUser")) {
-            user = registeredVisitorService.findByUsername(authentication.getName());
+        if( user!= null && authentication!=null && !authentication.getName().equals("anonymousUser")) {
             loggedinuser = authentication.getName();
             idUser = user.getId().toString();
         }
@@ -55,11 +62,10 @@ public class RegisteredVisitorController {
         return "index";
     }
 
-
-    @RequestMapping(value="/logout", method = RequestMethod.GET)
-    public String logOut(HttpServletRequest request, HttpServletResponse response){
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
+    public String logOut(HttpServletRequest request, HttpServletResponse response) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if(authentication!=null){
+        if (authentication != null) {
             new SecurityContextLogoutHandler().logout(request, response, authentication);
         }
         return "redirect:/index";
@@ -73,26 +79,39 @@ public class RegisteredVisitorController {
     }
 
     @PostMapping("registeredvisitor")
-    public String save(@ModelAttribute("registeredvisitor") @Valid RegisteredVisitor registeredVisitor, BindingResult bindingResult
-            , Model model) {
+    public String save(
+            @ModelAttribute("registeredvisitor") @Valid RegisteredVisitor registeredVisitor,
+            BindingResult bindingResult,
+            @RequestParam("image") MultipartFile multipartFile,
+            Model model) throws IOException {
 
         RegisteredVisitor savedVisitor;
 
         if (bindingResult.hasErrors()) {
 
             bindingResult.getAllErrors().forEach(objectError -> log.debug(objectError.toString()));
+            log.warn("number of binding errors: " + bindingResult.getAllErrors().size());
 
             return "registerform";
         }
 
+        log.warn("multipartFile: " + multipartFile.getBytes());
+        registeredVisitor.setAvatar(Base64.getEncoder().encodeToString(multipartFile.getBytes()));
+
         try {
             savedVisitor = registeredVisitorService.saveVisitor(registeredVisitor);
+            log.warn("visitor has been saved with id: " + savedVisitor.getId());
         } catch (UserAlreadyExistException uaeEx) {
 
             model.addAttribute("message", "An account for that username/email already exists.");
 
             return "registerform";
+        } catch (RuntimeException re) {
+            log.warn("I am in the runtime exception.");
+            return "registerform";
         }
+
+
 
         return "redirect:/registeredvisitor/" + savedVisitor.getId() + "/show";
     }
@@ -123,11 +142,11 @@ public class RegisteredVisitorController {
 
     @PostMapping("registeredvisitor/edit/{id}")
     public String UpdateRegisteredVisitor(@PathVariable("id") long id, @ModelAttribute("registeredvisitor") @Valid RegisteredVisitor visitor
-            ,BindingResult bindingResult, Model model) {
+            , BindingResult bindingResult, Model model) {
 
         if (bindingResult.hasErrors()) {
 
-            bindingResult.getAllErrors().forEach(objectError -> log.warn(objectError.toString()));
+            bindingResult.getAllErrors().forEach(objectError -> log.debug(objectError.toString()));
 
             return "updateprofile";
         }
@@ -146,7 +165,7 @@ public class RegisteredVisitorController {
         log.info(visitor.getConfirmPassword());
         log.info(visitor.getEncodedPassword());
 
-        return "redirect:/registeredvisitor/"+id+"/show";
+        return "redirect:/registeredvisitor/" + id + "/show";
     }
 
     @GetMapping("registeredvisitor/update password/{id}")
@@ -160,6 +179,7 @@ public class RegisteredVisitorController {
 
         return "changepassword";
     }
+
 
     @PostMapping("registeredvisitor/edit password/{id}")
     public String UpdatePwdRegisteredVisitor(@PathVariable("id") long id, @ModelAttribute("registeredvisitor") @Valid RegisteredVisitor visitor
@@ -177,8 +197,6 @@ public class RegisteredVisitorController {
 
         RegisteredVisitor userDb = registeredVisitorService.findById(id);
 
-//        boolean isOldPwdOk = passwordEncoder.matches(visitor.getOldPassword(), userDb.getEncodedPassword());
-  //      log.warn("is old pwd ok: " + isOldPwdOk);
 
         if (!registeredVisitorService.checkIfValidOldPassword(userDb, visitor.getOldPassword())) {
             log.warn("the old password is not correct.");
@@ -199,6 +217,34 @@ public class RegisteredVisitorController {
         model.setViewName("adminpage");
 
         return model;
+    }
+
+
+    @GetMapping("/delete/{id}")
+    public String deleteRegisteredVisitor(@PathVariable("id") long id) {
+        RegisteredVisitor registeredVisitor = registeredVisitorService.findById(id);
+        registeredVisitorService.deleteVisitor(registeredVisitor.getUsername());
+
+        return "redirect:/index";
+    }
+
+    @Override
+    public ModelAndView resolveException(HttpServletRequest httpServletRequest,
+                                         HttpServletResponse httpServletResponse,
+                                         Object o, Exception e) {
+
+        e.printStackTrace();
+        log.warn("I am in the resolveException");
+
+        Map<String, Object> model = new HashMap<String, Object>();
+        if (e instanceof MaxUploadSizeExceededException) {
+            model.put("error", "Please choose a valid picture/size (450KB Maximum)");
+            model.put("registeredvisitor", new RegisteredVisitor());
+        } else {
+            model.put("error", "Unexpected error: " + e.getMessage());
+        }
+
+        return new ModelAndView("registerform", model);
     }
 
 }

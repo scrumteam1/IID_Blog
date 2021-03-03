@@ -64,4 +64,8 @@ public class RegisteredVisitor {
 
     private Boolean isWriter;
 
+    @Column(nullable = true)
+    @Lob
+    private String avatar;
+
 }

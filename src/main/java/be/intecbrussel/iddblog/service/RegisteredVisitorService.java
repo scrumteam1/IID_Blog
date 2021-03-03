@@ -3,6 +3,7 @@ package be.intecbrussel.iddblog.service;
 
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 
 public interface RegisteredVisitorService {
@@ -24,6 +25,10 @@ public interface RegisteredVisitorService {
 
     boolean checkIfValidOldPassword(RegisteredVisitor visitor, String oldPassword);
 
+    void deleteVisitor(String registeredVisitor);
+
+
 //    void changeVisitorPassword(String password, String confirmPassword);
+
 
 }

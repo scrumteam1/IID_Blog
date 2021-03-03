@@ -1,10 +1,13 @@
 package be.intecbrussel.iddblog.service;
 
+import be.intecbrussel.iddblog.domain.Authority;
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
+import be.intecbrussel.iddblog.repository.AuthRepository;
 import be.intecbrussel.iddblog.repository.RegisteredVisitorRepository;
 import be.intecbrussel.iddblog.validation.error.UserAlreadyExistException;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,14 +21,20 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
 
     private final PasswordEncoder passwordEncoder;
 
-    public RegisteredVisitorServiceImpl(RegisteredVisitorRepository registeredVisitorRepository, PasswordEncoder passwordEncoder) {
+    private final AuthRepository authRepository;
+
+
+    public RegisteredVisitorServiceImpl(RegisteredVisitorRepository registeredVisitorRepository, PasswordEncoder passwordEncoder, AuthRepository authRepository) {
         this.registeredVisitorRepository = registeredVisitorRepository;
         this.passwordEncoder = passwordEncoder;
+        this.authRepository = authRepository;
     }
 
 
     @Override
     public RegisteredVisitor saveVisitor(RegisteredVisitor registeredVisitor) {
+
+        Authority savedAuth = new Authority();
 
         if (emailExists(registeredVisitor.getEmailAddress())) {
             throw new UserAlreadyExistException("There is an user with that email address: " + registeredVisitor.getEmailAddress());
@@ -40,6 +49,9 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
         registeredVisitor.setEncodedPassword(encodedPwd);
 
         RegisteredVisitor savedVisitor = registeredVisitorRepository.save(registeredVisitor);
+        savedAuth.setRegisteredVisitor(savedVisitor);
+        savedAuth.setAuthority("USER");
+        authRepository.save(savedAuth);
         log.debug("Saved VisitorId:" + savedVisitor.getId());
         return savedVisitor;
     }
@@ -84,6 +96,13 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
     public boolean checkIfValidOldPassword(RegisteredVisitor visitor, String oldPassword) {
 
         return passwordEncoder.matches(oldPassword,visitor.getEncodedPassword());
+    }
+
+    @Override
+    @Transactional
+    public void deleteVisitor(String username) {
+        authRepository.deleteAllByRegisteredVisitor(username);
+        registeredVisitorRepository.deleteByUsername(username);
     }
 
     private boolean emailExists(final String email) {
