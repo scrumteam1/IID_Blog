@@ -12,12 +12,6 @@ public class IndexController {
 
     private RegisteredVisitorRepository registeredVisitorRepository;
 
-  /*  @GetMapping({"","/","/index","/index.html"})
-    public String index() {
-
-        return "index";
-    }*/
-
     @RequestMapping("/login")
     public String login(){
 
