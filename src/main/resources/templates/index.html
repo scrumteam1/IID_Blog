@@ -43,10 +43,12 @@
     <span style="font-weight: bold; font-size: large;">Show Profile <a th:href="@{'/registeredvisitor/'+ ${idUser}+'/show'}" class="btn btn-primary"><i class="fas fa-user ml-2"></i></a></span>
     <span id = "username" th:text="${loggedinuser}" style="font-weight: bold; font-size: large;"></span>
     <span style="font-weight: bold; font-size: large;">Logout <a th:href="@{/logout}" class="btn btn-primary"><i class="fas fa-sign-out-alt ml-2"></i></a></span>
+    <span style="font-weight: bold; font-size: large;"><div th:if="${#authorization.expression('hasAuthority(''ADMIN'')')}"><a th:href="@{/adminpage}" class="btn btn-primary"><i class="fas fa-user ml-2"></i></a></div></span>
 
 
 
-<!--    <a href="index.html" th:href="@{/}">Home</a>-->
+
+    <!--    <a href="index.html" th:href="@{/}">Home</a>-->
 <!--    <a href="login.html" th:href="@{/login}">Log in</a>-->
 <!--    <a href="#" th:href="@{/logout}">Log out</a>-->
 <!--    <a href="registerform.html" th:href="@{/registeredvisitor/new}">Register</a>-->

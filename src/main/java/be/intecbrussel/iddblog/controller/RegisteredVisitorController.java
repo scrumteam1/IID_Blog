@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -190,6 +191,14 @@ public class RegisteredVisitorController {
         registeredVisitorService.updateUserPwd(id, visitor.getPassword());
 
         return "redirect:/index";
+    }
+
+    @RequestMapping(value = {"/adminpage"}, method = RequestMethod.GET)
+    public ModelAndView adminPage() {
+        ModelAndView model = new ModelAndView();
+        model.setViewName("adminpage");
+
+        return model;
     }
 
 }

@@ -45,6 +45,7 @@ public class SecSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/", "/index", "/registeredvisitor/**",
                         "/login","registeredvisitor/edit password/**","/webjars/**","/css/**").permitAll()
+                .antMatchers("/adminpage").access("hasAuthority('ADMIN')")
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
