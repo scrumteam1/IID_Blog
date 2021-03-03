@@ -47,14 +47,6 @@ class RegisteredVisitorControllerTest {
                 .build();
     }
 
-    @Test
-    void getIndexTest() throws Exception {
-        mockMvc.perform(get("/"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("index"));
-
-        verifyNoInteractions(visitorService);
-    }
 
     @Test
     void newMember() throws Exception {
@@ -235,8 +227,7 @@ class RegisteredVisitorControllerTest {
         mockMvc.perform(get("/registeredvisitor/update/1"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("updateprofile"))
-                .andExpect(model().attributeExists("registeredvisitor"))
-                .andExpect(model().attributeExists("defaultPwd"));
+                .andExpect(model().attributeExists("registeredvisitor"));
 
         verify(visitorService, times(1)).findById(ArgumentMatchers.any());
     }
@@ -402,15 +393,6 @@ class RegisteredVisitorControllerTest {
         verify(visitorService, times(0)).updateUserPwd(ArgumentMatchers.any(),ArgumentMatchers.any());
         verify(visitorService, times(1)).checkIfValidOldPassword(ArgumentMatchers.any(),ArgumentMatchers.any());
 
-    }
-
-    @Test
-    public void testDeleteAction() throws Exception {
-        mockMvc.perform(get("/registeredvisitor/delete/1"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/"));
-
-//        verify(visitorService, times(1)).deleteVisitor();
     }
 
     @Test
