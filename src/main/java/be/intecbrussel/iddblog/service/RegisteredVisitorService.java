@@ -27,8 +27,4 @@ public interface RegisteredVisitorService {
 
     void deleteVisitor(String registeredVisitor);
 
-
-//    void changeVisitorPassword(String password, String confirmPassword);
-
-
 }

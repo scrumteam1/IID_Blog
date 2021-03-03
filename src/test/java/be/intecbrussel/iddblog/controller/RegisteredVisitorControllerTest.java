@@ -10,13 +10,14 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
@@ -46,14 +47,6 @@ class RegisteredVisitorControllerTest {
                 .build();
     }
 
-    @Test
-    void getIndexTest() throws Exception {
-        mockMvc.perform(get("/"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("index"));
-
-        verifyNoInteractions(visitorService);
-    }
 
     @Test
     void newMember() throws Exception {
@@ -68,11 +61,15 @@ class RegisteredVisitorControllerTest {
     @Test
     void saveWithoutErrors() throws Exception {
 
+        MockMultipartFile file = new MockMultipartFile("image", "other-file-name.jpg",
+                "image/jpeg", "some other type".getBytes());
+
         when(visitorService.saveVisitor(ArgumentMatchers.any())).thenReturn(savedVisitor);
         //To improve and add the setId in the when(...)...
         savedVisitor.setId(1L);
 
-        mockMvc.perform(post("/registeredvisitor")
+        mockMvc.perform(multipart("/registeredvisitor")
+                .file(file)
                 .param("firstName","Abdel")
                 .param("lastName","Khy")
                 .param("username","akhyare")
@@ -89,7 +86,11 @@ class RegisteredVisitorControllerTest {
     @Test
     void saveBindingErrorEmailNotValid() throws Exception {
 
-        mockMvc.perform(post("/registeredvisitor")
+        MockMultipartFile file = new MockMultipartFile("image", "other-file-name.jpg",
+                "image/jpeg", "some other type".getBytes());
+
+        mockMvc.perform(multipart("/registeredvisitor")
+                .file(file)
                 .param("emailAddress","akgmail.com")
                 .param("password","uD45Pj6J*@cH$u")
                 .param("confirmPassword","uD45Pj6J*@cH$u"))
@@ -103,8 +104,11 @@ class RegisteredVisitorControllerTest {
 
     @Test
     void saveBindingErrorPasswordNotValid() throws Exception {
+        MockMultipartFile file = new MockMultipartFile("image", "other-file-name.jpg",
+                "image/jpeg", "some other type".getBytes());
 
-        mockMvc.perform(post("/registeredvisitor")
+        mockMvc.perform(multipart("/registeredvisitor")
+                .file(file)
                 .param("password","1234"))
                 .andExpect(model().attributeHasFieldErrors("registeredvisitor","password"))
                 .andExpect(status().isOk())
@@ -117,7 +121,11 @@ class RegisteredVisitorControllerTest {
     @Test
     void saveBindingErrorPasswordNotMatch() throws Exception {
 
-        mockMvc.perform(post("/registeredvisitor")
+        MockMultipartFile file = new MockMultipartFile("image", "other-file-name.jpg",
+                "image/jpeg", "some other type".getBytes());
+
+        mockMvc.perform(multipart("/registeredvisitor")
+                .file(file)
                 .param("firstName","Abdel")
                 .param("lastName","Khy")
                 .param("username","akhyare")
@@ -135,9 +143,13 @@ class RegisteredVisitorControllerTest {
     @Test
     void saveErrorUserAlreadyExistEmail() throws Exception {
 
+        MockMultipartFile file = new MockMultipartFile("image", "other-file-name.jpg",
+                "image/jpeg", "some other type".getBytes());
+
         when(visitorService.saveVisitor(any())).thenThrow(new UserAlreadyExistException("There is an user with that email address: "));
 
-        mockMvc.perform(post("/registeredvisitor")
+        mockMvc.perform(multipart("/registeredvisitor")
+                .file(file)
                 .param("firstName","Abdel")
                 .param("lastName","Khy")
                 .param("username","akhyare")
@@ -153,9 +165,13 @@ class RegisteredVisitorControllerTest {
     @Test
     void saveErrorUserAlreadyExistUsername() throws Exception {
 
+        MockMultipartFile file = new MockMultipartFile("image", "other-file-name.jpg",
+                "image/jpeg", "some other type".getBytes());
+
         when(visitorService.saveVisitor(any())).thenThrow(new UserAlreadyExistException("There is an user with that username: "));
 
-        mockMvc.perform(post("/registeredvisitor")
+        mockMvc.perform(multipart("/registeredvisitor")
+                .file(file)
                 .param("firstName","Abdel")
                 .param("lastName","Khy")
                 .param("username","akhyare")
@@ -171,7 +187,11 @@ class RegisteredVisitorControllerTest {
     @Test
     void saveWithAllErrors() throws Exception {
 
-        mockMvc.perform(post("/registeredvisitor")
+        MockMultipartFile file = new MockMultipartFile("image", "other-file-name.jpg",
+                "image/jpeg", "some other type".getBytes());
+
+        mockMvc.perform(multipart("/registeredvisitor")
+                .file(file)
                 .param("firstName","")
                 .param("lastName","")
                 .param("username","ak")
@@ -194,7 +214,7 @@ class RegisteredVisitorControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("profileview"))
                 .andExpect(model().attributeExists("registeredvisitor"));
-
+        verify(visitorService, times(1)).findById(ArgumentMatchers.any());
     }
 
     @Test
@@ -372,6 +392,25 @@ class RegisteredVisitorControllerTest {
         verify(visitorService, times(1)).findById(ArgumentMatchers.any());
         verify(visitorService, times(0)).updateUserPwd(ArgumentMatchers.any(),ArgumentMatchers.any());
         verify(visitorService, times(1)).checkIfValidOldPassword(ArgumentMatchers.any(),ArgumentMatchers.any());
+
+    }
+
+    @Test
+    void resolveException() throws Exception{
+        lenient().when(visitorService.saveVisitor(any())).thenThrow(new MaxUploadSizeExceededException(450000L));
+
+        mockMvc.perform(post("/registeredvisitor")
+                .param("firstName","Abdel")
+                .param("lastName","Khy")
+                .param("username","akhyare")
+                .param("emailAddress","ak@hotmail.com")
+                .param("password","uD45Pj6J*@cH$u")
+                .param("confirmPassword","uD45Pj6J*@cH$u"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("registerform"))
+                .andExpect(model().attributeExists("error"));
+
+        verify(visitorService, times(0)).saveVisitor(ArgumentMatchers.any());
 
     }
 }
