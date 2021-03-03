@@ -5,6 +5,10 @@ import be.intecbrussel.iddblog.password.RandomPasswordGenerator;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
 import be.intecbrussel.iddblog.validation.error.UserAlreadyExistException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.repository.query.Param;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -32,6 +36,37 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
         this.registeredVisitorService = registeredVisitorService;
     }
 
+    @GetMapping({"/", "/index"})
+    public String showUserList(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        String loggedinuser = "visitor";
+        String idUser = "";
+
+        RegisteredVisitor user;
+
+        if (!authentication.getName().equals("anonymousUser")) {
+            user = registeredVisitorService.findByUsername(authentication.getName());
+            loggedinuser = authentication.getName();
+            idUser = user.getId().toString();
+        }
+
+        model.addAttribute("loggedinuser", loggedinuser);
+        model.addAttribute("idUser", idUser);
+
+        return "index";
+    }
+
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
+    public String logOut(HttpServletRequest request, HttpServletResponse response) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null) {
+            new SecurityContextLogoutHandler().logout(request, response, authentication);
+        }
+        return "redirect:/index";
+    }
+
+
     @GetMapping("registeredvisitor/new")
     public String newMember(Model model) {
         model.addAttribute("registeredvisitor", new RegisteredVisitor());
@@ -40,9 +75,11 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
     }
 
     @PostMapping("registeredvisitor")
-    public String save(@RequestParam("image") MultipartFile multipartFile,
-                       @ModelAttribute("registeredvisitor") @Valid RegisteredVisitor registeredVisitor,
-                       BindingResult bindingResult, Model model) throws IOException {
+    public String save(
+            @ModelAttribute("registeredvisitor") @Valid RegisteredVisitor registeredVisitor,
+            BindingResult bindingResult,
+            @RequestParam("image") MultipartFile multipartFile,
+            Model model) throws IOException {
 
         RegisteredVisitor savedVisitor;
 
@@ -54,16 +91,22 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
             return "registerform";
         }
 
+        log.warn("multipartFile: " + multipartFile.getBytes());
         registeredVisitor.setAvatar(Base64.getEncoder().encodeToString(multipartFile.getBytes()));
 
         try {
             savedVisitor = registeredVisitorService.saveVisitor(registeredVisitor);
+            log.warn("visitor has been saved with id: " + savedVisitor.getId());
         } catch (UserAlreadyExistException uaeEx) {
 
             model.addAttribute("message", "An account for that username/email already exists.");
 
             return "registerform";
+        } catch (RuntimeException re) {
+            log.warn("I am in the runtime exception.");
+            return "registerform";
         }
+
 
         return "redirect:/registeredvisitor/" + savedVisitor.getId() + "/show";
     }
@@ -90,7 +133,7 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
 
     @PostMapping("registeredvisitor/edit/{id}")
     public String UpdateRegisteredVisitor(@PathVariable("id") long id, @ModelAttribute("registeredvisitor") @Valid RegisteredVisitor visitor
-            ,BindingResult bindingResult, Model model) {
+            , BindingResult bindingResult, Model model) {
 
         if (bindingResult.hasErrors()) {
 
@@ -113,19 +156,23 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
         log.info(visitor.getConfirmPassword());
         log.info(visitor.getEncodedPassword());
 
-        return "redirect:/registeredvisitor/"+id+"/show";
+        return "redirect:/registeredvisitor/" + id + "/show";
     }
 
 
     @Override
-    public ModelAndView resolveException(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, Exception e) {
+    public ModelAndView resolveException(HttpServletRequest httpServletRequest,
+                                         HttpServletResponse httpServletResponse,
+                                         Object o, Exception e) {
+
+        e.printStackTrace();
+        log.warn("I am in the resolveException");
+
         Map<String, Object> model = new HashMap<String, Object>();
-        if (e instanceof MaxUploadSizeExceededException)
-        {
+        if (e instanceof MaxUploadSizeExceededException) {
             model.put("error", "Please choose a valid picture/size (450KB Maximum)");
             model.put("registeredvisitor", new RegisteredVisitor());
-        } else
-        {
+        } else {
             model.put("error", "Unexpected error: " + e.getMessage());
         }
 

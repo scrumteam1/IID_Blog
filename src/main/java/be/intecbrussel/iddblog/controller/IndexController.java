@@ -13,12 +13,6 @@ public class IndexController {
     @Autowired
     private RegisteredVisitorRepository registeredVisitorRepository;
 
-    @GetMapping({"","/","/index","/index.html"})
-    public String index() {
-
-        return "index";
-    }
-
     @RequestMapping("/login")
     public String login(){
 
