@@ -1,10 +1,12 @@
 package be.intecbrussel.iddblog.service;
 
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
+import be.intecbrussel.iddblog.repository.AuthRepository;
 import be.intecbrussel.iddblog.repository.RegisteredVisitorRepository;
 import be.intecbrussel.iddblog.validation.error.UserAlreadyExistException;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,9 +20,13 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
 
     private final PasswordEncoder passwordEncoder;
 
-    public RegisteredVisitorServiceImpl(RegisteredVisitorRepository registeredVisitorRepository, PasswordEncoder passwordEncoder) {
+    private final AuthRepository authRepository;
+
+
+    public RegisteredVisitorServiceImpl(RegisteredVisitorRepository registeredVisitorRepository, PasswordEncoder passwordEncoder, AuthRepository authRepository) {
         this.registeredVisitorRepository = registeredVisitorRepository;
         this.passwordEncoder = passwordEncoder;
+        this.authRepository = authRepository;
     }
 
 
@@ -84,6 +90,13 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
     public boolean checkIfValidOldPassword(RegisteredVisitor visitor, String oldPassword) {
 
         return passwordEncoder.matches(oldPassword,visitor.getEncodedPassword());
+    }
+
+    @Override
+    @Transactional
+    public void deleteVisitor(String username) {
+        authRepository.deleteAllByRegisteredVisitor(username);
+        registeredVisitorRepository.deleteByUsername(username);
     }
 
     private boolean emailExists(final String email) {

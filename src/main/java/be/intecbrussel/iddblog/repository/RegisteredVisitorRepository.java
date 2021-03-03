@@ -42,4 +42,8 @@ public interface RegisteredVisitorRepository extends CrudRepository<RegisteredVi
 
     @Query("select u from RegisteredVisitor u where u.username = :username and u.id <> :id")
     List<RegisteredVisitor> findByUsernameNotEqualToId(@Param(value = "username") String username,  @Param(value = "id") Long id);
+
+    void deleteByUsername(String username);
 }
+
+

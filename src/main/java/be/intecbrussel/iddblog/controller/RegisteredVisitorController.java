@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.security.Principal;
 
 @Slf4j
 @Controller
@@ -40,10 +39,9 @@ public class RegisteredVisitorController {
         String loggedinuser="visitor";
         String idUser = "";
 
-        RegisteredVisitor user;
+        RegisteredVisitor user = registeredVisitorService.findByUsername(authentication.getName());;
 
-        if(authentication!=null && !authentication.getName().equals("anonymousUser")) {
-            user = registeredVisitorService.findByUsername(authentication.getName());
+        if( user!= null && authentication!=null && !authentication.getName().equals("anonymousUser")) {
             loggedinuser = authentication.getName();
             idUser = user.getId().toString();
         }
@@ -176,8 +174,6 @@ public class RegisteredVisitorController {
 
         RegisteredVisitor userDb = registeredVisitorService.findById(id);
 
-//        boolean isOldPwdOk = passwordEncoder.matches(visitor.getOldPassword(), userDb.getEncodedPassword());
-  //      log.warn("is old pwd ok: " + isOldPwdOk);
 
         if (!registeredVisitorService.checkIfValidOldPassword(userDb, visitor.getOldPassword())) {
             log.warn("the old password is not correct.");
@@ -192,4 +188,11 @@ public class RegisteredVisitorController {
         return "redirect:/index";
     }
 
+    @GetMapping("/delete/{id}")
+    public String deleteRegisteredVisitor(@PathVariable("id") long id) {
+        RegisteredVisitor registeredVisitor = registeredVisitorService.findById(id);
+        registeredVisitorService.deleteVisitor(registeredVisitor.getUsername());
+
+        return "redirect:/index";
+    }
 }

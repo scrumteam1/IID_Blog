@@ -20,17 +20,6 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 
 
-<!--    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"-->
-<!--      integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"-->
-<!--      th:href="@{/webjars/bootstrap/4.1.3/css/bootstrap.min.css}" />-->
-<!--<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">-->
-
-<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>-->
-
-<!-- Latest compiled and minified JavaScript -->
-<!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"-->
-<!--        -->
-<!--        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"></script>-->
 </head>
 <body>
 <div class="container text-center">
@@ -43,13 +32,7 @@
     <span style="font-weight: bold; font-size: large;">Show Profile <a th:href="@{'/registeredvisitor/'+ ${idUser}+'/show'}" class="btn btn-primary"><i class="fas fa-user ml-2"></i></a></span>
     <span id = "username" th:text="${loggedinuser}" style="font-weight: bold; font-size: large;"></span>
     <span style="font-weight: bold; font-size: large;">Logout <a th:href="@{/logout}" class="btn btn-primary"><i class="fas fa-sign-out-alt ml-2"></i></a></span>
-
-
-
-<!--    <a href="index.html" th:href="@{/}">Home</a>-->
-<!--    <a href="login.html" th:href="@{/login}">Log in</a>-->
-<!--    <a href="#" th:href="@{/logout}">Log out</a>-->
-<!--    <a href="registerform.html" th:href="@{/registeredvisitor/new}">Register</a>-->
+    
 </div>
 
 </body>
