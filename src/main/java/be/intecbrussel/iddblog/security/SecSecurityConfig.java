@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import javax.sql.DataSource;
 
@@ -42,9 +43,11 @@ public class SecSecurityConfig extends WebSecurityConfigurerAdapter {
         //security.httpBasic().disable();
 
         security
+                .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/", "/index", "/registeredvisitor/**",
-                        "/login","registeredvisitor/edit password/**","/webjars/**","/css/**").permitAll()
+                .antMatchers("/", "/index", "/registeredvisitor/**","/registerform/**",
+                        "/login","registeredvisitor/edit password/**","registerform",
+                        "/webjars/**","/css/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
