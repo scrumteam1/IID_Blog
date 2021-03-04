@@ -1,11 +1,13 @@
 package be.intecbrussel.iddblog.controller;
 
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
+import be.intecbrussel.iddblog.email.EmailService;
 import be.intecbrussel.iddblog.password.RandomPasswordGenerator;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
 import be.intecbrussel.iddblog.validation.error.UserAlreadyExistException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
@@ -26,6 +28,7 @@ import java.io.IOException;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Slf4j
 @Controller
@@ -36,8 +39,15 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public RegisteredVisitorController(RegisteredVisitorService registeredVisitorService) {
+    @Autowired
+    private EmailService emailService;
+
+    private final JavaMailSender javaMailSender;
+
+    public RegisteredVisitorController(RegisteredVisitorService registeredVisitorService,
+                                       JavaMailSender javaMailSender) {
         this.registeredVisitorService = registeredVisitorService;
+        this.javaMailSender = javaMailSender;
     }
 
     @GetMapping({"/", "/index"})
@@ -218,6 +228,39 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
         return "redirect:/index";
     }
 
+    @GetMapping("/forgetPassword")
+    public String showForgetPassword(Model model) {
+        log.warn("Your are in forget password:");
+        return "/forgetPassword";
+    }
+
+    @PostMapping("/forgetPassword")
+    public String resetPassword(HttpServletRequest request, Model model) {
+
+        String userEmail = request.getParameter("email");
+        RegisteredVisitor visitor = registeredVisitorService.findByEmailAddress(userEmail);
+
+        if(visitor == null) {
+            model.addAttribute("msgEmailMissing", "The email address you have entered does not exist in our database.");
+            return "/forgetPassword";
+        }
+
+        String appUrl = request.getContextPath();
+        String token = UUID.randomUUID().toString();
+        registeredVisitorService.createVerificationToken(visitor, token);
+
+        String recipientAddress = visitor.getEmailAddress();
+        String subject = "Reset password link";
+        String confirmationUrl
+                = "http://localhost:8080" + appUrl + "/resetPwdConfirm?token=" + token;
+        String message = "Dear,\n\nTo reset your account, please click on the following link: " + confirmationUrl +
+                ".\n\nKind Regards,\nThe Blog Post Team";
+
+        emailService.sendSimpleMessage(recipientAddress, subject, message);
+
+        return "/email-sent";
+    }
+
     @Override
     public ModelAndView resolveException(HttpServletRequest httpServletRequest,
                                          HttpServletResponse httpServletResponse,
@@ -236,4 +279,6 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
 
         return new ModelAndView("registerform", model);
     }
+
+
 }

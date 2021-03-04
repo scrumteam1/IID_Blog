@@ -67,6 +67,11 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
     }
 
     @Override
+    public RegisteredVisitor findByEmailAddress(String email) {
+        return registeredVisitorRepository.findByEmailAddress(email);
+    }
+
+    @Override
     public void updateVisitorWithoutPwd(RegisteredVisitor registeredVisitor) {
 
         if (emailExistsForIdOtherThanCurrentId(registeredVisitor.getEmailAddress(),registeredVisitor.getId())) {
