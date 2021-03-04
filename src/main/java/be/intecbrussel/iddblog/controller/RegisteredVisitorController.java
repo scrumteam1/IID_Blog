@@ -7,7 +7,6 @@ import be.intecbrussel.iddblog.service.RegisteredVisitorService;
 import be.intecbrussel.iddblog.validation.error.UserAlreadyExistException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,13 +19,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.HandlerExceptionResolver;
-
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.security.Principal;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -123,8 +122,6 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
             log.warn("I am in the runtime exception.");
             return "registerform";
         }
-
-
 
         return "redirect:/registeredvisitor/" + savedVisitor.getId() + "/show";
     }
@@ -234,9 +231,19 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
 
 
     @GetMapping("/delete/{id}")
-    public String deleteRegisteredVisitor(@PathVariable("id") long id) {
+    public String deleteRegisteredVisitor(@PathVariable("id") long id, Principal principal, HttpServletRequest request,
+                                          HttpServletResponse response) {
         RegisteredVisitor registeredVisitor = registeredVisitorService.findById(id);
+
+        // The user should only access his own data, otherwise redirect to another page
+        if (!principal.getName().equals(registeredVisitor.getUsername())) {
+            return "redirect:/forbidden-page";
+        }
+
         registeredVisitorService.deleteVisitor(registeredVisitor.getUsername());
+
+        // to logout after the user has deleted his own account
+        logout(request,response);
 
         return "redirect:/index";
     }
@@ -292,5 +299,13 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
 
         return new ModelAndView("registerform", model);
     }
+
+    private void logout(HttpServletRequest request, HttpServletResponse response) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null) {
+            new SecurityContextLogoutHandler().logout(request, response, auth);
+        }
+    }
+
 
 }
