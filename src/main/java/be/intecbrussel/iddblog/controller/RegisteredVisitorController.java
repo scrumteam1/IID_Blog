@@ -44,7 +44,7 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
     private final JavaMailSender javaMailSender;
 
     public RegisteredVisitorController(RegisteredVisitorService registeredVisitorService,
-                                       JavaMailSender javaMailSender) {
+                                        JavaMailSender javaMailSender) {
         this.registeredVisitorService = registeredVisitorService;
         this.javaMailSender = javaMailSender;
     }
@@ -218,6 +218,15 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
 
         return "redirect:/index";
     }
+
+    @RequestMapping(value = {"/adminpage"}, method = RequestMethod.GET)
+    public ModelAndView adminPage() {
+        ModelAndView model = new ModelAndView();
+        model.setViewName("adminpage");
+
+        return model;
+    }
+
 
     @GetMapping("/delete/{id}")
     public String deleteRegisteredVisitor(@PathVariable("id") long id, Principal principal, HttpServletRequest request,

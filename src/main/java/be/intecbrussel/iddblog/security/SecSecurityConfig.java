@@ -34,6 +34,7 @@ public class SecSecurityConfig extends WebSecurityConfigurerAdapter {
         security
                 .csrf().disable()
                 .authorizeRequests()
+                .antMatchers("/adminpage").access("hasAuthority('ADMIN')")
                 .antMatchers("/", "/index", "/registeredvisitor/**","/registerform/**","/login",
                         "registeredvisitor/edit password/**","registerform","/forgetPassword","/reset-pwd/",
                         "/resetPwdConfirm","/pwd-reset-success",
