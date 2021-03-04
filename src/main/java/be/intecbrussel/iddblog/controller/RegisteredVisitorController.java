@@ -41,13 +41,13 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
     }
 
     @GetMapping({"/", "/index"})
-    public String showUserList(Model model) {
+    public String getIndex(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         String loggedinuser = "visitor";
         String idUser = "";
 
-        RegisteredVisitor user = registeredVisitorService.findByUsername(authentication.getName());;
+        RegisteredVisitor user = registeredVisitorService.findByUsername(authentication.getName());
 
         if( user!= null && authentication!=null && !authentication.getName().equals("anonymousUser")) {
             loggedinuser = authentication.getName();
@@ -97,7 +97,10 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
         registeredVisitor.setAvatar(Base64.getEncoder().encodeToString(multipartFile.getBytes()));
 
         try {
+            registeredVisitor.setEnabled(false);
             savedVisitor = registeredVisitorService.saveVisitor(registeredVisitor);
+            registeredVisitorService.createAuthority(registeredVisitor,"USER");
+
             log.warn("visitor has been saved with id: " + savedVisitor.getId());
         } catch (UserAlreadyExistException uaeEx) {
 
