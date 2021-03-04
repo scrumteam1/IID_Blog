@@ -9,6 +9,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 //Spring security needs a table authorities with properties: username, authority
 //Spring security needs a table users with properties: username, password, enabled
@@ -32,6 +33,9 @@ public class RegisteredVisitor {
 
     @OneToOne(mappedBy = "registeredVisitor")
     private Authority authority;
+
+    @OneToMany(mappedBy = "registeredVisitor",cascade = CascadeType.ALL)
+    private List<VerificationToken> verificationToken;
 
     @NotBlank(message = "first name is mandatory.")
     @Size(min = 1, max = 20)
@@ -67,5 +71,8 @@ public class RegisteredVisitor {
     @Column(nullable = true)
     @Lob
     private String avatar;
+
+    @Column(name = "enabled")
+    private boolean enabled = false;
 
 }

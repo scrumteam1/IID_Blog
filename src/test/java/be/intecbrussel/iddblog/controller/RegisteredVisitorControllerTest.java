@@ -1,6 +1,8 @@
 package be.intecbrussel.iddblog.controller;
 
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
+import be.intecbrussel.iddblog.email.EmailService;
+import be.intecbrussel.iddblog.email.EmailServiceImpl;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
 import be.intecbrussel.iddblog.validation.error.UserAlreadyExistException;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,17 +12,27 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.subethamail.wiser.Wiser;
+
+import javax.mail.Session;
+import javax.mail.internet.MimeMessage;
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-
+@Import(TestConfigForMail.class)
 @ExtendWith(MockitoExtension.class)
 class RegisteredVisitorControllerTest {
 
@@ -395,22 +407,22 @@ class RegisteredVisitorControllerTest {
 
     }
 
-    @Test
-    void resolveException() throws Exception{
-        lenient().when(visitorService.saveVisitor(any())).thenThrow(new MaxUploadSizeExceededException(450000L));
-
-        mockMvc.perform(post("/registeredvisitor")
-                .param("firstName","Abdel")
-                .param("lastName","Khy")
-                .param("username","akhyare")
-                .param("emailAddress","ak@hotmail.com")
-                .param("password","uD45Pj6J*@cH$u")
-                .param("confirmPassword","uD45Pj6J*@cH$u"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("registerform"))
-                .andExpect(model().attributeExists("error"));
-
-        verify(visitorService, times(0)).saveVisitor(ArgumentMatchers.any());
-
-    }
+//    @Test
+//    void resolveException() throws Exception{
+//        lenient().when(visitorService.saveVisitor(any())).thenThrow(new MaxUploadSizeExceededException(450000L));
+//
+//        mockMvc.perform(post("/registeredvisitor")
+//                .param("firstName","Abdel")
+//                .param("lastName","Khy")
+//                .param("username","akhyare")
+//                .param("emailAddress","ak@hotmail.com")
+//                .param("password","uD45Pj6J*@cH$u")
+//                .param("confirmPassword","uD45Pj6J*@cH$u"))
+//                .andExpect(status().isOk())
+//                .andExpect(view().name("registerform"))
+//                .andExpect(model().attributeExists("error"));
+//
+//        verify(visitorService, times(0)).saveVisitor(ArgumentMatchers.any());
+//
+//    }
 }

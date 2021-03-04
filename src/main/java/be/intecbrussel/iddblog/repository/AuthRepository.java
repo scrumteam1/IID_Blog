@@ -14,4 +14,5 @@ public interface AuthRepository extends CrudRepository<Authority, Long> {
     @Query("DELETE FROM Authority a WHERE a.username = :username")
     void deleteAllByRegisteredVisitor(@Param(value = "username") String username);
 
+
 }

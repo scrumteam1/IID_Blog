@@ -2,11 +2,14 @@ package be.intecbrussel.iddblog.service;
 
 import be.intecbrussel.iddblog.domain.Authority;
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
+import be.intecbrussel.iddblog.domain.VerificationToken;
 import be.intecbrussel.iddblog.repository.AuthRepository;
 import be.intecbrussel.iddblog.repository.RegisteredVisitorRepository;
+import be.intecbrussel.iddblog.repository.VerifTokenRepository;
 import be.intecbrussel.iddblog.validation.error.UserAlreadyExistException;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,13 +25,16 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
 
     private final AuthRepository authRepository;
 
+    private final VerifTokenRepository tokenRepository;
 
-    public RegisteredVisitorServiceImpl(RegisteredVisitorRepository registeredVisitorRepository, PasswordEncoder passwordEncoder, AuthRepository authRepository) {
+    public RegisteredVisitorServiceImpl(RegisteredVisitorRepository registeredVisitorRepository,
+                                        PasswordEncoder passwordEncoder, AuthRepository authRepository,
+                                        VerifTokenRepository tokenRepository) {
         this.registeredVisitorRepository = registeredVisitorRepository;
         this.passwordEncoder = passwordEncoder;
         this.authRepository = authRepository;
+        this.tokenRepository = tokenRepository;
     }
-
 
     @Override
     public RegisteredVisitor saveVisitor(RegisteredVisitor registeredVisitor) {
@@ -58,6 +64,11 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
     @Override
     public RegisteredVisitor findByUsername(String username) {
         return registeredVisitorRepository.findByUsername(username);
+    }
+
+    @Override
+    public RegisteredVisitor findByEmailAddress(String email) {
+        return registeredVisitorRepository.findByEmailAddress(email);
     }
 
     @Override
@@ -115,6 +126,32 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
     private boolean usernameExistsForIdOtherThanCurrentId(final String username, final Long id) {
         int sizeUsers = registeredVisitorRepository.findByUsernameNotEqualToId(username, id).size();
         return  sizeUsers > 0;
+    }
+
+    @Override
+    public void createAuthority(RegisteredVisitor visitor, String authority) {
+        Authority myauthority = Authority.builder()
+                .registeredVisitor(visitor)
+                .username(visitor.getUsername())
+                .authority(authority)
+                .build();
+        authRepository.save(myauthority);
+    }
+
+    @Override
+    public void createVerificationToken(RegisteredVisitor visitor, String token) {
+        VerificationToken myToken = new VerificationToken(token, visitor);
+        tokenRepository.save(myToken);
+    }
+
+    @Override
+    public VerificationToken getVerificationToken(String VerificationToken) {
+        return tokenRepository.findByToken(VerificationToken);
+    }
+
+    @Override
+    public void updateUserEnabled(RegisteredVisitor visitor, boolean enabled) {
+        registeredVisitorRepository.updateUserEnabled(visitor.getId(), enabled);
     }
 
 }
