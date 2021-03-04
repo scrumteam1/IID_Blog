@@ -1,5 +1,6 @@
 package be.intecbrussel.iddblog.service;
 
+import be.intecbrussel.iddblog.repository.AuthRepository;
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
 import be.intecbrussel.iddblog.repository.RegisteredVisitorRepository;
 import be.intecbrussel.iddblog.validation.error.UserAlreadyExistException;
@@ -28,6 +29,7 @@ class RegisteredVisitorServiceImplTest {
     @Mock
     RegisteredVisitorRepository visitorRepository;
 
+    AuthRepository authorityRepository;
 
     RegisteredVisitor visitor;
 

@@ -33,8 +33,6 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
     @Override
     public RegisteredVisitor saveVisitor(RegisteredVisitor registeredVisitor) {
 
-        Authority savedAuth = new Authority();
-
         if (emailExists(registeredVisitor.getEmailAddress())) {
             throw new UserAlreadyExistException("There is an user with that email address: " + registeredVisitor.getEmailAddress());
         }
@@ -48,9 +46,6 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
         registeredVisitor.setEncodedPassword(encodedPwd);
 
         RegisteredVisitor savedVisitor = registeredVisitorRepository.save(registeredVisitor);
-        savedAuth.setRegisteredVisitor(savedVisitor);
-        savedAuth.setAuthority("USER");
-        authRepository.save(savedAuth);
         log.debug("Saved VisitorId:" + savedVisitor.getId());
         return savedVisitor;
     }
