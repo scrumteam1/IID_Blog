@@ -2,7 +2,6 @@
 application.properties
 application-dev.yml
 application-prod.yml
-application-test.properties
 
 ######################
 # Project Specific
