@@ -1,6 +1,7 @@
 package be.intecbrussel.iddblog.controller;
 
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
+import be.intecbrussel.iddblog.domain.VerificationToken;
 import be.intecbrussel.iddblog.email.EmailService;
 import be.intecbrussel.iddblog.password.RandomPasswordGenerator;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
@@ -26,10 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.security.Principal;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Slf4j
 @Controller
@@ -270,6 +268,43 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
         emailService.sendSimpleMessage(recipientAddress, subject, message);
 
         return "/email-sent";
+    }
+
+    @GetMapping("/resetPwdConfirm")
+    public String confirmResetPwd(@RequestParam("token") String token, Model model) {
+
+        VerificationToken verificationToken = registeredVisitorService.getVerificationToken(token);
+        if (verificationToken == null) {
+            return "redirect:/forbidden-page";
+        }
+
+        RegisteredVisitor visitor = verificationToken.getRegisteredVisitor();
+        Calendar cal = Calendar.getInstance();
+        if ((verificationToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
+            return "redirect:/forbidden-page";
+        }
+
+        model.addAttribute("registeredvisitor",visitor);
+
+        return "/reset-pwd";
+    }
+
+    @PostMapping("/reset-pwd")
+    public String resetPwd(@ModelAttribute("registeredvisitor") @Valid RegisteredVisitor visitor, BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            log.debug("Error in bindingResult!!!");
+            return "reset-pwd";
+        }
+
+        registeredVisitorService.updateUserPwd(visitor.getId(), visitor.getPassword());
+
+        return "redirect:/pwd-reset-success";
+    }
+
+    @GetMapping("/pwd-reset-success")
+    public String showResetPwdSuccess() {
+        return "pwd-reset-success";
     }
 
     @Override

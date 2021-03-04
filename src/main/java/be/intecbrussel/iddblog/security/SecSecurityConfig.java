@@ -35,7 +35,8 @@ public class SecSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/", "/index", "/registeredvisitor/**","/registerform/**","/login",
-                        "registeredvisitor/edit password/**","registerform","/forgetPassword",
+                        "registeredvisitor/edit password/**","registerform","/forgetPassword","/reset-pwd/",
+                        "/resetPwdConfirm","/pwd-reset-success",
                         "/webjars/**","/css/**").permitAll()
                 .anyRequest().authenticated()
                 .and()

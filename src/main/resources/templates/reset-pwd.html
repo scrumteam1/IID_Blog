@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Reset Password</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"
+          th:href="@{/webjars/bootstrap/3.3.7-1/css/bootstrap.min.css}">
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css"
+          integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
+    <link rel="stylesheet" href="../css/shards.min.css">
+</head>
+<body>
+
+<h1>Reset Pwd</h1>
+<div class="container my-5">
+    <!--/*@thymesVar id="registeredvisitor" type="be.intecbrussel.iddblog.domain.RegisteredVisitor"*/-->
+    <form action="#" th:object="${registeredvisitor}" th:action="@{/reset-pwd/}" method="post">
+
+        <div class="alert alert-danger" th:if="${#fields.hasErrors('global')}">
+            <p th:each="err : ${#fields.errors('global')}" th:text="${err}"></p>
+        </div>
+
+        <input type="hidden" th:field="${registeredvisitor.id}" readonly="readonly"/>
+        <input type="hidden" th:field="${registeredvisitor.username}" readonly="readonly"/>
+        <input type="hidden" th:field="${registeredvisitor.firstName}" readonly="readonly"/>
+        <input type="hidden" th:field="${registeredvisitor.lastName}" readonly="readonly"/>
+        <input type="hidden" th:field="${registeredvisitor.emailAddress}" readonly="readonly"/>
+        <input type="hidden" th:field="${registeredvisitor.oldPassword}" readonly="readonly"/>
+
+        <div class="form-group col-md-6">
+            <label for="pwd" class="col-form-label">Password</label>
+            <input type="password" th:field="${registeredvisitor.password}" class="form-control" id="pwd" placeholder="Password">
+            <span th:if="${#fields.hasErrors('password')}" th:errors="${registeredvisitor.password}" class="text-danger"></span>
+        </div>
+        <div class="form-group col-md-6">
+            <label for="confirmPwd" class="col-form-label">Confirm Password</label>
+            <input type="password" th:field="${registeredvisitor.confirmPassword}" class="form-control" id="confirmPwd"
+                   placeholder="Confirm Password">
+            <span th:if="${#fields.hasErrors('confirmPassword')}" th:errors="${registeredvisitor.confirmPassword}"
+                  class="text-danger"></span>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mt-5">
+                <input type="submit" class="btn btn-primary" value="Update User">
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+</html>
