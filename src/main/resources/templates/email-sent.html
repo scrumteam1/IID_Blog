@@ -1,12 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Email sent</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"
+          th:href="@{/webjars/bootstrap/3.3.7-1/css/bootstrap.min.css}">
 </head>
 <body>
-<div>
-    <span>An email is sent to your email address. If you do not receive it, please check your spam.</span>
-</div>
+
+<h1> An email is sent to your email address.</h1>
+<span style="font-size: large">If you do not receive it, please check your spam.</span>
+<p><a href="/">Go Home</a></p>
+
 </body>
 </html>
