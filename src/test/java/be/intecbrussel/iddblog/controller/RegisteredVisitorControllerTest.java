@@ -338,7 +338,7 @@ class RegisteredVisitorControllerTest {
 
         mockMvc.perform(get("/registeredvisitor/update password/1"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("changepassword"))
+                .andExpect(view().name("/password/changepassword"))
                 .andExpect(model().attributeExists("registeredvisitor"));
 
         verify(visitorService, times(1)).findById(ArgumentMatchers.any());
@@ -383,7 +383,7 @@ class RegisteredVisitorControllerTest {
                 .param("emailAddress","ak@hotmail.com"))
                 .andExpect(model().errorCount(3))
                 .andExpect(status().isOk())
-                .andExpect(view().name("changepassword"))
+                .andExpect(view().name("/password/changepassword"))
                 .andExpect(model().attributeExists("registeredvisitor"));
 
         verify(visitorService, times(0)).findById(ArgumentMatchers.any());
@@ -407,7 +407,7 @@ class RegisteredVisitorControllerTest {
                 .param("emailAddress","ak@hotmail.com"))
                 .andExpect(model().errorCount(0))
                 .andExpect(status().isOk())
-                .andExpect(view().name("changepassword"))
+                .andExpect(view().name("/password/changepassword"))
                 .andExpect(model().attributeExists("registeredvisitor"))
                 .andExpect(model().attributeExists("messageInvalidOldPwd"));
 
@@ -424,15 +424,15 @@ class RegisteredVisitorControllerTest {
 
     @Test
     void showForgetPasswordTest() throws Exception {
-        mockMvc.perform(get("/forgetPassword/"))
+        mockMvc.perform(get("/password/forgetPassword/"))
                 .andExpect(status().isOk());
     }
 
     @Test
     void resetPasswordTest() throws Exception {
-        mockMvc.perform(post("/forgetPassword/"))
+        mockMvc.perform(post("/password/forgetPassword/"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("/forgetPassword"));
+                .andExpect(view().name("/password/forgetPassword"));
     }
 
     @Test
@@ -444,7 +444,7 @@ class RegisteredVisitorControllerTest {
         mockMvc.perform(get("/resetPwdConfirm/")
                 .param("token","test"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("/reset-pwd"));
+                .andExpect(view().name("/password/reset-pwd"));
     }
 
 
