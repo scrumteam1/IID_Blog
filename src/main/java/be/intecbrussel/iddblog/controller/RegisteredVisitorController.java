@@ -8,8 +8,6 @@ import be.intecbrussel.iddblog.service.RegisteredVisitorService;
 import be.intecbrussel.iddblog.validation.error.UserAlreadyExistException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.servlet.error.ErrorController;
-import org.springframework.http.HttpStatus;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
@@ -208,7 +206,7 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
 
         log.warn("id from getupdatePwdRegisteredVisitor: " + user.getId());
 
-        return "changepassword";
+        return "/password/changepassword";
     }
 
 
@@ -222,7 +220,7 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
 
         if (bindingResult.hasErrors()) {
             bindingResult.getAllErrors().forEach(objectError -> log.warn(objectError.toString()));
-            return "changepassword";
+            return "/password/changepassword";
         }
 
 
@@ -232,7 +230,7 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
         if (!registeredVisitorService.checkIfValidOldPassword(userDb, visitor.getOldPassword())) {
             log.warn("the old password is not correct.");
             model.addAttribute("messageInvalidOldPwd", "The old password is invalid.");
-            return "changepassword";
+            return "/password/changepassword";
         }
 
         log.warn("validation on old password is ok.");
@@ -269,13 +267,13 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
         return "redirect:/index";
     }
 
-    @GetMapping("/forgetPassword")
+    @GetMapping("/password/forgetPassword")
     public String showForgetPassword( Model model) {
         log.warn("Your are in forget password:");
-        return "/forgetPassword";
+        return "/password/forgetPassword";
     }
 
-    @PostMapping("/forgetPassword")
+    @PostMapping("/password/forgetPassword")
     public String resetPassword(HttpServletRequest request, Model model) {
 
         String userEmail = request.getParameter("email");
@@ -283,7 +281,7 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
 
         if(visitor == null) {
             model.addAttribute("msgEmailMissing", "The email address you have entered does not exist in our database.");
-            return "/forgetPassword";
+            return "/password/forgetPassword";
         }
 
         String appUrl = request.getContextPath();
@@ -307,36 +305,37 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
 
         VerificationToken verificationToken = registeredVisitorService.getVerificationToken(token);
         if (verificationToken == null) {
-            return "redirect:/forbidden-page";
+            log.warn("I am in the resetPwd!");
+            return "/verification-link-failed";
         }
 
         RegisteredVisitor visitor = verificationToken.getRegisteredVisitor();
         Calendar cal = Calendar.getInstance();
         if ((verificationToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
-            return "redirect:/forbidden-page";
+            return "/verification-link-failed";
         }
 
         model.addAttribute("registeredvisitor",visitor);
 
-        return "/reset-pwd";
+        return "/password/reset-pwd";
     }
 
-    @PostMapping("/reset-pwd")
+    @PostMapping("/password/reset-pwd")
     public String resetPwd(@ModelAttribute("registeredvisitor") @Valid RegisteredVisitor visitor, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
             log.debug("Error in bindingResult!!!");
-            return "reset-pwd";
+            return "/password/reset-pwd";
         }
 
         registeredVisitorService.updateUserPwd(visitor.getId(), visitor.getPassword());
 
-        return "redirect:/pwd-reset-success";
+        return "redirect:/password/pwd-reset-success";
     }
 
-    @GetMapping("/pwd-reset-success")
+    @GetMapping("/password/pwd-reset-success")
     public String showResetPwdSuccess() {
-        return "pwd-reset-success";
+        return "/password/pwd-reset-success";
     }
 
     @Override

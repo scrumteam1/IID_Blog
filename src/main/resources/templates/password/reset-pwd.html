@@ -14,10 +14,10 @@
 </head>
 <body>
 
-<h1>Reset Pwd</h1>
+
 <div class="container my-5">
     <!--/*@thymesVar id="registeredvisitor" type="be.intecbrussel.iddblog.domain.RegisteredVisitor"*/-->
-    <form action="#" th:object="${registeredvisitor}" th:action="@{/reset-pwd/}" method="post">
+    <form class="form-horizontal" th:object="${registeredvisitor}" th:action="@{/password/reset-pwd/}" method="post">
 
         <div class="alert alert-danger" th:if="${#fields.hasErrors('global')}">
             <p th:each="err : ${#fields.errors('global')}" th:text="${err}"></p>
@@ -30,22 +30,32 @@
         <input type="hidden" th:field="${registeredvisitor.emailAddress}" readonly="readonly"/>
         <input type="hidden" th:field="${registeredvisitor.oldPassword}" readonly="readonly"/>
 
-        <div class="form-group col-md-6">
-            <label for="pwd" class="col-form-label">Password</label>
-            <input type="password" th:field="${registeredvisitor.password}" class="form-control" id="pwd" placeholder="Password">
-            <span th:if="${#fields.hasErrors('password')}" th:errors="${registeredvisitor.password}" class="text-danger"></span>
+        <h2 class="col-md-offset-3">Reset Password</h2>
+
+        <div class="form-group">
+            <label for="pwd" class="col-sm-3 control-label">Password</label>
+            <div class="col-sm-4">
+                <input type="password" th:field="${registeredvisitor.password}" class="form-control" id="pwd"
+                       placeholder="Password">
+                <span th:if="${#fields.hasErrors('password')}" th:errors="${registeredvisitor.password}"
+                      class="text-danger"></span>
+            </div>
         </div>
-        <div class="form-group col-md-6">
-            <label for="confirmPwd" class="col-form-label">Confirm Password</label>
-            <input type="password" th:field="${registeredvisitor.confirmPassword}" class="form-control" id="confirmPwd"
-                   placeholder="Confirm Password">
-            <span th:if="${#fields.hasErrors('confirmPassword')}" th:errors="${registeredvisitor.confirmPassword}"
-                  class="text-danger"></span>
+        <div class="form-group">
+            <label for="confirmPwd" class="col-sm-3 control-label">Confirm Password</label>
+            <div class="col-md-4">
+                <input type="password" th:field="${registeredvisitor.confirmPassword}" class="form-control"
+                       id="confirmPwd"
+                       placeholder="Confirm Password">
+                <span th:if="${#fields.hasErrors('confirmPassword')}" th:errors="${registeredvisitor.confirmPassword}"
+                      class="text-danger"></span>
+            </div>
         </div>
 
         <div class="row">
-            <div class="col-md-6 mt-5">
-                <input type="submit" class="btn btn-primary" value="Update User">
+            <div class="col-md col-md-offset-3">
+                <button type="submit" class="btn btn-primary">Submit</button>
+                <a th:href="@{'/index'}" class="btn btn-primary">Cancel</a>
             </div>
         </div>
     </form>
