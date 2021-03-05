@@ -56,16 +56,20 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
 
         String loggedinuser = "visitor";
         String idUser = "";
+        boolean isAdmin = false;
 
         RegisteredVisitor user = registeredVisitorService.findByUsername(authentication.getName());
 
         if( user!= null && authentication!=null && !authentication.getName().equals("anonymousUser")) {
             loggedinuser = authentication.getName();
             idUser = user.getId().toString();
+            isAdmin = authentication.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().contains("ADMIN"));
         }
 
         model.addAttribute("loggedinuser", loggedinuser);
         model.addAttribute("idUser", idUser);
+        model.addAttribute("isAdmin", isAdmin);
 
         return "index";
     }
