@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
@@ -26,6 +27,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.*;
@@ -98,11 +100,26 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
             Model model) throws IOException {
 
         RegisteredVisitor savedVisitor;
+        MultipartFile defaultFile = new MockMultipartFile("intec.jpg", new FileInputStream("src/main/resources/static/pictures/intec.jpg"));
+        String extension = multipartFile.getOriginalFilename().substring(multipartFile.getOriginalFilename().indexOf(".")+1,multipartFile.getOriginalFilename().length());
 
         if (bindingResult.hasErrors()) {
 
             bindingResult.getAllErrors().forEach(objectError -> log.debug(objectError.toString()));
             log.warn("number of binding errors: " + bindingResult.getAllErrors().size());
+
+            return "registerform";
+        }
+
+        if (extension.equals("png") || extension.equals("jpeg") || extension.equals("jpg")) {
+            registeredVisitor.setAvatar(Base64.getEncoder().encodeToString(multipartFile.getBytes()));
+        }
+        else if (extension.isEmpty()){
+            registeredVisitor.setAvatar(Base64.getEncoder().encodeToString(defaultFile.getBytes()));
+        }
+        else
+        {
+            model.addAttribute("error", "Wrong File extension, please choose png or jpeg file.");
 
             return "registerform";
         }
