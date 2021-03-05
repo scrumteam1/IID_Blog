@@ -1,8 +1,7 @@
 package be.intecbrussel.iddblog.controller;
 
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
-import be.intecbrussel.iddblog.email.EmailService;
-import be.intecbrussel.iddblog.email.EmailServiceImpl;
+import be.intecbrussel.iddblog.domain.VerificationToken;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
 import be.intecbrussel.iddblog.validation.error.UserAlreadyExistException;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,20 +10,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.multipart.MaxUploadSizeExceededException;
-import org.subethamail.wiser.Wiser;
 
 import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
@@ -63,6 +56,19 @@ class RegisteredVisitorControllerTest {
                 .build();
     }
 
+    @Test
+    void getIndexTest() throws Exception {
+
+        mockMvc.perform(get("/index"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void logOutTest() throws Exception {
+
+        mockMvc.perform(get("/logout"))
+                .andExpect(status().is3xxRedirection());
+    }
 
     @Test
     void newMember() throws Exception {
@@ -410,6 +416,37 @@ class RegisteredVisitorControllerTest {
         verify(visitorService, times(1)).checkIfValidOldPassword(ArgumentMatchers.any(),ArgumentMatchers.any());
 
     }
+
+    @Test
+    void deleteRegisteredVisitorTest() throws Exception {
+        mockMvc.perform(get("/delete/1"));
+    }
+
+    @Test
+    void showForgetPasswordTest() throws Exception {
+        mockMvc.perform(get("/forgetPassword/"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void resetPasswordTest() throws Exception {
+        mockMvc.perform(post("/forgetPassword/"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("/forgetPassword"));
+    }
+
+    @Test
+    void confirmResetPwdTest() throws Exception {
+        VerificationToken token = new VerificationToken("test");
+
+        when(visitorService.getVerificationToken(any())).thenReturn(token);
+
+        mockMvc.perform(get("/resetPwdConfirm/")
+                .param("token","test"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("/reset-pwd"));
+    }
+
 
 //    @Test
 //    void resolveException() throws Exception{

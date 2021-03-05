@@ -121,14 +121,6 @@
             <version>2.3.4.RELEASE</version>
         </dependency>
 
-        <!-- Mock test email -->
-        <dependency>
-            <groupId>org.subethamail</groupId>
-            <artifactId>subethasmtp</artifactId>
-            <version>3.1.7</version>
-            <scope>test</scope>
-        </dependency>
-
     </dependencies>
 
 

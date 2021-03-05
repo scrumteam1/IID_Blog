@@ -8,6 +8,7 @@ import be.intecbrussel.iddblog.service.RegisteredVisitorService;
 import be.intecbrussel.iddblog.validation.error.UserAlreadyExistException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -247,7 +248,7 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
     }
 
     @GetMapping("/forgetPassword")
-    public String showForgetPassword(Model model) {
+    public String showForgetPassword( Model model) {
         log.warn("Your are in forget password:");
         return "/forgetPassword";
     }
