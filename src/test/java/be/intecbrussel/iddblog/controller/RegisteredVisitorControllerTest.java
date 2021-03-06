@@ -2,8 +2,11 @@ package be.intecbrussel.iddblog.controller;
 
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
 import be.intecbrussel.iddblog.domain.VerificationToken;
+import be.intecbrussel.iddblog.email.EmailService;
+import be.intecbrussel.iddblog.email.EmailServiceImpl;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
 import be.intecbrussel.iddblog.validation.error.UserAlreadyExistException;
+import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,16 +15,25 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
 
+import java.security.Principal;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -43,8 +55,24 @@ class RegisteredVisitorControllerTest {
 
     MockMvc mockMvc;
 
+    Authentication authentication;
+
+    private EmailServiceImpl emailServiceImpl;
+
+    @Autowired
+    private JavaMailSender javaMailSender;
+
+    private MimeMessage mimeMessage;
+
     @BeforeEach
     void setUp() {
+
+        authentication = Mockito.mock(Authentication.class);
+
+        mimeMessage = Mockito.mock(MimeMessage.class);
+        javaMailSender = mock(JavaMailSender.class);
+//        when(javaMailSender.createMimeMessage()).thenReturn(mimeMessage);
+//        emailServiceImpl = new EmailServiceImpl(javaMailSender);
 
         mockMvc = MockMvcBuilders
                 .standaloneSetup(visitorController)
@@ -58,13 +86,24 @@ class RegisteredVisitorControllerTest {
 
     @Test
     void getIndexTest() throws Exception {
+        savedVisitor.setId(1L);
 
-        mockMvc.perform(get("/index"))
-                .andExpect(status().isOk());
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
+        Mockito.when(securityContext.getAuthentication().getName()).thenReturn("test");
+        when(visitorService.findByUsername(ArgumentMatchers.any())).thenReturn(savedVisitor);
+
+        mockMvc.perform(get("/index/"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("loggedinuser"));
     }
 
     @Test
     void logOutTest() throws Exception {
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
 
         mockMvc.perform(get("/logout"))
                 .andExpect(status().is3xxRedirection());
@@ -419,7 +458,32 @@ class RegisteredVisitorControllerTest {
 
     @Test
     void deleteRegisteredVisitorTest() throws Exception {
-        mockMvc.perform(get("/delete/1"));
+        savedVisitor.setId(1L);
+
+        when(visitorService.findById(any())).thenReturn(savedVisitor);
+
+        Principal mockPrincipal = Mockito.mock(Principal.class);
+        Mockito.when(mockPrincipal.getName()).thenReturn("akhyare");
+
+        mockMvc.perform(get("/delete/1")
+                .principal(mockPrincipal))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/index"));
+    }
+
+    @Test
+    void deleteRegisteredVisitorForbiddenTest() throws Exception {
+        savedVisitor.setId(1L);
+
+        when(visitorService.findById(any())).thenReturn(savedVisitor);
+
+        Principal mockPrincipal = Mockito.mock(Principal.class);
+        Mockito.when(mockPrincipal.getName()).thenReturn("hello");
+
+        mockMvc.perform(get("/delete/1")
+                .principal(mockPrincipal))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/forbidden-page"));
     }
 
     @Test
@@ -429,7 +493,7 @@ class RegisteredVisitorControllerTest {
     }
 
     @Test
-    void resetPasswordTest() throws Exception {
+    void resetPasswordNoVisitorTest() throws Exception {
         mockMvc.perform(post("/password/forgetPassword/"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("/password/forgetPassword"));
@@ -445,6 +509,34 @@ class RegisteredVisitorControllerTest {
                 .param("token","test"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("/password/reset-pwd"));
+    }
+
+    @Test
+    void confirmResetPwdFailTokenTest() throws Exception {
+
+        when(visitorService.getVerificationToken(any())).thenReturn(null);
+
+        mockMvc.perform(get("/resetPwdConfirm/")
+                .param("token","test"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("/verification-link-failed"));
+    }
+
+    @Test
+    void confirmResetPwdTokenExpiredTest() throws Exception {
+        savedVisitor.setId(1L);
+        VerificationToken token = new VerificationToken("test",savedVisitor);
+
+        ZoneId defaultZoneId = ZoneId.systemDefault();
+        LocalDate localDate = LocalDate.of(2000, 1, 1);
+        token.setExpiryDate(Date.from(localDate.atStartOfDay(defaultZoneId).toInstant()));
+
+        when(visitorService.getVerificationToken(any())).thenReturn(any());
+
+        mockMvc.perform(get("/resetPwdConfirm/")
+                .param("token","test"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("/verification-link-failed"));
     }
 
 
@@ -466,4 +558,5 @@ class RegisteredVisitorControllerTest {
 //        verify(visitorService, times(0)).saveVisitor(ArgumentMatchers.any());
 //
 //    }
+
 }

@@ -137,9 +137,6 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
             model.addAttribute("message", "An account for that username/email already exists.");
 
             return "registerform";
-        } catch (RuntimeException re) {
-            log.warn("I am in the runtime exception.");
-            return "registerform";
         }
 
         return "redirect:/registeredvisitor/" + savedVisitor.getId() + "/show";
@@ -305,7 +302,7 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
 
         VerificationToken verificationToken = registeredVisitorService.getVerificationToken(token);
         if (verificationToken == null) {
-            log.warn("I am in the resetPwd!");
+
             return "/verification-link-failed";
         }
 
