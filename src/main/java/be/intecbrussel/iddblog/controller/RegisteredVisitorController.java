@@ -112,9 +112,11 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
 
         if (extension.equals("png") || extension.equals("jpeg") || extension.equals("jpg")) {
             registeredVisitor.setAvatar(Base64.getEncoder().encodeToString(multipartFile.getBytes()));
+            log.warn("PNG ERROR");
         }
         else if (extension.isEmpty()){
             registeredVisitor.setAvatar(Base64.getEncoder().encodeToString(defaultFile.getBytes()));
+            log.warn("EMPTY FILE");
         }
         else
         {
@@ -124,7 +126,6 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
         }
 
         log.warn("multipartFile: " + multipartFile.getBytes());
-        registeredVisitor.setAvatar(Base64.getEncoder().encodeToString(multipartFile.getBytes()));
 
         try {
             registeredVisitor.setEnabled(false);
