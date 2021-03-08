@@ -140,7 +140,7 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
             return "registerform";
         }
 
-        return "redirect:/registeredvisitor/" + savedVisitor.getId() + "/show";
+        return "redirect:/registeredvisitor/confirm/" + savedVisitor.getId();
     }
 
     @GetMapping("registeredvisitor/{id}/show")
@@ -274,7 +274,8 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
     @PostMapping("/password/forgetPassword")
     public String resetPassword(HttpServletRequest request, Model model) {
 
-        String userEmail = request.getParameter("email");
+        String userEmail = request.getParameter("email").trim();
+
         RegisteredVisitor visitor = registeredVisitorService.findByEmailAddress(userEmail);
 
         if(visitor == null) {
@@ -291,7 +292,7 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
         String confirmationUrl
                 = "http://localhost:8080" + appUrl + "/resetPwdConfirm?token=" + token;
         String message = "Dear,\n\nTo reset your account, please click on the following link: " + confirmationUrl +
-                ".\n\nKind Regards,\nThe Blog Post Team";
+                "\n\nKind Regards,\nThe Blog Post Team";
 
         emailService.sendSimpleMessage(recipientAddress, subject, message);
 
@@ -334,6 +335,42 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
     @GetMapping("/password/pwd-reset-success")
     public String showResetPwdSuccess() {
         return "/password/pwd-reset-success";
+    }
+
+
+    @GetMapping("/registeredvisitor/confirm/{id}")
+    public String ConfirmRegistration (@PathVariable long id, Model model){
+        RegisteredVisitor visitor = registeredVisitorService.findById(id);
+        String token = UUID.randomUUID().toString();
+        registeredVisitorService.createVerificationToken(visitor, token);
+        String recipientAddress = visitor.getEmailAddress();
+        String subject ="Confirmation of your registration to Intec Blog";
+        String confirmationUrl= "http://localhost:8080/registeredvisitor/confirmRegistration?token="+ token;
+        String text = "To confirm your registration, please use the lin below : \n   " + confirmationUrl +  "\n\nKind Regards,\nThe Blog Post Team";;
+        emailService.sendSimpleMessage(recipientAddress, subject, text);
+
+        return "/email-sent";
+    }
+    @GetMapping("registeredvisitor/confirmRegistration")
+    public String registrationConfirmed(@RequestParam String token, Model model) {
+
+        VerificationToken verificationToken = registeredVisitorService.getVerificationToken(token);
+        if (verificationToken == null) {
+
+            return "/verification-link-failed";
+        }
+
+        RegisteredVisitor visitor = verificationToken.getRegisteredVisitor();
+        Calendar cal = Calendar.getInstance();
+        if ((verificationToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
+            return "/verification-link-failed";
+        }
+        registeredVisitorService.updateUserEnabled(visitor,true);
+
+        model.addAttribute("loggedinuser", visitor.getUsername());
+        model.addAttribute("idUser", visitor.getId());
+
+        return "index";
     }
 
     @Override
