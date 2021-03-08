@@ -180,6 +180,17 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
 
         try {
             registeredVisitorService.updateVisitorWithoutPwd(visitor);
+            String recipientAddress = visitor.getEmailAddress();
+            String subject = "Profile changes for " + visitor.getUsername();
+            String mailContent = "Your profile changes on INTEC blog were successful. Your profile looks as follows:" +
+                    "\nUsername: " + visitor.getUsername() +
+                    "\nFirst name: " + visitor.getFirstName() +
+                    "\nLast name: " + visitor.getLastName() +
+                    "\nEmail: " + visitor.getEmailAddress() +
+                    "\nGender: " + visitor.getGender() +
+                    "\nIf you're not satisfied with the changes, consider going on our website and " +
+                    "subscribe to our premium membership.\nThanks dude,\n\nIID Blog team";
+            emailService.sendSimpleMessage(recipientAddress, subject, mailContent);
 
         } catch (UserAlreadyExistException uaeEx) {
 
