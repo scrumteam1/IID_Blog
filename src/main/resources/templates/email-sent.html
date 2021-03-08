@@ -9,9 +9,13 @@
 </head>
 <body>
 
-<h1> An email is sent to your email address.</h1>
-<span style="font-size: large">If you do not receive it, please check your spam.</span>
-<p><a href="/">Go Home</a></p>
+<div class="col-md-offset-1">
+    <h1> An email is sent to your email address.</h1>
+    <span style="font-size: large">If you do not receive it, please check your spam.</span>
+</div>
+<div class="col-sm col-md-offset-3">
+    <p><a th:href="@{'/index'}" class="btn btn-primary">Go Home</a></p>
+</div>
 
 </body>
 </html>
