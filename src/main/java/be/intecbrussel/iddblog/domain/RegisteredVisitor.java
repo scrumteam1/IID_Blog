@@ -3,6 +3,10 @@ package be.intecbrussel.iddblog.domain;
 import be.intecbrussel.iddblog.validation.PasswordMatches;
 import be.intecbrussel.iddblog.validation.ValidPassword;
 import lombok.*;
+import org.apache.commons.lang3.builder.DiffBuilder;
+import org.apache.commons.lang3.builder.DiffResult;
+import org.apache.commons.lang3.builder.Diffable;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -21,7 +25,7 @@ import java.util.List;
 @AllArgsConstructor
 @PasswordMatches
 @Table(name="users")
-public class RegisteredVisitor {
+public class RegisteredVisitor implements Diffable<RegisteredVisitor> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -75,4 +79,18 @@ public class RegisteredVisitor {
     @Column(name = "enabled")
     private boolean enabled = false;
 
+    @Override
+    public DiffResult<RegisteredVisitor> diff(RegisteredVisitor registeredVisitor) {
+        return new DiffBuilder(this, registeredVisitor, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("id", this.id, registeredVisitor.id)
+                .append("username", this.username,registeredVisitor.username)
+                .append("first name", this.firstName,registeredVisitor.firstName)
+                .append("last name", this.lastName,registeredVisitor.lastName)
+                .append("email address", this.emailAddress,registeredVisitor.emailAddress)
+                .append("gender", this.gender,registeredVisitor.gender)
+                .append("iswriter", this.isWriter, registeredVisitor.isWriter)
+                .append("avatar", this.avatar,registeredVisitor.avatar)
+                .append("enabled", this.enabled,registeredVisitor.enabled)
+                .build();
+    }
 }

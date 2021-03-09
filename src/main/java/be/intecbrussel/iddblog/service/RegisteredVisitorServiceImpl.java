@@ -85,7 +85,8 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
         registeredVisitorRepository.updateVisitorWithoutPwd(registeredVisitor.getId(),
                 registeredVisitor.getUsername(), registeredVisitor.getFirstName(),
                 registeredVisitor.getLastName(), registeredVisitor.getEmailAddress(),
-                registeredVisitor.getIsWriter(), registeredVisitor.getGender());
+                registeredVisitor.getIsWriter(), registeredVisitor.getGender(),
+                registeredVisitor.getAvatar());
     }
 
     @Override

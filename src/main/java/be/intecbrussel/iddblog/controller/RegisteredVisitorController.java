@@ -7,6 +7,10 @@ import be.intecbrussel.iddblog.password.RandomPasswordGenerator;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
 import be.intecbrussel.iddblog.validation.error.UserAlreadyExistException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.builder.Diff;
+import org.apache.commons.lang3.builder.DiffBuilder;
+import org.apache.commons.lang3.builder.DiffResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mock.web.MockMultipartFile;
@@ -178,10 +182,13 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
             return "updateprofile";
         }
 
+        RegisteredVisitor baseVisitor = registeredVisitorService.findById(id);
+        visitor.setEnabled(true);
+
         try {
             registeredVisitorService.updateVisitorWithoutPwd(visitor);
             String recipientAddress = visitor.getEmailAddress();
-            String subject = "Profile changes for " + visitor.getUsername();
+            String subject = "Profile update on " + visitor.getUsername();
             String mailContent = "Your profile changes on INTEC blog were successful. Your profile looks as follows:" +
                     "\nUsername: " + visitor.getUsername() +
                     "\nFirst name: " + visitor.getFirstName() +
@@ -189,8 +196,12 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
                     "\nEmail: " + visitor.getEmailAddress() +
                     "\nGender: " + visitor.getGender() +
                     "\nIf you're not satisfied with the changes, consider going on our website and " +
-                    "subscribe to our premium membership.\nThanks dude,\n\nIID Blog team";
-            emailService.sendSimpleMessage(recipientAddress, subject, mailContent);
+                    "subscribe to our premium membership.\n\nThanks dude,\n\nIID Blog team";
+
+            if(baseVisitor != visitor){
+                emailService.sendSimpleMessage(recipientAddress, subject, mailContent);
+            }
+
 
         } catch (UserAlreadyExistException uaeEx) {
 
@@ -199,9 +210,12 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
             return "updateprofile";
         }
 
+        DiffResult diff = baseVisitor.diff(visitor);
         log.info(visitor.getPassword());
         log.info(visitor.getConfirmPassword());
-        log.info(visitor.getEncodedPassword());
+        log.info(String.valueOf(diff.getDiffs()));
+
+
 
         return "redirect:/registeredvisitor/" + id + "/show";
     }
