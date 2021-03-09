@@ -53,26 +53,34 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
 
     @GetMapping({"/", "/index"})
     public String getIndex(Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        String loggedinuser = "visitor";
-        String idUser = "";
-        boolean isAdmin = false;
-
-        RegisteredVisitor user = registeredVisitorService.findByUsername(authentication.getName());
-
-        if( user!= null && authentication!=null && !authentication.getName().equals("anonymousUser")) {
-            loggedinuser = authentication.getName();
-            idUser = user.getId().toString();
-            isAdmin = authentication.getAuthorities().stream()
-                    .anyMatch(a -> a.getAuthority().contains("ADMIN"));
-        }
-
-        model.addAttribute("loggedinuser", loggedinuser);
-        model.addAttribute("idUser", idUser);
-        model.addAttribute("isAdmin", isAdmin);
+        userContext(model);
 
         return "index";
+    }
+
+    @GetMapping("/about")
+    public String showAbout(Model model) {
+
+        userContext(model);
+
+        return "/about";
+    }
+
+    @GetMapping("/admin")
+    public String showAdmin(Model model) {
+
+        userContext(model);
+
+        return "/admin";
+    }
+
+    @GetMapping("/writer")
+    public String showWriter(Model model) {
+
+        userContext(model);
+
+        return "/writer";
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
@@ -130,7 +138,11 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
         try {
             registeredVisitor.setEnabled(false);
             savedVisitor = registeredVisitorService.saveVisitor(registeredVisitor);
-            registeredVisitorService.createAuthority(registeredVisitor,"USER");
+            if( registeredVisitor.getIsWriter()) {
+                registeredVisitorService.createAuthority(registeredVisitor,"WRITER");
+            } else {
+                registeredVisitorService.createAuthority(registeredVisitor,"USER");
+            }
 
             log.warn("visitor has been saved with id: " + savedVisitor.getId());
         } catch (UserAlreadyExistException uaeEx) {
@@ -399,5 +411,32 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
         }
     }
 
+    private void userContext(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
+        String loggedinuser = "visitor";
+        String idUser = "";
+        boolean isAdmin = false;
+        boolean isWriter = false;
+        boolean isRegistered = false;
+
+        RegisteredVisitor user = registeredVisitorService.findByUsername(authentication.getName());
+
+        if( user!= null && authentication!=null && !authentication.getName().equals("anonymousUser")) {
+            loggedinuser = authentication.getName();
+            idUser = user.getId().toString();
+            isAdmin = authentication.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().contains("ADMIN"));
+            isWriter = authentication.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().contains("WRITER"));
+            isRegistered = authentication.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().contains("USER"));
+        }
+
+        model.addAttribute("loggedinuser", loggedinuser);
+        model.addAttribute("idUser", idUser);
+        model.addAttribute("isAdmin", isAdmin);
+        model.addAttribute("isWriter", isWriter);
+        model.addAttribute("isRegistered", isRegistered);
+    }
 }

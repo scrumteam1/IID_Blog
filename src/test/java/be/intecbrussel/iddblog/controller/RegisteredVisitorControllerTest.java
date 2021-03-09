@@ -136,7 +136,8 @@ class RegisteredVisitorControllerTest {
                 .param("username","akhyare")
                 .param("emailAddress","ak@hotmail.com")
                 .param("password","uD45Pj6J*@cH$u")
-                .param("confirmPassword","uD45Pj6J*@cH$u"))
+                .param("confirmPassword","uD45Pj6J*@cH$u")
+                .param("isWriter","false"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/registeredvisitor/confirm/1"))
                 .andExpect(model().attributeExists("registeredvisitor"));

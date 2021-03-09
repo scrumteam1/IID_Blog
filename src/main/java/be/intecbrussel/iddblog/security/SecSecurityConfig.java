@@ -37,9 +37,10 @@ public class SecSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/", "/index", "/registeredvisitor/**","/registerform/**","/login",
                         "registeredvisitor/edit password/**","registerform","/forgetPassword","/reset-pwd/",
                         "/resetPwdConfirm","/pwd-reset-success","/password/**","/forbidden-page","/error/**",
-                        "/verification-link-failed",
+                        "/verification-link-failed","/about",
                         "/webjars/**","/css/**").permitAll()
-                .antMatchers("/adminpage").access("hasAuthority('ADMIN')")
+                .antMatchers("/adminpage","/admin").access("hasAuthority('ADMIN')")
+                .antMatchers("/writer").access("hasAuthority('WRITER')")
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
