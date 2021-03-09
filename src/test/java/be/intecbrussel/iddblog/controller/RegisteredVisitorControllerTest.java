@@ -136,9 +136,10 @@ class RegisteredVisitorControllerTest {
                 .param("username","akhyare")
                 .param("emailAddress","ak@hotmail.com")
                 .param("password","uD45Pj6J*@cH$u")
-                .param("confirmPassword","uD45Pj6J*@cH$u"))
+                .param("confirmPassword","uD45Pj6J*@cH$u")
+                .param("isWriter","false"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/registeredvisitor/1/show"))
+                .andExpect(view().name("redirect:/registeredvisitor/confirm/1"))
                 .andExpect(model().attributeExists("registeredvisitor"));
 
         verify(visitorService).saveVisitor(ArgumentMatchers.any());
@@ -494,7 +495,8 @@ class RegisteredVisitorControllerTest {
 
     @Test
     void resetPasswordNoVisitorTest() throws Exception {
-        mockMvc.perform(post("/password/forgetPassword/"))
+        mockMvc.perform(post("/password/forgetPassword/")
+                .param("email",""))
                 .andExpect(status().isOk())
                 .andExpect(view().name("/password/forgetPassword"));
     }

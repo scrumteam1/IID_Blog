@@ -57,26 +57,34 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
 
     @GetMapping({"/", "/index"})
     public String getIndex(Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        String loggedinuser = "visitor";
-        String idUser = "";
-        boolean isAdmin = false;
-
-        RegisteredVisitor user = registeredVisitorService.findByUsername(authentication.getName());
-
-        if( user!= null && authentication!=null && !authentication.getName().equals("anonymousUser")) {
-            loggedinuser = authentication.getName();
-            idUser = user.getId().toString();
-            isAdmin = authentication.getAuthorities().stream()
-                    .anyMatch(a -> a.getAuthority().contains("ADMIN"));
-        }
-
-        model.addAttribute("loggedinuser", loggedinuser);
-        model.addAttribute("idUser", idUser);
-        model.addAttribute("isAdmin", isAdmin);
+        userContext(model);
 
         return "index";
+    }
+
+    @GetMapping("/about")
+    public String showAbout(Model model) {
+
+        userContext(model);
+
+        return "/about";
+    }
+
+    @GetMapping("/admin")
+    public String showAdmin(Model model) {
+
+        userContext(model);
+
+        return "/admin";
+    }
+
+    @GetMapping("/writer")
+    public String showWriter(Model model) {
+
+        userContext(model);
+
+        return "/writer";
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
@@ -134,7 +142,11 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
         try {
             registeredVisitor.setEnabled(false);
             savedVisitor = registeredVisitorService.saveVisitor(registeredVisitor);
-            registeredVisitorService.createAuthority(registeredVisitor,"USER");
+            if( registeredVisitor.getIsWriter()) {
+                registeredVisitorService.createAuthority(registeredVisitor,"WRITER");
+            } else {
+                registeredVisitorService.createAuthority(registeredVisitor,"USER");
+            }
 
             log.warn("visitor has been saved with id: " + savedVisitor.getId());
         } catch (UserAlreadyExistException uaeEx) {
@@ -144,7 +156,7 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
             return "registerform";
         }
 
-        return "redirect:/registeredvisitor/" + savedVisitor.getId() + "/show";
+        return "redirect:/registeredvisitor/confirm/" + savedVisitor.getId();
     }
 
     @GetMapping("registeredvisitor/{id}/show")
@@ -361,6 +373,42 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
         return "/password/pwd-reset-success";
     }
 
+
+    @GetMapping("/registeredvisitor/confirm/{id}")
+    public String ConfirmRegistration (@PathVariable long id, Model model){
+        RegisteredVisitor visitor = registeredVisitorService.findById(id);
+        String token = UUID.randomUUID().toString();
+        registeredVisitorService.createVerificationToken(visitor, token);
+        String recipientAddress = visitor.getEmailAddress();
+        String subject ="Confirmation of your registration to Intec Blog";
+        String confirmationUrl= "http://localhost:8080/registeredvisitor/confirmRegistration?token="+ token;
+        String text = "To confirm your registration, please use the lin below : \n   " + confirmationUrl +  "\n\nKind Regards,\nThe Blog Post Team";;
+        emailService.sendSimpleMessage(recipientAddress, subject, text);
+
+        return "/email-sent";
+    }
+    @GetMapping("registeredvisitor/confirmRegistration")
+    public String registrationConfirmed(@RequestParam String token, Model model) {
+
+        VerificationToken verificationToken = registeredVisitorService.getVerificationToken(token);
+        if (verificationToken == null) {
+
+            return "/verification-link-failed";
+        }
+
+        RegisteredVisitor visitor = verificationToken.getRegisteredVisitor();
+        Calendar cal = Calendar.getInstance();
+        if ((verificationToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
+            return "/verification-link-failed";
+        }
+        registeredVisitorService.updateUserEnabled(visitor,true);
+
+        model.addAttribute("loggedinuser", visitor.getUsername());
+        model.addAttribute("idUser", visitor.getId());
+
+        return "index";
+    }
+
     @Override
     public ModelAndView resolveException(HttpServletRequest httpServletRequest,
                                          HttpServletResponse httpServletResponse,
@@ -387,5 +435,32 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
         }
     }
 
+    private void userContext(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
+        String loggedinuser = "visitor";
+        String idUser = "";
+        boolean isAdmin = false;
+        boolean isWriter = false;
+        boolean isRegistered = false;
+
+        RegisteredVisitor user = registeredVisitorService.findByUsername(authentication.getName());
+
+        if( user!= null && authentication!=null && !authentication.getName().equals("anonymousUser")) {
+            loggedinuser = authentication.getName();
+            idUser = user.getId().toString();
+            isAdmin = authentication.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().contains("ADMIN"));
+            isWriter = authentication.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().contains("WRITER"));
+            isRegistered = authentication.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().contains("USER"));
+        }
+
+        model.addAttribute("loggedinuser", loggedinuser);
+        model.addAttribute("idUser", idUser);
+        model.addAttribute("isAdmin", isAdmin);
+        model.addAttribute("isWriter", isWriter);
+        model.addAttribute("isRegistered", isRegistered);
+    }
 }
