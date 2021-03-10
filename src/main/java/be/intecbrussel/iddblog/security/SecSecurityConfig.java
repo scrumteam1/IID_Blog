@@ -28,8 +28,6 @@ public class SecSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity security) throws Exception
     {
-        //disable security to not asking to login at this time (not needed for signup)
-        //security.httpBasic().disable();
 
         security
                 .csrf().disable()
