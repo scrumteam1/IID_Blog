@@ -82,13 +82,6 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
         return "/admin";
     }
 
-    @GetMapping("/writer")
-    public String showWriter(Model model) {
-
-        userContext(model);
-
-        return "/writer";
-    }
 
     @GetMapping("/ban/{id}")
     public String banMember(@PathVariable String id) {
@@ -391,10 +384,7 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
         }
         registeredVisitorService.updateUserEnabled(visitor,true);
 
-        model.addAttribute("loggedinuser", visitor.getUsername());
-        model.addAttribute("idUser", visitor.getId());
-
-        return "index";
+        return "redirect:/login";
     }
 
     @Override
@@ -422,6 +412,7 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
     }
+
 
     private void userContext(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
