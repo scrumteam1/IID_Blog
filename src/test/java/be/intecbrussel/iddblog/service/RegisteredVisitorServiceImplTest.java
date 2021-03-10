@@ -30,11 +30,11 @@ class RegisteredVisitorServiceImplTest {
     @Mock
     RegisteredVisitorRepository visitorRepository;
 
-
+    @Mock
     AuthRepository authorityRepository;
 
     @Mock
-    AuthRepository authRepository;
+    AuthService authService;
 
     @Mock
     VerifTokenRepository verifTokenRepository;
@@ -49,8 +49,8 @@ class RegisteredVisitorServiceImplTest {
 
 
 
-        visitorService = new RegisteredVisitorServiceImpl(visitorRepository, passwordEncoder, authRepository,
-                verifTokenRepository);
+        visitorService = new RegisteredVisitorServiceImpl(visitorRepository, passwordEncoder, authService,
+                verifTokenRepository,authorityRepository);
 
 
         visitor = RegisteredVisitor.builder().id(2L).username("akyare")

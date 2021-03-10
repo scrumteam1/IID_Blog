@@ -9,6 +9,7 @@ import be.intecbrussel.iddblog.repository.VerifTokenRepository;
 import be.intecbrussel.iddblog.validation.error.UserAlreadyExistException;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,17 +25,19 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
 
     private final PasswordEncoder passwordEncoder;
 
-    private final AuthRepository authRepository;
+    private final AuthService authService;
 
     private final VerifTokenRepository tokenRepository;
 
-    public RegisteredVisitorServiceImpl(RegisteredVisitorRepository registeredVisitorRepository,
-                                        PasswordEncoder passwordEncoder, AuthRepository authRepository,
-                                        VerifTokenRepository tokenRepository) {
+    private final AuthRepository authRepository;
+
+    public RegisteredVisitorServiceImpl(RegisteredVisitorRepository registeredVisitorRepository, PasswordEncoder passwordEncoder,
+                                        AuthService authService, VerifTokenRepository tokenRepository, AuthRepository authRepository) {
         this.registeredVisitorRepository = registeredVisitorRepository;
         this.passwordEncoder = passwordEncoder;
-        this.authRepository = authRepository;
+        this.authService = authService;
         this.tokenRepository = tokenRepository;
+        this.authRepository = authRepository;
     }
 
     @Override
@@ -94,14 +97,14 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
                 registeredVisitor.getIsWriter(), registeredVisitor.getGender());
 
 
-        String authority = authRepository.findAuthorityByUsername(registeredVisitor.getUsername());
+        String authority = authService.findAuthorityByUsername(registeredVisitor.getUsername());
 
         if(registeredVisitor.getIsWriter() && !authority.equals("ADMIN")) {
             authority = "WRITER";
-            authRepository.updateAuthority(registeredVisitor.getUsername(),authority);
+            authService.updateAuthority(registeredVisitor.getUsername(),authority);
         } else if (!authority.equals("ADMIN")) {
             authority = "USER";
-            authRepository.updateAuthority(registeredVisitor.getUsername(),authority);
+            authService.updateAuthority(registeredVisitor.getUsername(),authority);
         }
 
     }
@@ -119,7 +122,7 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
     @Override
     @Transactional
     public void deleteVisitor(String username) {
-        authRepository.deleteAllByRegisteredVisitor(username);
+        authService.deleteAllByRegisteredVisitor(username);
         registeredVisitorRepository.deleteByUsername(username);
     }
 
@@ -143,12 +146,12 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
 
     @Override
     public void createAuthority(RegisteredVisitor visitor, String authority) {
-        Authority myauthority = Authority.builder()
+        Authority myAuthority = Authority.builder()
                 .registeredVisitor(visitor)
                 .username(visitor.getUsername())
                 .authority(authority)
                 .build();
-        authRepository.save(myauthority);
+        authRepository.save(myAuthority);
     }
 
     @Override

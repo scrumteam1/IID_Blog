@@ -4,6 +4,7 @@ import be.intecbrussel.iddblog.domain.RegisteredVisitor;
 import be.intecbrussel.iddblog.domain.VerificationToken;
 import be.intecbrussel.iddblog.email.EmailService;
 import be.intecbrussel.iddblog.password.RandomPasswordGenerator;
+import be.intecbrussel.iddblog.service.AuthService;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
 import be.intecbrussel.iddblog.validation.error.UserAlreadyExistException;
 import lombok.extern.slf4j.Slf4j;
@@ -37,17 +38,20 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
 
     private final RegisteredVisitorService registeredVisitorService;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final AuthService authService;
 
-    @Autowired
-    private EmailService emailService;
+    private final PasswordEncoder passwordEncoder;
+
+    private final EmailService emailService;
 
     private final JavaMailSender javaMailSender;
 
-    public RegisteredVisitorController(RegisteredVisitorService registeredVisitorService,
-                                        JavaMailSender javaMailSender) {
+    public RegisteredVisitorController(RegisteredVisitorService registeredVisitorService, AuthService authService,
+                                       PasswordEncoder passwordEncoder, EmailService emailService, JavaMailSender javaMailSender) {
         this.registeredVisitorService = registeredVisitorService;
+        this.authService = authService;
+        this.passwordEncoder = passwordEncoder;
+        this.emailService = emailService;
         this.javaMailSender = javaMailSender;
     }
 
@@ -433,12 +437,10 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
         if( user!= null && authentication!=null && !authentication.getName().equals("anonymousUser")) {
             loggedinuser = authentication.getName();
             idUser = user.getId().toString();
-            isAdmin = authentication.getAuthorities().stream()
-                    .anyMatch(a -> a.getAuthority().contains("ADMIN"));
-            isWriter = authentication.getAuthorities().stream()
-                    .anyMatch(a -> a.getAuthority().contains("WRITER"));
-            isRegistered = authentication.getAuthorities().stream()
-                    .anyMatch(a -> a.getAuthority().contains("USER"));
+            String authority = authService.findAuthorityByUsername(user.getUsername());
+            isAdmin = authority.equals("ADMIN");
+            isWriter = authority.equals("WRITER");
+            isRegistered = authority.equals("USER");
         }
 
         model.addAttribute("loggedinuser", loggedinuser);
