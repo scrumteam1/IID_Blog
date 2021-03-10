@@ -27,9 +27,21 @@
 </div>
 
 <header>
-    <h1 itemprop="name headline">Writer</h1>
+    <h1 itemprop="name headline">Writer's bloghome</h1>
 </header>
+<a class="btn btn-primary float-right" th:href="@{/index}"  >Create new Blogpost</a>
 
+<ul th:each="post : ${posts}" class="timeline" >
+    <li>
+        <p th:text="${post.title}">title</p>
+        <p th:text="${post.creationDate}" >Creation Date</p>
+        <p th:text="${post.content}">Content</p>
+
+    </li>
+</ul>
 </div>
 </body>
 </html>
+
+
+

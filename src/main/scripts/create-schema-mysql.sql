@@ -27,3 +27,17 @@ create table if not exists authorities
         foreign key (username) references users (username)
 );
 
+create table if not exists writerposts
+(
+    id            bigint auto_increment
+        primary key,
+    creation_date datetime     null,
+    title         varchar(255) null,
+    content       longtext     null,
+    status        varchar(255) null,
+    user_id       bigint       null,
+    constraint fk_post_users
+        foreign key (user_id) references users (id)
+);
+
+

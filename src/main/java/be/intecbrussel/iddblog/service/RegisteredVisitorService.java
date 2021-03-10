@@ -3,8 +3,11 @@ package be.intecbrussel.iddblog.service;
 
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
 import be.intecbrussel.iddblog.domain.VerificationToken;
+import be.intecbrussel.iddblog.domain.WriterPost;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 
 public interface RegisteredVisitorService {
@@ -38,4 +41,5 @@ public interface RegisteredVisitorService {
 
     void updateUserEnabled(RegisteredVisitor visitor, boolean enabled);
 
+    List<WriterPost> findWriterPostsByUserId(long userId);
 }

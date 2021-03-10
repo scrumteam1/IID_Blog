@@ -75,13 +75,6 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
         return "/admin";
     }
 
-    @GetMapping("/writer")
-    public String showWriter(Model model) {
-
-        userContext(model);
-
-        return "/writer";
-    }
 
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public String logOut(HttpServletRequest request, HttpServletResponse response) {
@@ -407,6 +400,7 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
     }
+
 
     private void userContext(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

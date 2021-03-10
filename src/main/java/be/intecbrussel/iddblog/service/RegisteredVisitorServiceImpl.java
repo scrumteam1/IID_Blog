@@ -3,16 +3,19 @@ package be.intecbrussel.iddblog.service;
 import be.intecbrussel.iddblog.domain.Authority;
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
 import be.intecbrussel.iddblog.domain.VerificationToken;
+import be.intecbrussel.iddblog.domain.WriterPost;
 import be.intecbrussel.iddblog.repository.AuthRepository;
 import be.intecbrussel.iddblog.repository.RegisteredVisitorRepository;
 import be.intecbrussel.iddblog.repository.VerifTokenRepository;
+import be.intecbrussel.iddblog.repository.WriterPostRepository;
 import be.intecbrussel.iddblog.validation.error.UserAlreadyExistException;
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -27,13 +30,16 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
 
     private final VerifTokenRepository tokenRepository;
 
+    private final WriterPostRepository writerPostRepository;
+
     public RegisteredVisitorServiceImpl(RegisteredVisitorRepository registeredVisitorRepository,
                                         PasswordEncoder passwordEncoder, AuthRepository authRepository,
-                                        VerifTokenRepository tokenRepository) {
+                                        VerifTokenRepository tokenRepository, WriterPostRepository writerPostRepository) {
         this.registeredVisitorRepository = registeredVisitorRepository;
         this.passwordEncoder = passwordEncoder;
         this.authRepository = authRepository;
         this.tokenRepository = tokenRepository;
+        this.writerPostRepository = writerPostRepository;
     }
 
     @Override
@@ -153,5 +159,8 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
     public void updateUserEnabled(RegisteredVisitor visitor, boolean enabled) {
         registeredVisitorRepository.updateUserEnabled(visitor.getId(), enabled);
     }
-
+    @Override
+    public List<WriterPost> findWriterPostsByUserId(long userId){
+        return writerPostRepository.findWriterPostsByUserId(userId);
+    }
 }
