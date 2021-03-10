@@ -71,7 +71,7 @@
                         </div>
 
                         <!-- Button trigger modal -->
-                        <a  href="/index" class="btn btn-primary">Home</a>
+                        <a  th:href="@{'/index'}" class="btn btn-primary">Home</a>
                         <a th:href="@{'/registeredvisitor/update/' +'' + ${id}}" class="btn btn-primary">Edit user</a>
                         <button  type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
                             Delete User

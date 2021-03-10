@@ -93,11 +93,18 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
                 registeredVisitor.getUsername(), registeredVisitor.getFirstName(),
                 registeredVisitor.getLastName(), registeredVisitor.getEmailAddress(),
                 registeredVisitor.getIsWriter(), registeredVisitor.getGender());
-    }
 
-    @Override
-    public void updateVisitorWithPwd(Long id, String username, String firstName, String lastName, String email, Boolean writer, String password) {
-        registeredVisitorRepository.updateVisitorWithPwd(id, username, firstName, lastName, email, writer, passwordEncoder.encode(password));
+
+        String authority = authRepository.findAuthorityByUsername(registeredVisitor.getUsername());
+
+        if(registeredVisitor.getIsWriter() && !authority.equals("ADMIN")) {
+            authority = "WRITER";
+            authRepository.updateAuthority(registeredVisitor.getUsername(),authority);
+        } else if (!authority.equals("ADMIN")) {
+            authority = "USER";
+            authRepository.updateAuthority(registeredVisitor.getUsername(),authority);
+        }
+
     }
 
     @Override
