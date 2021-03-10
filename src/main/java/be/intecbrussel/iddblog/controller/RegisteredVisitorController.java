@@ -72,6 +72,9 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
 
         userContext(model);
 
+        List<RegisteredVisitor> users = registeredVisitorService.findAll();
+        model.addAttribute("users", users);
+
         return "/admin";
     }
 
@@ -81,6 +84,20 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
         userContext(model);
 
         return "/writer";
+    }
+
+    @GetMapping("/ban/{id}")
+    public String banMember(@PathVariable String id) {
+
+       RegisteredVisitor visitor = registeredVisitorService.findById(Long.valueOf(id));
+
+       if(visitor.isEnabled()) {
+           registeredVisitorService.updateUserEnabled(visitor, false);
+       } else {
+           registeredVisitorService.updateUserEnabled(visitor, true);
+       }
+
+        return "redirect:/admin";
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
@@ -249,15 +266,6 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
 
         return "redirect:/index";
     }
-
-    @RequestMapping(value = {"/adminpage"}, method = RequestMethod.GET)
-    public ModelAndView adminPage() {
-        ModelAndView model = new ModelAndView();
-        model.setViewName("adminpage");
-
-        return model;
-    }
-
 
     @GetMapping("/delete/{id}")
     public String deleteRegisteredVisitor(@PathVariable("id") long id, Principal principal, HttpServletRequest request,

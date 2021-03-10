@@ -6,6 +6,8 @@ import be.intecbrussel.iddblog.domain.VerificationToken;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 
 public interface RegisteredVisitorService {
 
@@ -16,6 +18,8 @@ public interface RegisteredVisitorService {
     RegisteredVisitor findByUsername(String username);
 
     RegisteredVisitor findByEmailAddress(String email);
+
+    List<RegisteredVisitor> findAll();
 
     void updateVisitorWithoutPwd( RegisteredVisitor registeredVisitor);
 

@@ -14,6 +14,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Slf4j
 @Service
 @Transactional
@@ -69,6 +71,11 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
     @Override
     public RegisteredVisitor findByEmailAddress(String email) {
         return registeredVisitorRepository.findByEmailAddress(email);
+    }
+
+    @Override
+    public List<RegisteredVisitor> findAll() {
+        return registeredVisitorRepository.findAll();
     }
 
     @Override

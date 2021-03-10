@@ -19,6 +19,8 @@ public interface RegisteredVisitorRepository extends CrudRepository<RegisteredVi
 
     RegisteredVisitor findByUsername(String username);
 
+    List<RegisteredVisitor> findAll();
+
     @Modifying
     @Query("update RegisteredVisitor u set u.username = :username, u.firstName = :firstName, u.lastName = :lastName , u.emailAddress = :email, u.isWriter = :writer, u.gender = :gender where u.id = :id")
     void updateVisitorWithoutPwd(@Param(value = "id") Long id, @Param(value = "username") String username,
