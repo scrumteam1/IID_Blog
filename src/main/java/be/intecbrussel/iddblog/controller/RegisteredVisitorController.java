@@ -88,11 +88,7 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
 
        RegisteredVisitor visitor = registeredVisitorService.findById(Long.valueOf(id));
 
-       if(visitor.isEnabled()) {
-           registeredVisitorService.updateUserEnabled(visitor, false);
-       } else {
-           registeredVisitorService.updateUserEnabled(visitor, true);
-       }
+        registeredVisitorService.updateUserEnabled(visitor, !visitor.isEnabled());
 
         return "redirect:/admin";
     }
@@ -122,7 +118,7 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
 
         RegisteredVisitor savedVisitor;
         MultipartFile defaultFile = new MockMultipartFile("intec.jpg", new FileInputStream("src/main/resources/static/pictures/intec.jpg"));
-        String extension = multipartFile.getOriginalFilename().substring(multipartFile.getOriginalFilename().indexOf(".")+1,multipartFile.getOriginalFilename().length());
+        String extension = multipartFile.getOriginalFilename().substring(multipartFile.getOriginalFilename().indexOf(".")+1);
 
         if (bindingResult.hasErrors()) {
 
@@ -363,7 +359,7 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
         String recipientAddress = visitor.getEmailAddress();
         String subject ="Confirmation of your registration to Intec Blog";
         String confirmationUrl= "http://localhost:8080/registeredvisitor/confirmRegistration?token="+ token;
-        String text = "To confirm your registration, please use the lin below : \n   " + confirmationUrl +  "\n\nKind Regards,\nThe Blog Post Team";;
+        String text = "To confirm your registration, please use the lin below : \n   " + confirmationUrl +  "\n\nKind Regards,\nThe Blog Post Team";
         emailService.sendSimpleMessage(recipientAddress, subject, text);
 
         return "/email-sent";
