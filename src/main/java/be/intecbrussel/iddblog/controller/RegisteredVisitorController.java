@@ -379,10 +379,7 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
         }
         registeredVisitorService.updateUserEnabled(visitor,true);
 
-        model.addAttribute("loggedinuser", visitor.getUsername());
-        model.addAttribute("idUser", visitor.getId());
-
-        return "index";
+        return "redirect:/login";
     }
 
     @Override
