@@ -4,6 +4,7 @@ import be.intecbrussel.iddblog.domain.RegisteredVisitor;
 import be.intecbrussel.iddblog.domain.VerificationToken;
 import be.intecbrussel.iddblog.email.EmailService;
 import be.intecbrussel.iddblog.email.EmailServiceImpl;
+import be.intecbrussel.iddblog.service.AuthService;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
 import be.intecbrussel.iddblog.validation.error.UserAlreadyExistException;
 import lombok.val;
@@ -47,6 +48,9 @@ class RegisteredVisitorControllerTest {
 
     @Mock
     RegisteredVisitorService visitorService;
+
+    @Mock
+    AuthService authService;
 
     @InjectMocks
     RegisteredVisitorController visitorController;
@@ -93,6 +97,7 @@ class RegisteredVisitorControllerTest {
         SecurityContextHolder.setContext(securityContext);
         Mockito.when(securityContext.getAuthentication().getName()).thenReturn("test");
         when(visitorService.findByUsername(ArgumentMatchers.any())).thenReturn(savedVisitor);
+        when(authService.findAuthorityByUsername(ArgumentMatchers.any())).thenReturn("ADMIN");
 
         mockMvc.perform(get("/index/"))
                 .andExpect(status().isOk())
