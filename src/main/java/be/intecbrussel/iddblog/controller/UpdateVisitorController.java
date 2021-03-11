@@ -48,11 +48,14 @@ public class UpdateVisitorController {
 
     @PostMapping("registeredvisitor/edit/{id}")
     public String updateRegisteredVisitor(@PathVariable("id") long id, @ModelAttribute("registeredvisitor") @Valid RegisteredVisitor visitor,
-             Model model){
-
-
+                                          BindingResult bindingResult, Model model){
 
         RegisteredVisitor baseVisitor = registeredVisitorService.findById(visitor.getId());
+
+        if (bindingResult.hasErrors()) {
+
+            return "updateprofile";
+        }
 
         try {
             registeredVisitorService.updateVisitorWithoutPwd(visitor);

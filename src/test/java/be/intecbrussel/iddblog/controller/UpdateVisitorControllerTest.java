@@ -73,6 +73,8 @@ class UpdateVisitorControllerTest {
     void UpdateVisitorPost() throws Exception {
         savedVisitor.setId(1L);
 
+        when(visitorService.findById(ArgumentMatchers.any())).thenReturn(savedVisitor);
+
         mockMvc.perform(post("/registeredvisitor/edit/1")
                 .param("firstName","Abdel")
                 .param("lastName","Khy")
@@ -92,6 +94,9 @@ class UpdateVisitorControllerTest {
 
     @Test
     void updateWithAllErrors() throws Exception {
+        savedVisitor.setId(1L);
+
+        when(visitorService.findById(ArgumentMatchers.any())).thenReturn(savedVisitor);
 
         mockMvc.perform(post("/registeredvisitor/edit/1")
                 .param("firstName","")
@@ -103,7 +108,7 @@ class UpdateVisitorControllerTest {
                 .andExpect(model().errorCount(7))
                 .andExpect(status().isOk())
                 .andExpect(view().name("updateprofile"))
-                .andExpect(model().attributeExists("registeredvisitor"));
+               .andExpect(model().attributeExists("registeredvisitor"));
 
         verify(visitorService, times(0)).updateVisitorWithoutPwd(ArgumentMatchers.any());
     }
