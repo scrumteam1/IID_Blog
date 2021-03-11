@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import java.security.Principal;
 
 @Slf4j
 @Controller
@@ -21,7 +22,10 @@ public class WriterPostController  {
     }
 
     @GetMapping("/writer/{id}")
-    public String showPostsList (@PathVariable Long id, Model model){
+    public String showPostsList (@PathVariable Long id, Model model, Principal principal){
+        if (!principal.getName().equals(registeredVisitorService.findById(id).getUsername())) {
+            return "redirect:/forbidden-page";
+        }
         model.addAttribute("posts", registeredVisitorService.findWriterPostsByUserId(id));
         userContext(model);
         return "writer";

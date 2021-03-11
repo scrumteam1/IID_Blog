@@ -28,17 +28,37 @@
 
 <header>
     <h1 itemprop="name headline">Writer's bloghome</h1>
+    <div><a class="btn btn-primary float-right" th:href="@{/index}" >Recent first</a></div>
+      <div><a class="btn btn-primary float-right" th:href="@{/index}" >Oldest first</a></div>
+
 </header>
-<a class="btn btn-primary float-right" th:href="@{/index}"  >Create new Blogpost</a>
 
-<ul th:each="post : ${posts}" class="timeline" >
-    <li>
-        <p th:text="${post.title}">title</p>
-        <p th:text="${post.creationDate}" >Creation Date</p>
-        <p th:text="${post.content}">Content</p>
+<div class="container">
+    <div><a class="btn btn-primary float-right" th:href="@{/index}"  >Create new Blogpost</a></div>
 
-    </li>
-</ul>
+
+    <div class="span8">
+            <h2 th:if = "${posts.isEmpty()}" >No blogposts yet!</h2>
+            <ul th:each="post : ${posts}" class="timeline" >
+                 <li>
+                <p th:text="${post.creationDate}" >Creation Date</p>
+                <h1 th:text="${post.title}">title</h1>
+                <p th:text="${post.content}">Content</p>
+
+                    <div class="more label"><a href="#">Read more</a></div>
+                    <div class="tags">
+                        <span class="btn-info"> <a href="#">energy</a></span> <span class="btn-info"> <a href="#">reality</a></span> <span class="btn-info"><a href="#">world</a></span>
+                    </div>
+                </div>
+
+                <div class="clear"></div>
+                <hr>
+                </li>
+              </ul>
+
+        </div>
+</div>
+
 </div>
 </body>
 </html>
