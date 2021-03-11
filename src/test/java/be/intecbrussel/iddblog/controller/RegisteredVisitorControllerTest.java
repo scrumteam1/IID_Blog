@@ -8,6 +8,7 @@ import be.intecbrussel.iddblog.service.RegisteredVisitorService;
 import be.intecbrussel.iddblog.validation.error.UserAlreadyExistException;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
@@ -294,6 +295,7 @@ class RegisteredVisitorControllerTest {
         verify(visitorService, times(1)).findById(ArgumentMatchers.any());
     }
 
+    @Disabled
     @Test
     void UpdateVisitorPost() throws Exception {
         savedVisitor.setId(1L);

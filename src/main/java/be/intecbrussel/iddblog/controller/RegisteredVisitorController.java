@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.*;
@@ -184,8 +185,8 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
     }
 
     @PostMapping("registeredvisitor/edit/{id}")
-    public String UpdateRegisteredVisitor(@PathVariable("id") long id, @ModelAttribute("registeredvisitor") @Valid RegisteredVisitor visitor
-            , BindingResult bindingResult, Model model) {
+    public String LupdateRegisteredVisitorWithMail(@PathVariable("id") long id, @ModelAttribute("registeredvisitor") @Valid RegisteredVisitor visitor
+            , BindingResult bindingResult, Model model) throws IOException {
 
         if (bindingResult.hasErrors()) {
 
@@ -194,26 +195,25 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
             return "updateprofile";
         }
 
-        RegisteredVisitor baseVisitor = registeredVisitorService.findById(id);
-        visitor.setEnabled(true);
+        RegisteredVisitor baseVisitor = registeredVisitorService.findById(visitor.getId());
+        //visitor.setEnabled(true);
 
         try {
             registeredVisitorService.updateVisitorWithoutPwd(visitor);
             String recipientAddress = visitor.getEmailAddress();
-            String subject = "Profile update on " + visitor.getUsername();
+            String subject = "INTEC Blog - Profile update for " + visitor.getUsername();
             String mailContent = "Your profile changes on INTEC blog were successful. Your profile looks as follows:" +
                     "\nUsername: " + visitor.getUsername() +
                     "\nFirst name: " + visitor.getFirstName() +
                     "\nLast name: " + visitor.getLastName() +
                     "\nEmail: " + visitor.getEmailAddress() +
                     "\nGender: " + visitor.getGender() +
-                    "\nIf you're not satisfied with the changes, consider going on our website and " +
+                    "\n\nIf you're not satisfied with the changes, consider going on our website and " +
                     "subscribe to our premium membership.\n\nThanks dude,\n\nIID Blog team";
 
-            if(baseVisitor != visitor){
+            if(!baseVisitor.equals(visitor)){
                 emailService.sendSimpleMessage(recipientAddress, subject, mailContent);
             }
-
 
         } catch (UserAlreadyExistException uaeEx) {
 
@@ -222,12 +222,8 @@ public class RegisteredVisitorController implements HandlerExceptionResolver {
             return "updateprofile";
         }
 
-        DiffResult diff = baseVisitor.diff(visitor);
         log.info(visitor.getPassword());
         log.info(visitor.getConfirmPassword());
-        log.info(String.valueOf(diff.getDiffs()));
-
-
 
         return "redirect:/registeredvisitor/" + id + "/show";
     }

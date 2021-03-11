@@ -14,6 +14,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
+import java.util.Objects;
 
 //Spring security needs a table authorities with properties: username, authority
 //Spring security needs a table users with properties: username, password, enabled
@@ -25,7 +26,7 @@ import java.util.List;
 @AllArgsConstructor
 @PasswordMatches
 @Table(name="users")
-public class RegisteredVisitor implements Diffable<RegisteredVisitor> {
+public class RegisteredVisitor{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -68,7 +69,7 @@ public class RegisteredVisitor implements Diffable<RegisteredVisitor> {
     @Transient
     private String oldPassword;
 
-    private String gender = "Unknown";
+    private String gender;
 
     private Boolean isWriter;
 
@@ -80,17 +81,19 @@ public class RegisteredVisitor implements Diffable<RegisteredVisitor> {
     private boolean enabled = false;
 
     @Override
-    public DiffResult<RegisteredVisitor> diff(RegisteredVisitor registeredVisitor) {
-        return new DiffBuilder(this, registeredVisitor, ToStringStyle.SHORT_PREFIX_STYLE)
-                .append("id", this.id, registeredVisitor.id)
-                .append("username", this.username,registeredVisitor.username)
-                .append("first name", this.firstName,registeredVisitor.firstName)
-                .append("last name", this.lastName,registeredVisitor.lastName)
-                .append("email address", this.emailAddress,registeredVisitor.emailAddress)
-                .append("gender", this.gender,registeredVisitor.gender)
-                .append("iswriter", this.isWriter, registeredVisitor.isWriter)
-                .append("avatar", this.avatar,registeredVisitor.avatar)
-                .append("enabled", this.enabled,registeredVisitor.enabled)
-                .build();
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        RegisteredVisitor that = (RegisteredVisitor) o;
+
+        if (!username.equals(that.username)) return false;
+        if (!firstName.equals(that.firstName)) return false;
+        if (!lastName.equals(that.lastName)) return false;
+        if (!emailAddress.equals(that.emailAddress)) return false;
+        if (!gender.equals(that.gender)) return false;
+        if (!isWriter.equals(that.isWriter)) return false;
+        if (avatar != null && !avatar.equals(that.avatar)) return false;
+        return true;
     }
 }
