@@ -1,6 +1,5 @@
 package be.intecbrussel.iddblog.repository;
 
-import be.intecbrussel.iddblog.domain.RegisteredVisitor;
 import be.intecbrussel.iddblog.domain.VerificationToken;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

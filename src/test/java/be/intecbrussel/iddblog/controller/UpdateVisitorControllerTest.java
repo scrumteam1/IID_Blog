@@ -4,7 +4,6 @@ import be.intecbrussel.iddblog.domain.RegisteredVisitor;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
 import be.intecbrussel.iddblog.validation.error.UserAlreadyExistException;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
@@ -13,27 +12,26 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.security.Principal;
-
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.mockito.Mockito.doThrow;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
-class RegisteredVisitorControllerTest {
+class UpdateVisitorControllerTest {
 
     @Mock
     RegisteredVisitorService visitorService;
 
     @InjectMocks
-    RegisteredVisitorController visitorController;
+    UpdateVisitorController visitorController;
 
     RegisteredVisitor savedVisitor;
 
@@ -57,27 +55,6 @@ class RegisteredVisitorControllerTest {
     }
 
     @Test
-    void logOutTest() throws Exception {
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
-        SecurityContextHolder.setContext(securityContext);
-
-        mockMvc.perform(get("/logout"))
-                .andExpect(status().is3xxRedirection());
-    }
-
-    @Test
-    void showById() throws Exception {
-        when(visitorService.findById(ArgumentMatchers.any())).thenReturn(savedVisitor);
-
-        mockMvc.perform(get("/registeredvisitor/1/show"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("profileview"))
-                .andExpect(model().attributeExists("registeredvisitor"));
-        verify(visitorService, times(1)).findById(ArgumentMatchers.any());
-    }
-
-    @Test
     void UpdateVisitorGetForm() throws Exception {
         RegisteredVisitor visitorFound = new RegisteredVisitor();
         visitorFound.setId(1L);
@@ -92,7 +69,6 @@ class RegisteredVisitorControllerTest {
         verify(visitorService, times(1)).findById(ArgumentMatchers.any());
     }
 
-    @Disabled
     @Test
     void UpdateVisitorPost() throws Exception {
         savedVisitor.setId(1L);
@@ -254,36 +230,6 @@ class RegisteredVisitorControllerTest {
         verify(visitorService, times(0)).updateUserPwd(ArgumentMatchers.any(),ArgumentMatchers.any());
         verify(visitorService, times(1)).checkIfValidOldPassword(ArgumentMatchers.any(),ArgumentMatchers.any());
 
-    }
-
-    @Test
-    void deleteRegisteredVisitorTest() throws Exception {
-        savedVisitor.setId(1L);
-
-        when(visitorService.findById(any())).thenReturn(savedVisitor);
-
-        Principal mockPrincipal = Mockito.mock(Principal.class);
-        Mockito.when(mockPrincipal.getName()).thenReturn("akhyare");
-
-        mockMvc.perform(get("/delete/1")
-                .principal(mockPrincipal))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/index"));
-    }
-
-    @Test
-    void deleteRegisteredVisitorForbiddenTest() throws Exception {
-        savedVisitor.setId(1L);
-
-        when(visitorService.findById(any())).thenReturn(savedVisitor);
-
-        Principal mockPrincipal = Mockito.mock(Principal.class);
-        Mockito.when(mockPrincipal.getName()).thenReturn("hello");
-
-        mockMvc.perform(get("/delete/1")
-                .principal(mockPrincipal))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/forbidden-page"));
     }
 
 }

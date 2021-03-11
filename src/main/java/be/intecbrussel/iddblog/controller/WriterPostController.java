@@ -1,57 +1,35 @@
 package be.intecbrussel.iddblog.controller;
 
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
-import be.intecbrussel.iddblog.service.AuthService;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import java.security.Principal;
 
+@Slf4j
 @Controller
-public class IndexController {
+public class WriterPostController  {
 
     private final RegisteredVisitorService registeredVisitorService;
 
-    private final AuthService authService;
-
-
-    public IndexController(RegisteredVisitorService registeredVisitorService, AuthService authService) {
+    public WriterPostController(RegisteredVisitorService registeredVisitorService) {
         this.registeredVisitorService = registeredVisitorService;
-        this.authService = authService;
     }
 
-    @RequestMapping("/login")
-    public String login(){
-
-        return "login";
-    }
-    @RequestMapping("/login-error")
-    public String loginError(Model model){
-        model.addAttribute("loginError", true);
-
-       return "login";
-    }
-
-    @GetMapping({"/", "/index"})
-    public String getIndex(Model model) {
-
+    @GetMapping("/writer/{id}")
+    public String showPostsList (@PathVariable Long id, Model model, Principal principal){
+        if (!principal.getName().equals(registeredVisitorService.findById(id).getUsername())) {
+            return "redirect:/forbidden-page";
+        }
+        model.addAttribute("posts", registeredVisitorService.findWriterPostsByUserId(id));
         userContext(model);
-
-        return "index";
+        return "writer";
     }
-
-    @GetMapping("/about")
-    public String showAbout(Model model) {
-
-        userContext(model);
-
-        return "/about";
-    }
-
-
     private void userContext(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -63,13 +41,15 @@ public class IndexController {
 
         RegisteredVisitor user = registeredVisitorService.findByUsername(authentication.getName());
 
-        if (user != null && !authentication.getName().equals("anonymousUser")) {
+        if( user!= null && authentication!=null && !authentication.getName().equals("anonymousUser")) {
             loggedinuser = authentication.getName();
             idUser = user.getId().toString();
-            String authority = authService.findAuthorityByUsername(user.getUsername());
-            isAdmin = authority.equals("ADMIN");
-            isWriter = authority.equals("WRITER");
-            isRegistered = authority.equals("USER");
+            isAdmin = authentication.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().contains("ADMIN"));
+            isWriter = authentication.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().contains("WRITER"));
+            isRegistered = authentication.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().contains("USER"));
         }
 
         model.addAttribute("loggedinuser", loggedinuser);

@@ -37,7 +37,7 @@ public class VerificationToken {
     public VerificationToken(final String token) {
 
         this.token = token;
-        this.expiryDate = calculateExpiryDate(EXPIRATION);
+        this.expiryDate = calculateExpiryDate();
     }
 
     public VerificationToken(final String token, final RegisteredVisitor visitor) {
@@ -45,19 +45,14 @@ public class VerificationToken {
         this.token = token;
         this.registeredVisitor = visitor;
         this.userId = visitor.getId();
-        this.expiryDate = calculateExpiryDate(EXPIRATION);
+        this.expiryDate = calculateExpiryDate();
     }
 
-    private Date calculateExpiryDate(int expiryTimeInMinutes) {
+    private Date calculateExpiryDate() {
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Timestamp(cal.getTime().getTime()));
-        cal.add(Calendar.MINUTE, expiryTimeInMinutes);
+        cal.add(Calendar.MINUTE, VerificationToken.EXPIRATION);
         return new Date(cal.getTime().getTime());
-    }
-
-    public void updateToken(final String token) {
-        this.token = token;
-        this.expiryDate = calculateExpiryDate(EXPIRATION);
     }
 
     @Override
@@ -97,19 +92,12 @@ public class VerificationToken {
             return false;
         }
         if (getRegisteredVisitor() == null) {
-            if (other.getRegisteredVisitor() != null) {
-                return false;
-            }
-        } else if (!getRegisteredVisitor().equals(other.getRegisteredVisitor())) {
-            return false;
-        }
-        return true;
+            return other.getRegisteredVisitor() == null;
+        } else return getRegisteredVisitor().equals(other.getRegisteredVisitor());
     }
 
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("Token [String=").append(token).append("]").append("[Expires").append(expiryDate).append("]");
-        return builder.toString();
+        return "Token [String=" + token + "]" + "[Expires" + expiryDate + "]";
     }
 }

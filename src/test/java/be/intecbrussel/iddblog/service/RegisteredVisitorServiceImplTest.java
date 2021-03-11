@@ -4,6 +4,7 @@ import be.intecbrussel.iddblog.repository.AuthRepository;
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
 import be.intecbrussel.iddblog.repository.RegisteredVisitorRepository;
 import be.intecbrussel.iddblog.repository.VerifTokenRepository;
+import be.intecbrussel.iddblog.repository.WriterPostRepository;
 import be.intecbrussel.iddblog.validation.error.UserAlreadyExistException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,15 +31,17 @@ class RegisteredVisitorServiceImplTest {
     @Mock
     RegisteredVisitorRepository visitorRepository;
 
-
+    @Mock
     AuthRepository authorityRepository;
 
     @Mock
-    AuthRepository authRepository;
+    AuthService authService;
 
     @Mock
     VerifTokenRepository verifTokenRepository;
 
+    @Mock
+    WriterPostRepository writerPostRepository;
 
 
     RegisteredVisitor visitor;
@@ -49,8 +52,8 @@ class RegisteredVisitorServiceImplTest {
 
 
 
-        visitorService = new RegisteredVisitorServiceImpl(visitorRepository, passwordEncoder, authRepository,
-                verifTokenRepository);
+        visitorService = new RegisteredVisitorServiceImpl(visitorRepository, passwordEncoder, authService,
+                verifTokenRepository,authorityRepository, writerPostRepository);
 
 
         visitor = RegisteredVisitor.builder().id(2L).username("akyare")

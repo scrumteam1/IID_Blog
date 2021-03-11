@@ -3,16 +3,19 @@ package be.intecbrussel.iddblog.service;
 import be.intecbrussel.iddblog.domain.Authority;
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
 import be.intecbrussel.iddblog.domain.VerificationToken;
+import be.intecbrussel.iddblog.domain.WriterPost;
 import be.intecbrussel.iddblog.repository.AuthRepository;
 import be.intecbrussel.iddblog.repository.RegisteredVisitorRepository;
 import be.intecbrussel.iddblog.repository.VerifTokenRepository;
+import be.intecbrussel.iddblog.repository.WriterPostRepository;
 import be.intecbrussel.iddblog.validation.error.UserAlreadyExistException;
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -23,17 +26,23 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
 
     private final PasswordEncoder passwordEncoder;
 
-    private final AuthRepository authRepository;
+    private final AuthService authService;
 
     private final VerifTokenRepository tokenRepository;
 
-    public RegisteredVisitorServiceImpl(RegisteredVisitorRepository registeredVisitorRepository,
-                                        PasswordEncoder passwordEncoder, AuthRepository authRepository,
-                                        VerifTokenRepository tokenRepository) {
+    private final AuthRepository authRepository;
+
+    private final WriterPostRepository writerPostRepository;
+
+    public RegisteredVisitorServiceImpl(RegisteredVisitorRepository registeredVisitorRepository, PasswordEncoder passwordEncoder,
+                                        AuthService authService, VerifTokenRepository tokenRepository, AuthRepository authRepository,
+                                        WriterPostRepository writerPostRepository) {
         this.registeredVisitorRepository = registeredVisitorRepository;
         this.passwordEncoder = passwordEncoder;
-        this.authRepository = authRepository;
+        this.authService = authService;
         this.tokenRepository = tokenRepository;
+        this.authRepository = authRepository;
+        this.writerPostRepository = writerPostRepository;
     }
 
     @Override
@@ -72,6 +81,11 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
     }
 
     @Override
+    public List<RegisteredVisitor> findAll() {
+        return registeredVisitorRepository.findAll();
+    }
+
+    @Override
     public void updateVisitorWithoutPwd(RegisteredVisitor registeredVisitor) {
 
         if (emailExistsForIdOtherThanCurrentId(registeredVisitor.getEmailAddress(),registeredVisitor.getId())) {
@@ -86,11 +100,18 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
                 registeredVisitor.getUsername(), registeredVisitor.getFirstName(),
                 registeredVisitor.getLastName(), registeredVisitor.getEmailAddress(),
                 registeredVisitor.getIsWriter(), registeredVisitor.getGender());
-    }
 
-    @Override
-    public void updateVisitorWithPwd(Long id, String username, String firstName, String lastName, String email, Boolean writer, String password) {
-        registeredVisitorRepository.updateVisitorWithPwd(id, username, firstName, lastName, email, writer, passwordEncoder.encode(password));
+
+        String authority = authService.findAuthorityByUsername(registeredVisitor.getUsername());
+
+        if(registeredVisitor.getIsWriter() && !authority.equals("ADMIN")) {
+            authority = "WRITER";
+            authService.updateAuthority(registeredVisitor.getUsername(),authority);
+        } else if (!authority.equals("ADMIN")) {
+            authority = "USER";
+            authService.updateAuthority(registeredVisitor.getUsername(),authority);
+        }
+
     }
 
     @Override
@@ -106,7 +127,7 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
     @Override
     @Transactional
     public void deleteVisitor(String username) {
-        authRepository.deleteAllByRegisteredVisitor(username);
+        authService.deleteAllByRegisteredVisitor(username);
         registeredVisitorRepository.deleteByUsername(username);
     }
 
@@ -130,12 +151,12 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
 
     @Override
     public void createAuthority(RegisteredVisitor visitor, String authority) {
-        Authority myauthority = Authority.builder()
+        Authority myAuthority = Authority.builder()
                 .registeredVisitor(visitor)
                 .username(visitor.getUsername())
                 .authority(authority)
                 .build();
-        authRepository.save(myauthority);
+        authRepository.save(myAuthority);
     }
 
     @Override
@@ -153,5 +174,8 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
     public void updateUserEnabled(RegisteredVisitor visitor, boolean enabled) {
         registeredVisitorRepository.updateUserEnabled(visitor.getId(), enabled);
     }
-
+    @Override
+    public List<WriterPost> findWriterPostsByUserId(long userId){
+        return writerPostRepository.findWriterPostsByUserId(userId);
+    }
 }

@@ -11,7 +11,7 @@ import javax.validation.constraints.NotBlank;
 //Spring security needs a table authorities with properties: username, authority
 //Spring security needs a table users with properties: username, password, enabled
 @Entity(name="Authority")
-@Table(name="authorities")//Spring security needs a tables: authorities and users. Names of tables should be authorities and users.
+@Table(name="authorities", schema = "blog_dev")//Spring security needs a tables: authorities and users. Names of tables should be authorities and users.
 @Data
 @Builder
 @NoArgsConstructor

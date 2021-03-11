@@ -19,6 +19,8 @@ public interface RegisteredVisitorRepository extends CrudRepository<RegisteredVi
 
     RegisteredVisitor findByUsername(String username);
 
+    List<RegisteredVisitor> findAll();
+
     @Modifying
     @Query("update RegisteredVisitor u set u.username = :username, u.firstName = :firstName, u.lastName = :lastName , u.emailAddress = :email, u.isWriter = :writer, u.gender = :gender where u.id = :id")
     void updateVisitorWithoutPwd(@Param(value = "id") Long id, @Param(value = "username") String username,
@@ -26,13 +28,6 @@ public interface RegisteredVisitorRepository extends CrudRepository<RegisteredVi
                               @Param(value = "email") String email, @Param(value = "writer") Boolean writer,
                                  @Param(value = "gender") String gender);
 
-
-    @Modifying
-    @Query("update RegisteredVisitor u set u.username = :username, u.firstName = :firstName, u.lastName = :lastName , u.emailAddress = :email, u.isWriter = :writer, u.encodedPassword = :password where u.id = :id")
-    void updateVisitorWithPwd(@Param(value = "id") Long id, @Param(value = "username") String username,
-                           @Param(value = "firstName") String firstName, @Param(value = "lastName") String lastName,
-                           @Param(value = "email") String email,
-                           @Param(value = "writer") Boolean writer, @Param(value = "password") String password);
 
     @Modifying
     @Query("update RegisteredVisitor u set u.encodedPassword = :password where u.id = :id")

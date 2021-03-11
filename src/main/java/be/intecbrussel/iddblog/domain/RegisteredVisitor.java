@@ -73,7 +73,6 @@ public class RegisteredVisitor{
 
     private Boolean isWriter;
 
-    @Column(nullable = true)
     @Lob
     private String avatar;
 
@@ -93,7 +92,18 @@ public class RegisteredVisitor{
         if (!emailAddress.equals(that.emailAddress)) return false;
         if (!gender.equals(that.gender)) return false;
         if (!isWriter.equals(that.isWriter)) return false;
-        if (avatar != null && !avatar.equals(that.avatar)) return false;
         return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = username.hashCode();
+        result = 31 * result + firstName.hashCode();
+        result = 31 * result + lastName.hashCode();
+        result = 31 * result + emailAddress.hashCode();
+        result = 31 * result + gender.hashCode();
+        result = 31 * result + isWriter.hashCode();
+        result = 31 * result + avatar.hashCode();
+        return result;
     }
 }
