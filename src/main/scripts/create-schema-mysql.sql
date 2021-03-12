@@ -33,6 +33,7 @@ create table if not exists writerposts
         primary key,
     creation_date datetime     null,
     title         varchar(255) null,
+    intro         longtext     not null,
     content       longtext     null,
     status        varchar(255) null,
     user_id       bigint       null,

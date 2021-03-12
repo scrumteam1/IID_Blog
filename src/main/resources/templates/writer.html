@@ -27,37 +27,65 @@
 </div>
 
 <header>
-    <h1 itemprop="name headline">Writer's bloghome</h1>
-    <div><a class="btn btn-primary float-right" th:href="@{/index}" >Recent first</a></div>
-      <div><a class="btn btn-primary float-right" th:href="@{/index}" >Oldest first</a></div>
+    <h1 style="color: #447EB9">Writer's bloghome</h1>
+
+    <div class="nav-item dropdown float-right">
+        <a style="color: #447EB9;" href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Sort by</a>
+        <div class="dropdown-menu dropdown-menu-right">
+            <a class="dropdown-item" th:href="@{/index}" >Recent first</a>
+            <a class="dropdown-item" th:href="@{/index}" >Oldest first</a>
+            <a class="dropdown-item" th:href="@{/index}" >By Popularity</a>
+        </div>
+    </div>
 
 </header>
 
 <div class="container">
     <div><a class="btn btn-primary float-right" th:href="@{/index}"  >Create new Blogpost</a></div>
+        <ul class="align-items-end " style="  display: flex;  list-style: none">
+            <li>
+            <a th:href="@{/index}" class="btn btn-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M2 13.5V7h1v6.5a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5V7h1v6.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5zm11-11V6l-2-2V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5z"/>
+                    <path fill-rule="evenodd" d="M7.293 1.5a1 1 0 0 1 1.414 0l6.647 6.646a.5.5 0 0 1-.708.708L8 2.207 1.354 8.854a.5.5 0 1 1-.708-.708L7.293 1.5z"/>
+                </svg>
+            </a></li>
+            <li>  /   Authors   /   </li>
+            <li th:text="${username}"></li>
+            <li><img style="width: 40px" th:src="@{'data:image/png;base64,'+${avatar}}"th:if="${avatar!= null}"/></li>
 
-
-    <div class="span8">
-            <h2 th:if = "${posts.isEmpty()}" >No blogposts yet!</h2>
-            <ul th:each="post : ${posts}" class="timeline" >
-                 <li>
+        </ul>
+    <hr>
+    <h2 th:if = "${posts.isEmpty()}" style="color: #447EB9">No blogposts yet!</h2>
+        <ul th:each="post : ${posts}" class="timeline" style="list-style: none" >
+            <li>
                 <p th:text="${post.creationDate}" >Creation Date</p>
-                <h1 th:text="${post.title}">title</h1>
-                <p th:text="${post.content}">Content</p>
-
-                    <div class="more label"><a href="#">Read more</a></div>
-                    <div class="tags">
-                        <span class="btn-info"> <a href="#">energy</a></span> <span class="btn-info"> <a href="#">reality</a></span> <span class="btn-info"><a href="#">world</a></span>
-                    </div>
+                <h1 th:text="${post.title}"style="color: #447EB9">title</h1>
+                <p th:text="${post.intro}">Content</p>
+                <p>Written by: <a href="#" th:text="${username}">username</a></p>
+                <div class="more label" style="margin-bottom: 20px"><a href="#">Read more</a></div>
+                <a th:href="@{/index}" class="btn btn-primary">Edit post</a>
+                <a th:href="@{/index}" class="btn btn-primary">Delete post</a>
+            </li>
                 <div class="clear"></div>
-                <hr>
-                </li>
-              </ul>
-
-</div>
+            <hr>
+        </ul>
 
 </div>
 </body>
+<footer style="margin-bottom: 40px">
+
+    <div class="container">
+        <a href="#" >Previous</a>
+        <a href="#" >1</a>
+        <a href="#" >2</a>
+        <a href="#" >3</a>
+        <a href="#" >4</a>
+        <a href="#" >5</a>
+        <a href="#" >Next</a>
+        <a href="#" class="float-right" >Top of the page</a>
+    </div>
+</footer>
 </html>
 
 

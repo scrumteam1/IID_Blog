@@ -27,6 +27,8 @@ public class WriterPostController  {
             return "redirect:/forbidden-page";
         }
         model.addAttribute("posts", registeredVisitorService.findWriterPostsByUserId(id));
+        model.addAttribute("username",principal.getName());
+        model.addAttribute("avatar", registeredVisitorService.findById(id).getAvatar());
         userContext(model);
         return "writer";
     }

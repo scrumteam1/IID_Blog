@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
 @Entity(name = "WriterPost")
@@ -24,6 +25,11 @@ public class WriterPost {
 
     @Column(name = "title")
     private String title;
+
+    @NotBlank(message = "An introduction is mandatory!")
+    @Column (name = "intro")
+    @Lob
+    private String intro;
 
     @Column(name = "content")
     @Lob

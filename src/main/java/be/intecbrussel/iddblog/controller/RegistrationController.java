@@ -97,7 +97,7 @@ public class RegistrationController implements HandlerExceptionResolver {
         String recipientAddress = visitor.getEmailAddress();
         String subject ="Confirmation of your registration to Intec Blog";
         String confirmationUrl= "http://localhost:8080/registeredvisitor/confirmRegistration?token="+ token;
-        String text = "To confirm your registration, please use the lin below : \n   " + confirmationUrl +  "\n\nKind Regards,\nThe Blog Post Team";
+        String text = "Dear, \n\n To confirm your registration, please use the lin below : \n   " + confirmationUrl +  "\n\nKind Regards,\nThe Blog Post Team";
         emailService.sendSimpleMessage(recipientAddress, subject, text);
 
         return "/email-sent";
