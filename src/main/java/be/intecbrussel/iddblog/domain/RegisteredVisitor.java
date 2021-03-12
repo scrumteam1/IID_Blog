@@ -3,6 +3,10 @@ package be.intecbrussel.iddblog.domain;
 import be.intecbrussel.iddblog.validation.PasswordMatches;
 import be.intecbrussel.iddblog.validation.ValidPassword;
 import lombok.*;
+import org.apache.commons.lang3.builder.DiffBuilder;
+import org.apache.commons.lang3.builder.DiffResult;
+import org.apache.commons.lang3.builder.Diffable;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -10,6 +14,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
+import java.util.Objects;
 
 //Spring security needs a table authorities with properties: username, authority
 //Spring security needs a table users with properties: username, password, enabled
@@ -21,7 +26,7 @@ import java.util.List;
 @AllArgsConstructor
 @PasswordMatches
 @Table(name="users")
-public class RegisteredVisitor {
+public class RegisteredVisitor{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -64,7 +69,7 @@ public class RegisteredVisitor {
     @Transient
     private String oldPassword;
 
-    private String gender = "Unknown";
+    private String gender;
 
     private Boolean isWriter;
 
@@ -74,4 +79,31 @@ public class RegisteredVisitor {
     @Column(name = "enabled")
     private boolean enabled = false;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        RegisteredVisitor that = (RegisteredVisitor) o;
+
+        if (!username.equals(that.username)) return false;
+        if (!firstName.equals(that.firstName)) return false;
+        if (!lastName.equals(that.lastName)) return false;
+        if (!emailAddress.equals(that.emailAddress)) return false;
+        if (!gender.equals(that.gender)) return false;
+        if (!isWriter.equals(that.isWriter)) return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = username.hashCode();
+        result = 31 * result + firstName.hashCode();
+        result = 31 * result + lastName.hashCode();
+        result = 31 * result + emailAddress.hashCode();
+        result = 31 * result + gender.hashCode();
+        result = 31 * result + isWriter.hashCode();
+        result = 31 * result + avatar.hashCode();
+        return result;
+    }
 }

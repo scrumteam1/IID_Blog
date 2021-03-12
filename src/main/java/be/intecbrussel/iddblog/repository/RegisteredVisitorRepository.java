@@ -28,6 +28,7 @@ public interface RegisteredVisitorRepository extends CrudRepository<RegisteredVi
                               @Param(value = "email") String email, @Param(value = "writer") Boolean writer,
                                  @Param(value = "gender") String gender);
 
+
     @Modifying
     @Query("update RegisteredVisitor u set u.encodedPassword = :password where u.id = :id")
     void updateUserPwd(@Param(value = "id") Long id, @Param(value = "password") String password);

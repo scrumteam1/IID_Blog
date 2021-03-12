@@ -1,9 +1,12 @@
 package be.intecbrussel.iddblog.controller;
 
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
+import be.intecbrussel.iddblog.email.EmailService;
 import be.intecbrussel.iddblog.password.RandomPasswordGenerator;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
 import be.intecbrussel.iddblog.validation.error.UserAlreadyExistException;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -13,11 +16,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.validation.Valid;
+import java.io.IOException;
 
 @Controller
 public class UpdateVisitorController {
 
     private final RegisteredVisitorService registeredVisitorService;
+
+    @Autowired
+    private EmailService emailService;
 
     public UpdateVisitorController(RegisteredVisitorService registeredVisitorService) {
         this.registeredVisitorService = registeredVisitorService;
@@ -40,8 +47,10 @@ public class UpdateVisitorController {
     }
 
     @PostMapping("registeredvisitor/edit/{id}")
-    public String UpdateRegisteredVisitor(@PathVariable("id") long id, @ModelAttribute("registeredvisitor") @Valid RegisteredVisitor visitor
-            , BindingResult bindingResult, Model model) {
+    public String updateRegisteredVisitor(@PathVariable("id") long id, @ModelAttribute("registeredvisitor") @Valid RegisteredVisitor visitor,
+                                          BindingResult bindingResult, Model model){
+
+        RegisteredVisitor baseVisitor = registeredVisitorService.findById(visitor.getId());
 
         if (bindingResult.hasErrors()) {
 
@@ -50,6 +59,20 @@ public class UpdateVisitorController {
 
         try {
             registeredVisitorService.updateVisitorWithoutPwd(visitor);
+            String recipientAddress = visitor.getEmailAddress();
+            String subject = "INTEC Blog - Profile update for " + visitor.getUsername();
+            String mailContent = "Your profile changes on INTEC blog were successful. Your profile looks as follows:" +
+                    "\nUsername: " + visitor.getUsername() +
+                    "\nFirst name: " + visitor.getFirstName() +
+                    "\nLast name: " + visitor.getLastName() +
+                    "\nEmail: " + visitor.getEmailAddress() +
+                    "\nGender: " + visitor.getGender() +
+                    "\n\nIf you're not satisfied with the changes, consider going on our website and " +
+                    "subscribe to our premium membership.\n\nThanks dude,\n\nIID Blog team";
+
+            if(!baseVisitor.equals(visitor)){
+                emailService.sendSimpleMessage(recipientAddress, subject, mailContent);
+            }
 
         } catch (UserAlreadyExistException uaeEx) {
 
@@ -60,6 +83,7 @@ public class UpdateVisitorController {
 
         return "redirect:/registeredvisitor/" + id + "/show";
     }
+
 
     @GetMapping("registeredvisitor/update password/{id}")
     public String updatePwdRegisteredVisitor(@PathVariable long id, Model model) {
