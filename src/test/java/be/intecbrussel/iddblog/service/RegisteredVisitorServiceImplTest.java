@@ -53,7 +53,7 @@ class RegisteredVisitorServiceImplTest {
 
 
         visitorService = new RegisteredVisitorServiceImpl(visitorRepository, passwordEncoder, authService,
-                verifTokenRepository,authorityRepository, writerPostRepository);
+                verifTokenRepository, writerPostRepository);
 
 
         visitor = RegisteredVisitor.builder().id(2L).username("akyare")

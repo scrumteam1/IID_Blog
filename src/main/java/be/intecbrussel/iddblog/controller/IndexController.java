@@ -1,8 +1,10 @@
 package be.intecbrussel.iddblog.controller;
 
+import be.intecbrussel.iddblog.domain.Authority;
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
 import be.intecbrussel.iddblog.service.AuthService;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
@@ -80,10 +82,9 @@ public class IndexController {
         if (user != null && !authentication.getName().equals("anonymousUser")) {
             loggedinuser = authentication.getName();
             idUser = user.getId().toString();
-            String authority = authService.findAuthorityByUsername(user.getUsername());
-            isAdmin = authority.equals("ADMIN");
-            isWriter = authority.equals("WRITER");
-            isRegistered = authority.equals("USER");
+            isAdmin = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ADMIN"));
+            isWriter = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("WRITER"));
+            isRegistered = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("USER"));
         }
 
         model.addAttribute("loggedinuser", loggedinuser);

@@ -1,5 +1,6 @@
 package be.intecbrussel.iddblog.controller;
 
+import be.intecbrussel.iddblog.domain.Authority;
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
 import be.intecbrussel.iddblog.domain.VerificationToken;
 import be.intecbrussel.iddblog.email.EmailService;
@@ -50,7 +51,7 @@ public class RegistrationController implements HandlerExceptionResolver {
 
         RegisteredVisitor savedVisitor;
         MultipartFile defaultFile = new MockMultipartFile("intec.jpg", new FileInputStream("src/main/resources/static/pictures/intec.jpg"));
-        String extension = multipartFile.getOriginalFilename().substring(multipartFile.getOriginalFilename().indexOf(".")+1);
+        String extension = multipartFile.getOriginalFilename().substring(multipartFile.getOriginalFilename().indexOf(".") + 1);
 
         if (bindingResult.hasErrors()) {
 
@@ -59,25 +60,29 @@ public class RegistrationController implements HandlerExceptionResolver {
 
         if (extension.equals("png") || extension.equals("jpeg") || extension.equals("jpg")) {
             registeredVisitor.setAvatar(Base64.getEncoder().encodeToString(multipartFile.getBytes()));
-        }
-        else if (extension.isEmpty()){
+        } else if (extension.isEmpty()) {
             registeredVisitor.setAvatar(Base64.getEncoder().encodeToString(defaultFile.getBytes()));
-        }
-        else
-        {
+        } else {
             model.addAttribute("error", "Wrong File extension, please choose png or jpeg file.");
 
             return "registerform";
         }
 
         try {
-            registeredVisitor.setEnabled(false);
+
             savedVisitor = registeredVisitorService.saveVisitor(registeredVisitor);
-            if( registeredVisitor.getIsWriter()) {
-                registeredVisitorService.createAuthority(registeredVisitor,"WRITER");
+
+            Authority authority = new Authority();
+
+            if (registeredVisitor.getIsWriter()) {
+                authority.setAuthority("WRITER");
             } else {
-                registeredVisitorService.createAuthority(registeredVisitor,"USER");
+                authority.setAuthority("USER");
             }
+
+            List<Authority> authorities = new ArrayList<>();
+            authorities.add(authority);
+            registeredVisitor.setAuthority(authorities);
 
         } catch (UserAlreadyExistException uaeEx) {
 
@@ -90,14 +95,14 @@ public class RegistrationController implements HandlerExceptionResolver {
     }
 
     @GetMapping("/registeredvisitor/confirm/{id}")
-    public String confirmRegistration (@PathVariable long id){
+    public String confirmRegistration(@PathVariable long id) {
         RegisteredVisitor visitor = registeredVisitorService.findById(id);
         String token = UUID.randomUUID().toString();
         registeredVisitorService.createVerificationToken(visitor, token);
         String recipientAddress = visitor.getEmailAddress();
-        String subject ="Confirmation of your registration to Intec Blog";
-        String confirmationUrl= "http://localhost:8080/registeredvisitor/confirmRegistration?token="+ token;
-        String text = "Dear, \n\n To confirm your registration, please use the lin below : \n   " + confirmationUrl +  "\n\nKind Regards,\nThe Blog Post Team";
+        String subject = "Confirmation of your registration to Intec Blog";
+        String confirmationUrl = "http://localhost:8080/registeredvisitor/confirmRegistration?token=" + token;
+        String text = "Dear, \n\n To confirm your registration, please use the lin below : \n   " + confirmationUrl + "\n\nKind Regards,\nThe Blog Post Team";
         emailService.sendSimpleMessage(recipientAddress, subject, text);
 
         return "/email-sent";
@@ -117,7 +122,7 @@ public class RegistrationController implements HandlerExceptionResolver {
         if ((verificationToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
             return "/verification-link-failed";
         }
-        registeredVisitorService.updateUserEnabled(visitor,true);
+        registeredVisitorService.updateUserEnabled(visitor, true);
 
         return "redirect:/login";
     }

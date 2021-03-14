@@ -31,8 +31,6 @@ public interface RegisteredVisitorService {
 
     void deleteVisitor(String registeredVisitor);
 
-    void createAuthority(RegisteredVisitor visitor, String authority);
-
     void createVerificationToken(RegisteredVisitor visitor, String token);
 
     VerificationToken getVerificationToken(String VerificationToken);

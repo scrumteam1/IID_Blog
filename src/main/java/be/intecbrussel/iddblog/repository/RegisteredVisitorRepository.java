@@ -13,6 +13,8 @@ import java.util.Optional;
 @Repository
 public interface RegisteredVisitorRepository extends CrudRepository<RegisteredVisitor, Long> {
 
+    RegisteredVisitor save(RegisteredVisitor visitor);
+
     Optional<RegisteredVisitor> findById(Long id);
 
     RegisteredVisitor findByEmailAddress(String email);

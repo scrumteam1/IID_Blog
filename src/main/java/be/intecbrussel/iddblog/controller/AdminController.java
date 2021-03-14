@@ -59,10 +59,9 @@ public class AdminController {
         if (user != null && !authentication.getName().equals("anonymousUser")) {
             loggedinuser = authentication.getName();
             idUser = user.getId().toString();
-            String authority = authService.findAuthorityByUsername(user.getUsername());
-            isAdmin = authority.equals("ADMIN");
-            isWriter = authority.equals("WRITER");
-            isRegistered = authority.equals("USER");
+            isAdmin = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ADMIN"));
+            isWriter = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("WRITER"));
+            isRegistered = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("USER"));
         }
 
         model.addAttribute("loggedinuser", loggedinuser);
