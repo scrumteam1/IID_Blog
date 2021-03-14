@@ -124,30 +124,4 @@ public class UpdateVisitorController {
 
         return "redirect:/index";
     }
-
-    private void userContext(Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        String loggedinuser = "visitor";
-        String idUser = "";
-        boolean isAdmin = false;
-        boolean isWriter = false;
-        boolean isRegistered = false;
-
-        RegisteredVisitor user = registeredVisitorService.findByUsername(authentication.getName());
-
-        if (user != null && !authentication.getName().equals("anonymousUser")) {
-            loggedinuser = authentication.getName();
-            idUser = user.getId().toString();
-            isAdmin =  user.getAuthority().stream().anyMatch(a -> a.getAuthority().equals("ADMIN"));
-            isWriter =  user.getAuthority().stream().anyMatch(a -> a.getAuthority().equals("WRITER"));
-            isRegistered = user.getAuthority().stream().anyMatch(a -> a.getAuthority().equals("USER"));
-        }
-
-        model.addAttribute("loggedinuser", loggedinuser);
-        model.addAttribute("idUser", idUser);
-        model.addAttribute("isAdmin", isAdmin);
-        model.addAttribute("isWriter", isWriter);
-        model.addAttribute("isRegistered", isRegistered);
-    }
 }

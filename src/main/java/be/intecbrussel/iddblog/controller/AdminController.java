@@ -1,5 +1,6 @@
 package be.intecbrussel.iddblog.controller;
 
+import be.intecbrussel.iddblog.domain.Authority;
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
 import be.intecbrussel.iddblog.service.AuthService;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
@@ -59,9 +60,10 @@ public class AdminController {
         if (user != null && !authentication.getName().equals("anonymousUser")) {
             loggedinuser = authentication.getName();
             idUser = user.getId().toString();
-            isAdmin = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ADMIN"));
-            isWriter = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("WRITER"));
-            isRegistered = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("USER"));
+            List<Authority> authorities = authService.findAuthorityByUsername(user.getUsername());
+            isAdmin = authorities.stream().anyMatch(a -> a.getAuthority().equals("ADMIN"));
+            isWriter = authorities.stream().anyMatch(a -> a.getAuthority().equals("WRITER"));
+            isRegistered = authorities.stream().anyMatch(a -> a.getAuthority().equals("USER"));
         }
 
         model.addAttribute("loggedinuser", loggedinuser);

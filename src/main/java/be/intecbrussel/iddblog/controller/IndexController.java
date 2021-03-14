@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 @Controller
 public class IndexController {
@@ -82,9 +83,10 @@ public class IndexController {
         if (user != null && !authentication.getName().equals("anonymousUser")) {
             loggedinuser = authentication.getName();
             idUser = user.getId().toString();
-            isAdmin = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ADMIN"));
-            isWriter = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("WRITER"));
-            isRegistered = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("USER"));
+            List<Authority> authorities = authService.findAuthorityByUsername(user.getUsername());
+            isAdmin = authorities.stream().anyMatch(a -> a.getAuthority().equals("ADMIN"));
+            isWriter = authorities.stream().anyMatch(a -> a.getAuthority().equals("WRITER"));
+            isRegistered = authorities.stream().anyMatch(a -> a.getAuthority().equals("USER"));
         }
 
         model.addAttribute("loggedinuser", loggedinuser);
