@@ -58,7 +58,7 @@ class RegisteredVisitorControllerTest {
 
         mockMvc.perform(get("/registeredvisitor/1/show"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("registeredvisitor/profileview"))
+                .andExpect(view().name("registeredVisitor/profileview"))
                 .andExpect(model().attributeExists("registeredvisitor"));
         verify(visitorService, times(1)).findById(ArgumentMatchers.any());
     }

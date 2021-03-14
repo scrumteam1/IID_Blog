@@ -41,7 +41,7 @@ public class UpdateVisitorController {
 
         model.addAttribute("registeredvisitor", visitor);
 
-        return "registeredvisitor/updateprofile";
+        return "registeredVisitor/updateprofile";
     }
 
     @PostMapping("registeredvisitor/edit/{id}")
@@ -52,7 +52,7 @@ public class UpdateVisitorController {
 
         if (bindingResult.hasErrors()) {
 
-            return "registeredvisitor/updateprofile";
+            return "registeredVisitor/updateprofile";
         }
 
         try {
@@ -76,7 +76,7 @@ public class UpdateVisitorController {
 
             model.addAttribute("message", "An account for that username/email already exists.");
 
-            return "registeredvisitor/updateprofile";
+            return "registeredVisitor/updateprofile";
         }
 
         return "redirect:/registeredvisitor/" + id + "/show";

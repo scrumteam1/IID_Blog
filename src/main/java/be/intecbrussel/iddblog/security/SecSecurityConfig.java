@@ -32,13 +32,10 @@ public class SecSecurityConfig extends WebSecurityConfigurerAdapter {
         security
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/", "/index", "/registeredvisitor/**","/registerform/**","/login",
-                        "registeredvisitor/edit password/**","registerform","/forgetPassword","/reset-pwd/",
-                        "/resetPwdConfirm","/pwd-reset-success","/password/**","/forbidden-page","/error/**",
-                        "/verification-link-failed","/about",
-                        "/webjars/**","/css/**").permitAll()
-                .antMatchers("/adminpage","/admin").access("hasAuthority('ADMIN')")
-                .antMatchers("/writer").access("hasAuthority('WRITER')")
+                .antMatchers("/admin/**").hasAuthority("ADMIN")
+                .antMatchers("/writer/**").hasAuthority("WRITER")
+                .antMatchers("/registeredVisitor/**").hasAnyAuthority("USER","ADMIN","WRITER")
+                .antMatchers("/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()

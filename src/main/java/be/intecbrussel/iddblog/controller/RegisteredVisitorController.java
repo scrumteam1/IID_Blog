@@ -26,7 +26,7 @@ public class RegisteredVisitorController {
     @GetMapping("registeredvisitor/{id}/show")
     public String showById(@PathVariable String id, Model model) {
         model.addAttribute("registeredvisitor", registeredVisitorService.findById(Long.valueOf(id)));
-        return "registeredvisitor/profileview";
+        return "registeredVisitor/profileview";
     }
 
     @GetMapping("/delete/{id}")
