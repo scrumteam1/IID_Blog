@@ -74,6 +74,12 @@ class IndexControllerTest {
     }
 
     @Test
-    void showAbout() {
+    void logOutTest() throws Exception {
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
+
+        mockMvc.perform(get("/logout"))
+                .andExpect(status().is3xxRedirection());
     }
 }

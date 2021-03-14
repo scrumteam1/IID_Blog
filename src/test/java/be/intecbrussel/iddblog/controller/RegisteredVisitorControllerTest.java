@@ -2,9 +2,7 @@ package be.intecbrussel.iddblog.controller;
 
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
-import be.intecbrussel.iddblog.validation.error.UserAlreadyExistException;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
@@ -13,8 +11,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -57,22 +53,12 @@ class RegisteredVisitorControllerTest {
     }
 
     @Test
-    void logOutTest() throws Exception {
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
-        SecurityContextHolder.setContext(securityContext);
-
-        mockMvc.perform(get("/logout"))
-                .andExpect(status().is3xxRedirection());
-    }
-
-    @Test
     void showById() throws Exception {
         when(visitorService.findById(ArgumentMatchers.any())).thenReturn(savedVisitor);
 
         mockMvc.perform(get("/registeredvisitor/1/show"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("profileview"))
+                .andExpect(view().name("registeredvisitor/profileview"))
                 .andExpect(model().attributeExists("registeredvisitor"));
         verify(visitorService, times(1)).findById(ArgumentMatchers.any());
     }

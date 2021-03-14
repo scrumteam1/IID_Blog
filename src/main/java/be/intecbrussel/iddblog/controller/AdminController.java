@@ -1,37 +1,50 @@
 package be.intecbrussel.iddblog.controller;
 
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
+import be.intecbrussel.iddblog.service.AuthService;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import java.security.Principal;
 
-@Slf4j
+import java.util.List;
+
 @Controller
-public class WriterPostController  {
-
+public class AdminController {
     private final RegisteredVisitorService registeredVisitorService;
 
-    public WriterPostController(RegisteredVisitorService registeredVisitorService) {
+    private final AuthService authService;
+
+    public AdminController(RegisteredVisitorService registeredVisitorService, AuthService authService) {
         this.registeredVisitorService = registeredVisitorService;
+        this.authService = authService;
     }
 
-    @GetMapping("/writer/{id}")
-    public String showPostsList (@PathVariable Long id, Model model, Principal principal){
-        if (!principal.getName().equals(registeredVisitorService.findById(id).getUsername())) {
-            return "redirect:/forbidden-page";
-        }
-        model.addAttribute("posts", registeredVisitorService.findWriterPostsByUserId(id));
-        model.addAttribute("username",principal.getName());
-        model.addAttribute("avatar", registeredVisitorService.findById(id).getAvatar());
+    @GetMapping("/admin")
+    public String showAdmin(Model model) {
+
         userContext(model);
-        return "writer/writer";
+
+        List<RegisteredVisitor> users = registeredVisitorService.findAll();
+        model.addAttribute("users", users);
+
+        return "/admin/admin";
     }
+
+
+    @GetMapping("/ban/{id}")
+    public String banMember(@PathVariable String id) {
+
+        RegisteredVisitor visitor = registeredVisitorService.findById(Long.valueOf(id));
+
+        registeredVisitorService.updateUserEnabled(visitor, !visitor.isEnabled());
+
+        return "redirect:/admin";
+    }
+
     private void userContext(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -43,15 +56,13 @@ public class WriterPostController  {
 
         RegisteredVisitor user = registeredVisitorService.findByUsername(authentication.getName());
 
-        if( user!= null && !authentication.getName().equals("anonymousUser")) {
+        if (user != null && !authentication.getName().equals("anonymousUser")) {
             loggedinuser = authentication.getName();
             idUser = user.getId().toString();
-            isAdmin = authentication.getAuthorities().stream()
-                    .anyMatch(a -> a.getAuthority().contains("ADMIN"));
-            isWriter = authentication.getAuthorities().stream()
-                    .anyMatch(a -> a.getAuthority().contains("WRITER"));
-            isRegistered = authentication.getAuthorities().stream()
-                    .anyMatch(a -> a.getAuthority().contains("USER"));
+            String authority = authService.findAuthorityByUsername(user.getUsername());
+            isAdmin = authority.equals("ADMIN");
+            isWriter = authority.equals("WRITER");
+            isRegistered = authority.equals("USER");
         }
 
         model.addAttribute("loggedinuser", loggedinuser);

@@ -90,7 +90,7 @@ public class RegistrationController implements HandlerExceptionResolver {
     }
 
     @GetMapping("/registeredvisitor/confirm/{id}")
-    public String ConfirmRegistration (@PathVariable long id){
+    public String confirmRegistration (@PathVariable long id){
         RegisteredVisitor visitor = registeredVisitorService.findById(id);
         String token = UUID.randomUUID().toString();
         registeredVisitorService.createVerificationToken(visitor, token);

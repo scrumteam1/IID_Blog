@@ -63,7 +63,7 @@ class UpdateVisitorControllerTest {
 
         mockMvc.perform(get("/registeredvisitor/update/1"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("updateprofile"))
+                .andExpect(view().name("registeredvisitor/updateprofile"))
                 .andExpect(model().attributeExists("registeredvisitor"));
 
         verify(visitorService, times(1)).findById(ArgumentMatchers.any());
@@ -107,7 +107,7 @@ class UpdateVisitorControllerTest {
                 .param("confirmPassword","123"))
                 .andExpect(model().errorCount(7))
                 .andExpect(status().isOk())
-                .andExpect(view().name("updateprofile"))
+                .andExpect(view().name("registeredvisitor/updateprofile"))
                .andExpect(model().attributeExists("registeredvisitor"));
 
         verify(visitorService, times(0)).updateVisitorWithoutPwd(ArgumentMatchers.any());
@@ -126,7 +126,7 @@ class UpdateVisitorControllerTest {
                 .param("password","uD45Pj6J*@cH$u")
                 .param("confirmPassword","uD45Pj6J*@cH$u"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("updateprofile"))
+                .andExpect(view().name("registeredvisitor/updateprofile"))
                 .andExpect(model().attributeExists("message"));
 
     }
@@ -144,7 +144,7 @@ class UpdateVisitorControllerTest {
                 .param("password","uD45Pj6J*@cH$u")
                 .param("confirmPassword","uD45Pj6J*@cH$u"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("updateprofile"))
+                .andExpect(view().name("registeredvisitor/updateprofile"))
                 .andExpect(model().attributeExists("message"));
 
     }

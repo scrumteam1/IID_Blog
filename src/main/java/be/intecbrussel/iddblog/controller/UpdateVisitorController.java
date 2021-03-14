@@ -5,7 +5,6 @@ import be.intecbrussel.iddblog.email.EmailService;
 import be.intecbrussel.iddblog.password.RandomPasswordGenerator;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
 import be.intecbrussel.iddblog.validation.error.UserAlreadyExistException;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.validation.Valid;
-import java.io.IOException;
 
 @Controller
 public class UpdateVisitorController {
@@ -43,7 +41,7 @@ public class UpdateVisitorController {
 
         model.addAttribute("registeredvisitor", visitor);
 
-        return "updateprofile";
+        return "registeredvisitor/updateprofile";
     }
 
     @PostMapping("registeredvisitor/edit/{id}")
@@ -54,7 +52,7 @@ public class UpdateVisitorController {
 
         if (bindingResult.hasErrors()) {
 
-            return "updateprofile";
+            return "registeredvisitor/updateprofile";
         }
 
         try {
@@ -78,7 +76,7 @@ public class UpdateVisitorController {
 
             model.addAttribute("message", "An account for that username/email already exists.");
 
-            return "updateprofile";
+            return "registeredvisitor/updateprofile";
         }
 
         return "redirect:/registeredvisitor/" + id + "/show";
@@ -97,7 +95,7 @@ public class UpdateVisitorController {
 
 
     @PostMapping("registeredvisitor/edit password/{id}")
-    public String UpdatePwdRegisteredVisitor(@PathVariable("id") long id, @ModelAttribute("registeredvisitor") @Valid RegisteredVisitor visitor
+    public String updatePwdRegisteredVisitor(@PathVariable("id") long id, @ModelAttribute("registeredvisitor") @Valid RegisteredVisitor visitor
             , BindingResult bindingResult, Model model) {
 
         if (bindingResult.hasErrors()) {
