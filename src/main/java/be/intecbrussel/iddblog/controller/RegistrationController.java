@@ -78,6 +78,7 @@ public class RegistrationController implements HandlerExceptionResolver {
 
         List<Authority> authorities = new ArrayList<>();
         authorities.add(authority);
+
         registeredVisitor.setAuthority(authorities);
 
         try {

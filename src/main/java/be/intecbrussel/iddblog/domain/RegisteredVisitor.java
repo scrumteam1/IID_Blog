@@ -84,7 +84,7 @@ public class RegisteredVisitor{
 
     private String gender;
 
-    private Boolean isWriter;
+    private Boolean isWriter = false;
 
     @Lob
     private String avatar;

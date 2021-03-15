@@ -2,6 +2,7 @@ package be.intecbrussel.iddblog.controller;
 
 import be.intecbrussel.iddblog.domain.Authority;
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
+import be.intecbrussel.iddblog.domain.WriterPost;
 import be.intecbrussel.iddblog.service.AuthService;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
 import be.intecbrussel.iddblog.service.WriterService;
@@ -34,15 +35,16 @@ public class IndexController {
     }
 
     @RequestMapping("/login")
-    public String login(){
+    public String login() {
 
         return "login";
     }
+
     @RequestMapping("/login-error")
-    public String loginError(Model model){
+    public String loginError(Model model) {
         model.addAttribute("loginError", true);
 
-       return "login";
+        return "login";
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
@@ -58,7 +60,8 @@ public class IndexController {
     public String getIndex(Model model) {
 
         userContext(model);
-        model.addAttribute("posts",writerService.findAll());
+
+        model.addAttribute("posts", writerService.findAll());
 
         return "index";
     }

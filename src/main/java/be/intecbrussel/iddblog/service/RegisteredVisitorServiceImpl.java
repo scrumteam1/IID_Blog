@@ -161,8 +161,4 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
     public void updateUserEnabled(RegisteredVisitor visitor, boolean enabled) {
         registeredVisitorRepository.updateUserEnabled(visitor.getId(), enabled);
     }
-    @Override
-    public List<WriterPost> findWriterPostsByUserId(long userId){
-        return writerPostRepository.findWriterPostsByUserId(userId);
-    }
 }
