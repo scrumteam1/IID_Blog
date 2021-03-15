@@ -68,21 +68,21 @@ public class RegistrationController implements HandlerExceptionResolver {
             return "registerform";
         }
 
+        Authority authority = new Authority();
+
+        if (registeredVisitor.getIsWriter()) {
+            authority.setAuthority("WRITER");
+        } else {
+            authority.setAuthority("USER");
+        }
+
+        List<Authority> authorities = new ArrayList<>();
+        authorities.add(authority);
+        registeredVisitor.setAuthority(authorities);
+
         try {
 
             savedVisitor = registeredVisitorService.saveVisitor(registeredVisitor);
-
-            Authority authority = new Authority();
-
-            if (registeredVisitor.getIsWriter()) {
-                authority.setAuthority("WRITER");
-            } else {
-                authority.setAuthority("USER");
-            }
-
-            List<Authority> authorities = new ArrayList<>();
-            authorities.add(authority);
-            registeredVisitor.setAuthority(authorities);
 
         } catch (UserAlreadyExistException uaeEx) {
 
