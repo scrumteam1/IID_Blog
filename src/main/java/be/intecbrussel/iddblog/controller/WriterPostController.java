@@ -35,7 +35,7 @@ public class WriterPostController  {
         if (!principal.getName().equals(registeredVisitorService.findById(id).getUsername())) {
             return "redirect:/forbidden-page";
         }
-        model.addAttribute("posts", writerService.findAll());
+        model.addAttribute("posts", writerService.findWriterPostsByUserId(id));
         model.addAttribute("username",principal.getName());
         model.addAttribute("avatar", registeredVisitorService.findById(id).getAvatar());
         userContext(model);
