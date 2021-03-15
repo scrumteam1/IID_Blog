@@ -33,16 +33,12 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
     private final VerifTokenRepository tokenRepository;
 
 
-    private final WriterPostRepository writerPostRepository;
-
     public RegisteredVisitorServiceImpl(RegisteredVisitorRepository registeredVisitorRepository, PasswordEncoder passwordEncoder,
-                                        AuthService authService, VerifTokenRepository tokenRepository,
-                                        WriterPostRepository writerPostRepository) {
+                                        AuthService authService, VerifTokenRepository tokenRepository) {
         this.registeredVisitorRepository = registeredVisitorRepository;
         this.passwordEncoder = passwordEncoder;
         this.authService = authService;
         this.tokenRepository = tokenRepository;
-        this.writerPostRepository = writerPostRepository;
     }
 
     @Override

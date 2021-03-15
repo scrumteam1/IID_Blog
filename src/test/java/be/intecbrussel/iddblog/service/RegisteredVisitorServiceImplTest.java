@@ -40,20 +40,14 @@ class RegisteredVisitorServiceImplTest {
     @Mock
     VerifTokenRepository verifTokenRepository;
 
-    @Mock
-    WriterPostRepository writerPostRepository;
-
-
     RegisteredVisitor visitor;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-
-
         visitorService = new RegisteredVisitorServiceImpl(visitorRepository, passwordEncoder, authService,
-                verifTokenRepository, writerPostRepository);
+                verifTokenRepository);
 
 
         visitor = RegisteredVisitor.builder().id(2L).username("akyare")
