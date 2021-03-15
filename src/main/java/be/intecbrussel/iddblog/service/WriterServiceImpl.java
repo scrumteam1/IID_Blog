@@ -35,4 +35,9 @@ public class WriterServiceImpl implements WriterService{
         return writerPostRepository.findAll().stream().sorted(Comparator.comparing(WriterPost::getCreationDate))
                             .collect(Collectors.toList());
     }
+    @Override
+    public WriterPost findByTitle(String title){
+        return writerPostRepository.findByTitle(title);
+    }
+
 }

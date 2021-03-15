@@ -11,4 +11,6 @@ public interface WriterService {
     List<WriterPost> findWriterPostsByUserId(long userId);
     List<WriterPost> findAll();
     List<WriterPost> findOrderByCreationDate(Date date);
+    WriterPost findByTitle(String title);
+
 }

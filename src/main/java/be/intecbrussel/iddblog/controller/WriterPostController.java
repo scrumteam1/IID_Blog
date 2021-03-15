@@ -38,6 +38,12 @@ public class WriterPostController  {
         model.addAttribute("avatar", registeredVisitorService.findById(id).getAvatar());
         return "writer";
     }
+    @GetMapping("/writer/{id}/{title}")
+    public String showPost (@PathVariable Long id,@PathVariable String title, Model model){
+        userContext(model);
+        model.addAttribute("post", writerService.findByTitle(title));
+        return "blogpost-view";
+    }
     private void userContext(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 

@@ -12,5 +12,6 @@ public interface WriterPostRepository extends CrudRepository<WriterPost, Long> {
     List<WriterPost> findWriterPostsByUserId(Long userId);
     List<WriterPost> findAll();
     List<WriterPost> findOrderByCreationDate(Date creationDate);
+    WriterPost findByTitle(String title);
 
 }
