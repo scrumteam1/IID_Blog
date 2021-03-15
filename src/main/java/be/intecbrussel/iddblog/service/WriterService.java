@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface WriterService {
 
-
     List<WriterPost> findWriterPostsByUserId(long userId);
     List<WriterPost> findAll();
+    WriterPost save(WriterPost post);
 }

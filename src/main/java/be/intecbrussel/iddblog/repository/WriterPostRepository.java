@@ -8,7 +8,9 @@ import java.util.List;
 
 @Repository
 public interface WriterPostRepository extends CrudRepository<WriterPost, Long> {
+
     List<WriterPost> findWriterPostsByUserId(Long userId);
     List<WriterPost> findAll();
+    WriterPost save(WriterPost post);
 
 }

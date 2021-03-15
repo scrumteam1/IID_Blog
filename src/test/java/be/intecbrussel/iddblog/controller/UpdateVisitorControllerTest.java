@@ -1,5 +1,6 @@
 package be.intecbrussel.iddblog.controller;
 
+import be.intecbrussel.iddblog.domain.Authority;
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
 import be.intecbrussel.iddblog.validation.error.UserAlreadyExistException;
@@ -15,6 +16,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -58,6 +62,9 @@ class UpdateVisitorControllerTest {
     void UpdateVisitorGetForm() throws Exception {
         RegisteredVisitor visitorFound = new RegisteredVisitor();
         visitorFound.setId(1L);
+        List<Authority> authorityList = new ArrayList<>();
+        authorityList.add(Authority.builder().id(2L).authority("ADMIN").build());
+        visitorFound.setAuthority(authorityList);
 
         when(visitorService.findById(ArgumentMatchers.any())).thenReturn(visitorFound);
 

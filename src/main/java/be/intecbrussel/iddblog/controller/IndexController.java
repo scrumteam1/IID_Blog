@@ -2,7 +2,6 @@ package be.intecbrussel.iddblog.controller;
 
 import be.intecbrussel.iddblog.domain.Authority;
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
-import be.intecbrussel.iddblog.domain.WriterPost;
 import be.intecbrussel.iddblog.service.AuthService;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
 import be.intecbrussel.iddblog.service.WriterService;

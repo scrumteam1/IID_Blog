@@ -3,10 +3,6 @@ package be.intecbrussel.iddblog.domain;
 import be.intecbrussel.iddblog.validation.PasswordMatches;
 import be.intecbrussel.iddblog.validation.ValidPassword;
 import lombok.*;
-import org.apache.commons.lang3.builder.DiffBuilder;
-import org.apache.commons.lang3.builder.DiffResult;
-import org.apache.commons.lang3.builder.Diffable;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -17,7 +13,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
-import java.util.Objects;
 
 //Spring security needs a table authorities with properties: username, authority
 //Spring security needs a table users with properties: username, password, enabled
@@ -40,9 +35,6 @@ public class RegisteredVisitor{
     @Size(min = 3, max = 20)
     private String username;
 
-//    @OneToOne(mappedBy = "registeredVisitor")
-//    private Authority authority;
-
     @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     @Fetch(FetchMode.SELECT)
     @JoinTable(
@@ -54,6 +46,9 @@ public class RegisteredVisitor{
 
     @OneToMany(mappedBy = "registeredVisitor",cascade = CascadeType.ALL)
     private List<VerificationToken> verificationToken;
+
+    @OneToMany(mappedBy = "registeredVisitor", fetch=FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<WriterPost> writerPosts;
 
     @NotBlank(message = "first name is mandatory.")
     @Size(min = 1, max = 20)

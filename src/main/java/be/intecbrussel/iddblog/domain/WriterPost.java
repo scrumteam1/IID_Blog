@@ -41,8 +41,9 @@ public class WriterPost {
     @Column(name = "user_id")
     private Long userId;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = "user_id", insertable=false, updatable=false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
     private RegisteredVisitor registeredVisitor;
 
+    private Boolean isEnabled = true;
 }
