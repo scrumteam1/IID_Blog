@@ -20,6 +20,34 @@
     Intec blog
 </div>
 
+
+<div class="container">
+    <h2 th:if = "${posts.isEmpty()}" style="color: #447EB9">No blogposts yet!</h2>
+    <ul th:each="post : ${posts}" class="timeline" style="list-style: none" >
+        <li>
+            <p th:text="${post.creationDate}" >Creation Date</p>
+            <h1 th:text="${post.title}"style="color: #447EB9">title</h1>
+            <p th:text="${post.intro}">Content</p>
+<!--            <p>Written by: <a href="#" th:text="${username}">username</a></p>-->
+            <div class="more label" style="margin-bottom: 20px"><a href="#">Read more</a></div>
+        </li>
+        <div class="clear"></div>
+        <hr>
+    </ul>
+
 </div>
 </body>
+<footer style="margin-bottom: 40px">
+
+    <div class="container">
+        <a href="#" >Previous</a>
+        <a href="#" >1</a>
+        <a href="#" >2</a>
+        <a href="#" >3</a>
+        <a href="#" >4</a>
+        <a href="#" >5</a>
+        <a href="#" >Next</a>
+        <a href="#" class="float-right" >Top of the page</a>
+    </div>
+</footer>
 </html>

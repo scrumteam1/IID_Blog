@@ -2,6 +2,7 @@ package be.intecbrussel.iddblog.controller;
 
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
+import be.intecbrussel.iddblog.service.WriterService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,9 +17,11 @@ import java.security.Principal;
 public class WriterPostController  {
 
     private final RegisteredVisitorService registeredVisitorService;
+    private final WriterService writerService;
 
-    public WriterPostController(RegisteredVisitorService registeredVisitorService) {
+    public WriterPostController(RegisteredVisitorService registeredVisitorService, WriterService writerService) {
         this.registeredVisitorService = registeredVisitorService;
+        this.writerService = writerService;
     }
 
     @GetMapping("/writer/{id}")
@@ -26,7 +29,7 @@ public class WriterPostController  {
         if (!principal.getName().equals(registeredVisitorService.findById(id).getUsername())) {
             return "redirect:/forbidden-page";
         }
-        model.addAttribute("posts", registeredVisitorService.findWriterPostsByUserId(id));
+        model.addAttribute("posts", writerService.findWriterPostsByUserId(id));
         model.addAttribute("username",principal.getName());
         model.addAttribute("avatar", registeredVisitorService.findById(id).getAvatar());
         userContext(model);
