@@ -1,7 +1,10 @@
 package be.intecbrussel.iddblog.service;
 
+import be.intecbrussel.iddblog.domain.Authority;
 import be.intecbrussel.iddblog.repository.AuthRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class AuthServiceImpl implements AuthService{
@@ -13,17 +16,12 @@ public class AuthServiceImpl implements AuthService{
     }
 
     @Override
-    public void deleteAllByRegisteredVisitor(String username) {
-        authRepository.deleteAllByRegisteredVisitor(username);
+    public Authority save(Authority authority) {
+        return authRepository.save(authority);
     }
 
     @Override
-    public void updateAuthority(String username, String authority) {
-        authRepository.updateAuthority(username, authority);
-    }
-
-    @Override
-    public String findAuthorityByUsername(String username) {
+    public List<Authority> findAuthorityByUsername(String username) {
         return authRepository.findAuthorityByUsername(username);
     }
 }

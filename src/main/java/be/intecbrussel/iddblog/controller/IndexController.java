@@ -1,9 +1,10 @@
 package be.intecbrussel.iddblog.controller;
 
+import be.intecbrussel.iddblog.domain.Authority;
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
 import be.intecbrussel.iddblog.service.AuthService;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
-import be.intecbrussel.iddblog.service.WriterService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
@@ -15,19 +16,18 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 @Controller
 public class IndexController {
 
     private final RegisteredVisitorService registeredVisitorService;
-    private final WriterService writerService;
 
     private final AuthService authService;
 
 
-    public IndexController(RegisteredVisitorService registeredVisitorService, WriterService writerService, AuthService authService) {
+    public IndexController(RegisteredVisitorService registeredVisitorService, AuthService authService) {
         this.registeredVisitorService = registeredVisitorService;
-        this.writerService = writerService;
         this.authService = authService;
     }
 
@@ -56,7 +56,7 @@ public class IndexController {
     public String getIndex(Model model) {
 
         userContext(model);
-        model.addAttribute("posts", writerService.findAll());
+
         return "index";
     }
 
@@ -83,10 +83,10 @@ public class IndexController {
         if (user != null && !authentication.getName().equals("anonymousUser")) {
             loggedinuser = authentication.getName();
             idUser = user.getId().toString();
-            String authority = authService.findAuthorityByUsername(user.getUsername());
-            isAdmin = authority.equals("ADMIN");
-            isWriter = authority.equals("WRITER");
-            isRegistered = authority.equals("USER");
+            List<Authority> authorities = authService.findAuthorityByUsername(user.getUsername());
+            isAdmin = authorities.stream().anyMatch(a -> a.getAuthority().equals("ADMIN"));
+            isWriter = authorities.stream().anyMatch(a -> a.getAuthority().equals("WRITER"));
+            isRegistered = authorities.stream().anyMatch(a -> a.getAuthority().equals("USER"));
         }
 
         model.addAttribute("loggedinuser", loggedinuser);

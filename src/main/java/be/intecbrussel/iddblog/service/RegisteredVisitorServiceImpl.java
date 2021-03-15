@@ -15,6 +15,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Slf4j
@@ -30,18 +32,16 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
 
     private final VerifTokenRepository tokenRepository;
 
-    private final AuthRepository authRepository;
 
     private final WriterPostRepository writerPostRepository;
 
     public RegisteredVisitorServiceImpl(RegisteredVisitorRepository registeredVisitorRepository, PasswordEncoder passwordEncoder,
-                                        AuthService authService, VerifTokenRepository tokenRepository, AuthRepository authRepository,
+                                        AuthService authService, VerifTokenRepository tokenRepository,
                                         WriterPostRepository writerPostRepository) {
         this.registeredVisitorRepository = registeredVisitorRepository;
         this.passwordEncoder = passwordEncoder;
         this.authService = authService;
         this.tokenRepository = tokenRepository;
-        this.authRepository = authRepository;
         this.writerPostRepository = writerPostRepository;
     }
 
@@ -101,17 +101,15 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
                 registeredVisitor.getLastName(), registeredVisitor.getEmailAddress(),
                 registeredVisitor.getIsWriter(), registeredVisitor.getGender());
 
+        Authority authority = authService.findAuthorityByUsername(registeredVisitor.getUsername()).get(0);
 
-        String authority = authService.findAuthorityByUsername(registeredVisitor.getUsername());
-
-        if(registeredVisitor.getIsWriter() && !authority.equals("ADMIN")) {
-            authority = "WRITER";
-            authService.updateAuthority(registeredVisitor.getUsername(),authority);
+        if(registeredVisitor.getIsWriter() && !authority.getAuthority().equals("ADMIN")) {
+            authority.setAuthority("WRITER");
         } else if (!authority.equals("ADMIN")) {
-            authority = "USER";
-            authService.updateAuthority(registeredVisitor.getUsername(),authority);
+            authority.setAuthority("USER");
         }
 
+        authService.save(authority);
     }
 
     @Override
@@ -127,7 +125,6 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
     @Override
     @Transactional
     public void deleteVisitor(String username) {
-        authService.deleteAllByRegisteredVisitor(username);
         registeredVisitorRepository.deleteByUsername(username);
     }
 
@@ -147,16 +144,6 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
     private boolean usernameExistsForIdOtherThanCurrentId(final String username, final Long id) {
         int sizeUsers = registeredVisitorRepository.findByUsernameNotEqualToId(username, id).size();
         return  sizeUsers > 0;
-    }
-
-    @Override
-    public void createAuthority(RegisteredVisitor visitor, String authority) {
-        Authority myAuthority = Authority.builder()
-                .registeredVisitor(visitor)
-                .username(visitor.getUsername())
-                .authority(authority)
-                .build();
-        authRepository.save(myAuthority);
     }
 
     @Override

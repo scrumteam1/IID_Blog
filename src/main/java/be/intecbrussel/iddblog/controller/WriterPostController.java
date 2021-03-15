@@ -1,8 +1,9 @@
 package be.intecbrussel.iddblog.controller;
 
+import be.intecbrussel.iddblog.domain.Authority;
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
+import be.intecbrussel.iddblog.service.AuthService;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
-import be.intecbrussel.iddblog.service.WriterService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -11,17 +12,19 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import java.security.Principal;
+import java.util.List;
 
 @Slf4j
 @Controller
 public class WriterPostController  {
 
     private final RegisteredVisitorService registeredVisitorService;
-    private final WriterService writerService;
 
-    public WriterPostController(RegisteredVisitorService registeredVisitorService, WriterService writerService) {
+    private final AuthService authService;
+
+    public WriterPostController(RegisteredVisitorService registeredVisitorService, AuthService authService) {
         this.registeredVisitorService = registeredVisitorService;
-        this.writerService = writerService;
+        this.authService = authService;
     }
 
     @GetMapping("/writer/{id}")
@@ -29,7 +32,7 @@ public class WriterPostController  {
         if (!principal.getName().equals(registeredVisitorService.findById(id).getUsername())) {
             return "redirect:/forbidden-page";
         }
-        model.addAttribute("posts", writerService.findWriterPostsByUserId(id));
+        model.addAttribute("posts", registeredVisitorService.findWriterPostsByUserId(id));
         model.addAttribute("username",principal.getName());
         model.addAttribute("avatar", registeredVisitorService.findById(id).getAvatar());
         userContext(model);
@@ -46,15 +49,13 @@ public class WriterPostController  {
 
         RegisteredVisitor user = registeredVisitorService.findByUsername(authentication.getName());
 
-        if( user!= null && !authentication.getName().equals("anonymousUser")) {
+        if (user != null && !authentication.getName().equals("anonymousUser")) {
             loggedinuser = authentication.getName();
             idUser = user.getId().toString();
-            isAdmin = authentication.getAuthorities().stream()
-                    .anyMatch(a -> a.getAuthority().contains("ADMIN"));
-            isWriter = authentication.getAuthorities().stream()
-                    .anyMatch(a -> a.getAuthority().contains("WRITER"));
-            isRegistered = authentication.getAuthorities().stream()
-                    .anyMatch(a -> a.getAuthority().contains("USER"));
+            List<Authority> authorities = authService.findAuthorityByUsername(user.getUsername());
+            isAdmin = authorities.stream().anyMatch(a -> a.getAuthority().equals("ADMIN"));
+            isWriter = authorities.stream().anyMatch(a -> a.getAuthority().equals("WRITER"));
+            isRegistered = authorities.stream().anyMatch(a -> a.getAuthority().equals("USER"));
         }
 
         model.addAttribute("loggedinuser", loggedinuser);

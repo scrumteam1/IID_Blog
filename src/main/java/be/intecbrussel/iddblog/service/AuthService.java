@@ -1,12 +1,13 @@
 package be.intecbrussel.iddblog.service;
 
+import be.intecbrussel.iddblog.domain.Authority;
 import org.springframework.data.repository.query.Param;
+
+import java.util.List;
 
 public interface AuthService {
 
-    void deleteAllByRegisteredVisitor(String username);
+    Authority save(Authority authority);
 
-    void updateAuthority(String username, String authority);
-
-    String findAuthorityByUsername(String username);
+    List<Authority> findAuthorityByUsername(@Param(value="username") String username);
 }

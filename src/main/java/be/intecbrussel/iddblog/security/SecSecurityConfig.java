@@ -3,6 +3,7 @@ package be.intecbrussel.iddblog.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -16,13 +17,15 @@ import javax.sql.DataSource;
 @EnableWebSecurity
 public class SecSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private DataSource dataSource;
+    private MyUserDetailsService myUserDetailsService;
+
+    public SecSecurityConfig(MyUserDetailsService myUserDetailsService) {
+        this.myUserDetailsService = myUserDetailsService;
+    }
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.jdbcAuthentication()
-                .dataSource(dataSource);
+        auth.authenticationProvider(authenticationProvider());
     }
 
     @Override
@@ -45,6 +48,15 @@ public class SecSecurityConfig extends WebSecurityConfigurerAdapter {
                 .logout()
                 .logoutSuccessUrl("/index");
 
+    }
+
+    @Bean
+    DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+        daoAuthenticationProvider.setPasswordEncoder(encoder());
+        daoAuthenticationProvider.setUserDetailsService(this.myUserDetailsService);
+
+        return daoAuthenticationProvider;
     }
 
     @Bean

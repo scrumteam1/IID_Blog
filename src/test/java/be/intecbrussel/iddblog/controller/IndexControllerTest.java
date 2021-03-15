@@ -1,5 +1,6 @@
 package be.intecbrussel.iddblog.controller;
 
+import be.intecbrussel.iddblog.domain.Authority;
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
 import be.intecbrussel.iddblog.service.AuthService;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
@@ -18,6 +19,11 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -66,7 +72,6 @@ class IndexControllerTest {
         SecurityContextHolder.setContext(securityContext);
         Mockito.when(securityContext.getAuthentication().getName()).thenReturn("test");
         when(visitorService.findByUsername(ArgumentMatchers.any())).thenReturn(savedVisitor);
-        when(authService.findAuthorityByUsername(ArgumentMatchers.any())).thenReturn("ADMIN");
 
         mockMvc.perform(get("/index/"))
                 .andExpect(status().isOk())
