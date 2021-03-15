@@ -6,10 +6,6 @@ import be.intecbrussel.iddblog.password.RandomPasswordGenerator;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
 import be.intecbrussel.iddblog.validation.error.UserAlreadyExistException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -26,14 +22,12 @@ public class UpdateVisitorController {
 
     private final RegisteredVisitorService registeredVisitorService;
 
-    @Autowired
-    PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private EmailService emailService;
+    private final EmailService emailService;
 
-    public UpdateVisitorController(RegisteredVisitorService registeredVisitorService) {
+    public UpdateVisitorController(RegisteredVisitorService registeredVisitorService, EmailService emailService) {
         this.registeredVisitorService = registeredVisitorService;
+        this.emailService = emailService;
     }
 
     @GetMapping("registeredvisitor/update/{id}")
@@ -46,6 +40,10 @@ public class UpdateVisitorController {
         final String DEFAULT_PWD = passGen.generatePassayPassword();
         visitor.setPassword(DEFAULT_PWD);
         visitor.setConfirmPassword(DEFAULT_PWD);
+
+        // if admin then cannot change his authority to USER or WRITER
+        boolean isAdmin = visitor.getAuthority().stream().anyMatch(a -> a.getAuthority().equals("ADMIN"));
+        model.addAttribute("isAdmin", isAdmin);
 
         model.addAttribute("registeredvisitor", visitor);
 

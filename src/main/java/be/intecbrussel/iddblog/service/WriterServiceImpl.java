@@ -31,13 +31,16 @@ public class WriterServiceImpl implements WriterService{
     }
 
     @Override
+    public WriterPost save(WriterPost post) {
+        return writerPostRepository.save(post);
+    }
+    @Override
     public List<WriterPost> findOrderByCreationDate(Date date) {
         return writerPostRepository.findAll().stream().sorted(Comparator.comparing(WriterPost::getCreationDate))
-                            .collect(Collectors.toList());
+                .collect(Collectors.toList());
     }
     @Override
     public WriterPost findByTitle(String title){
         return writerPostRepository.findByTitle(title);
     }
-
 }

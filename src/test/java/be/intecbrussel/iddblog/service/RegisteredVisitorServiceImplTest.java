@@ -32,7 +32,7 @@ class RegisteredVisitorServiceImplTest {
     RegisteredVisitorRepository visitorRepository;
 
     @Mock
-    AuthRepository authorityRepository;
+    WriterService writerService;
 
     @Mock
     AuthService authService;
@@ -47,7 +47,7 @@ class RegisteredVisitorServiceImplTest {
         MockitoAnnotations.openMocks(this);
 
         visitorService = new RegisteredVisitorServiceImpl(visitorRepository, passwordEncoder, authService,
-                verifTokenRepository);
+                verifTokenRepository, writerService);
 
 
         visitor = RegisteredVisitor.builder().id(2L).username("akyare")

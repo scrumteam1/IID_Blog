@@ -1,8 +1,6 @@
 package be.intecbrussel.iddblog.repository;
 
 import be.intecbrussel.iddblog.domain.Authority;
-import be.intecbrussel.iddblog.domain.RegisteredVisitor;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;

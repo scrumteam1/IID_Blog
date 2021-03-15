@@ -4,10 +4,8 @@ import be.intecbrussel.iddblog.domain.Authority;
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
 import be.intecbrussel.iddblog.domain.VerificationToken;
 import be.intecbrussel.iddblog.domain.WriterPost;
-import be.intecbrussel.iddblog.repository.AuthRepository;
 import be.intecbrussel.iddblog.repository.RegisteredVisitorRepository;
 import be.intecbrussel.iddblog.repository.VerifTokenRepository;
-import be.intecbrussel.iddblog.repository.WriterPostRepository;
 import be.intecbrussel.iddblog.validation.error.UserAlreadyExistException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -15,8 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Slf4j
@@ -32,13 +28,15 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
 
     private final VerifTokenRepository tokenRepository;
 
+    private final WriterService writerService;
 
-    public RegisteredVisitorServiceImpl(RegisteredVisitorRepository registeredVisitorRepository, PasswordEncoder passwordEncoder,
-                                        AuthService authService, VerifTokenRepository tokenRepository) {
+
+    public RegisteredVisitorServiceImpl(RegisteredVisitorRepository registeredVisitorRepository, PasswordEncoder passwordEncoder, AuthService authService, VerifTokenRepository tokenRepository, WriterService writerService) {
         this.registeredVisitorRepository = registeredVisitorRepository;
         this.passwordEncoder = passwordEncoder;
         this.authService = authService;
         this.tokenRepository = tokenRepository;
+        this.writerService = writerService;
     }
 
     @Override
@@ -63,7 +61,7 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
 
     @Override
     public RegisteredVisitor findById(Long id) {
-        return registeredVisitorRepository.findById(id).get();
+        return registeredVisitorRepository.findById(id).orElse(null);
     }
 
     @Override
@@ -97,15 +95,37 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
                 registeredVisitor.getLastName(), registeredVisitor.getEmailAddress(),
                 registeredVisitor.getIsWriter(), registeredVisitor.getGender());
 
-        Authority authority = authService.findAuthorityByUsername(registeredVisitor.getUsername()).get(0);
+        RegisteredVisitor udpatedVisitor = registeredVisitorRepository.findById(registeredVisitor.getId()).get();
+
+        Authority authority = authService.findAuthorityByUsername(udpatedVisitor.getUsername()).get(0);
 
         if(registeredVisitor.getIsWriter() && !authority.getAuthority().equals("ADMIN")) {
             authority.setAuthority("WRITER");
-        } else if (!authority.equals("ADMIN")) {
+        } else if (!authority.getAuthority().equals("ADMIN")) {
             authority.setAuthority("USER");
         }
 
         authService.save(authority);
+
+        List<WriterPost> posts = writerService.findWriterPostsByUserId(udpatedVisitor.getId());
+        posts.forEach(p -> log.warn("post: " + p.getTitle()));
+
+        // if admin then will not have posts and posts.size will zero
+        if(registeredVisitor.getIsWriter() && posts.size()>0) {
+            posts.forEach(p -> {
+                p.setIsEnabled(true);
+                p.setRegisteredVisitor(udpatedVisitor);
+                writerService.save(p);
+            });
+
+        } else if(!registeredVisitor.getIsWriter() && posts.size()>0) {
+            posts.forEach(p -> {
+                p.setIsEnabled(false);
+                p.setRegisteredVisitor(udpatedVisitor);
+                writerService.save(p);
+            });
+        }
+
     }
 
     @Override
