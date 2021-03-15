@@ -4,7 +4,7 @@ import be.intecbrussel.iddblog.domain.Authority;
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
 import be.intecbrussel.iddblog.service.AuthService;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
-import lombok.extern.slf4j.Slf4j;
+import be.intecbrussel.iddblog.service.WriterService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
@@ -25,10 +25,12 @@ public class IndexController {
 
     private final AuthService authService;
 
+    private final WriterService writerService;
 
-    public IndexController(RegisteredVisitorService registeredVisitorService, AuthService authService) {
+    public IndexController(RegisteredVisitorService registeredVisitorService, AuthService authService, WriterService writerService) {
         this.registeredVisitorService = registeredVisitorService;
         this.authService = authService;
+        this.writerService = writerService;
     }
 
     @RequestMapping("/login")
@@ -56,6 +58,7 @@ public class IndexController {
     public String getIndex(Model model) {
 
         userContext(model);
+        model.addAttribute("posts",writerService.findAll());
 
         return "index";
     }
