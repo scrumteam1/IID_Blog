@@ -4,6 +4,7 @@ import be.intecbrussel.iddblog.domain.Authority;
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
 import be.intecbrussel.iddblog.service.AuthService;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
+import be.intecbrussel.iddblog.service.WriterService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,6 +39,9 @@ class IndexControllerTest {
 
     @Mock
     AuthService authService;
+
+    @Mock
+    WriterService writerService;
 
     @InjectMocks
     IndexController visitorController;
