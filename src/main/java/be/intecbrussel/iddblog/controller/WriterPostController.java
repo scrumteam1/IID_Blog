@@ -31,15 +31,12 @@ public class WriterPostController  {
     }
 
     @GetMapping("/writer/{id}")
-    public String showPostsList (@PathVariable Long id, Model model, Principal principal){
-        if (!principal.getName().equals(registeredVisitorService.findById(id).getUsername())) {
-            return "redirect:/forbidden-page";
-        }
-        model.addAttribute("posts", writerService.findWriterPostsByUserId(id));
-        model.addAttribute("username",principal.getName());
-        model.addAttribute("avatar", registeredVisitorService.findById(id).getAvatar());
+    public String showPostsList (@PathVariable Long id, Model model){
         userContext(model);
-        return "writer/writer";
+        model.addAttribute("posts", writerService.findWriterPostsByUserId(id));
+        model.addAttribute("username",registeredVisitorService.findById(id).getUsername());
+        model.addAttribute("avatar", registeredVisitorService.findById(id).getAvatar());
+        return "writer";
     }
     private void userContext(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

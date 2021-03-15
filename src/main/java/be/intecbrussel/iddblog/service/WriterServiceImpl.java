@@ -6,7 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+
 @Slf4j
 @Service
 @Transactional
@@ -26,5 +28,11 @@ public class WriterServiceImpl implements WriterService{
     @Override
     public List<WriterPost> findAll() {
         return writerPostRepository.findAll();
+    }
+
+    @Override
+    public List<WriterPost> findOrderByCreationDate(Date date) {
+        return writerPostRepository.findAll().stream().sorted(Comparator.comparing(WriterPost::getCreationDate))
+                            .collect(Collectors.toList());
     }
 }

@@ -41,7 +41,7 @@
 </header>
 
 <div class="container">
-    <div><a class="btn btn-primary float-right" th:href="@{/index}"  >Create new Blogpost</a></div>
+    <div><a class="btn btn-primary float-right" th:href="@{/index}" th:if="${loggedinuser.equals(username)}">Create new Blogpost</a></div>
         <ul class="align-items-end " style="  display: flex;  list-style: none">
             <li>
             <a th:href="@{/index}" class="btn btn-primary">
@@ -64,8 +64,8 @@
                 <p th:text="${post.intro}">Content</p>
                 <p>Written by: <a href="#" th:text="${username}">username</a></p>
                 <div class="more label" style="margin-bottom: 20px"><a href="#">Read more</a></div>
-                <a th:href="@{/index}" class="btn btn-primary">Edit post</a>
-                <a th:href="@{/index}" class="btn btn-primary">Delete post</a>
+                <a th:href="@{/index}" class="btn btn-primary" th:if="${loggedinuser.equals(username)}">Edit post</a>
+                <a th:href="@{/index}" class="btn btn-primary"th:if="${loggedinuser.equals(username)}">Delete post</a>
             </li>
                 <div class="clear"></div>
             <hr>
