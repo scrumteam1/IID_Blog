@@ -82,7 +82,7 @@ public class RegisteredVisitor{
     @Transient
     private String oldPassword;
 
-    private String gender;
+    private String gender = "Unknown";
 
     private Boolean isWriter = false;
 
