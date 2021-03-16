@@ -61,9 +61,9 @@
             <li>
                 <p th:text="${post.creationDate}" >Creation Date</p>
                 <h1 th:text="${post.title}"style="color: #447EB9">title</h1>
-                <p th:text="${post.intro}">Content</p>
-                <p>Written by: <a href="#" th:text="${username}">username</a></p>
-                <div class="more label" style="margin-bottom: 20px"><a href="#">Read more</a></div>
+                <p th:text="${post.intro}" style="text-align: justify">Content</p>
+                <p>Written by: <a th:href="@{'/writer/'+${post.userId}}" th:text="${post.getRegisteredVisitor().username}">username</a></p>
+                <div class="more label" style="margin-bottom: 20px"><a th:href="@{'/writer/'+${post.userId} +'/'+ ${post.title}}">Read more</a></div>
                 <a th:href="@{/index}" class="btn btn-primary" th:if="${loggedinuser.equals(username)}">Edit post</a>
                 <a th:href="@{/index}" class="btn btn-primary"th:if="${loggedinuser.equals(username)}">Delete post</a>
             </li>

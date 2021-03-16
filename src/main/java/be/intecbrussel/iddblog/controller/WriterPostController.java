@@ -12,7 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import java.security.Principal;
+
 import java.util.List;
 
 @Slf4j
@@ -36,13 +36,13 @@ public class WriterPostController  {
         model.addAttribute("posts", writerService.findWriterPostsByUserId(id));
         model.addAttribute("username",registeredVisitorService.findById(id).getUsername());
         model.addAttribute("avatar", registeredVisitorService.findById(id).getAvatar());
-        return "writer";
+        return "/writer/writer";
     }
     @GetMapping("/writer/{id}/{title}")
     public String showPost (@PathVariable Long id,@PathVariable String title, Model model){
         userContext(model);
         model.addAttribute("post", writerService.findByTitle(title));
-        return "blogpost-view";
+        return "/writer/blogpost-view";
     }
     private void userContext(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
