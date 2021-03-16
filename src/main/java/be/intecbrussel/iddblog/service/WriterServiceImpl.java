@@ -29,7 +29,6 @@ public class WriterServiceImpl implements WriterService{
     public List<WriterPost> findAll() {
         return writerPostRepository.findAll();
     }
-
     @Override
     public WriterPost save(WriterPost post) {
         return writerPostRepository.save(post);

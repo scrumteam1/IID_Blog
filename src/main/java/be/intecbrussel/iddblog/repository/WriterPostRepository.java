@@ -15,5 +15,4 @@ public interface WriterPostRepository extends CrudRepository<WriterPost, Long> {
     WriterPost save(WriterPost post);
     List<WriterPost> findOrderByCreationDate(Date creationDate);
     WriterPost findByTitle(String title);
-
 }
