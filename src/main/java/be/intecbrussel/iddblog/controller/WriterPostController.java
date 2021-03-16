@@ -2,6 +2,8 @@ package be.intecbrussel.iddblog.controller;
 
 import be.intecbrussel.iddblog.domain.Authority;
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
+import be.intecbrussel.iddblog.domain.WriterPost;
+import be.intecbrussel.iddblog.repository.WriterPostRepository;
 import be.intecbrussel.iddblog.service.AuthService;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
 import be.intecbrussel.iddblog.service.WriterService;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+
 import java.security.Principal;
 import java.util.List;
 
@@ -24,7 +27,8 @@ public class WriterPostController  {
     private final AuthService authService;
     private final WriterService writerService;
 
-    public WriterPostController(RegisteredVisitorService registeredVisitorService, AuthService authService, WriterService writerService) {
+
+    public WriterPostController(RegisteredVisitorService registeredVisitorService, AuthService authService, WriterService writerService, WriterPostRepository writerPostRepository) {
         this.registeredVisitorService = registeredVisitorService;
         this.authService = authService;
         this.writerService = writerService;
@@ -66,5 +70,13 @@ public class WriterPostController  {
         model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("isWriter", isWriter);
         model.addAttribute("isRegistered", isRegistered);
+    }
+
+    @GetMapping("/deletepost/{id}")
+    public String deleteWriterPost(WriterPost writerPost) {
+        long id = writerPost.getId();
+        writerService.deleteById(id);
+
+        return "redirect:/index";
     }
 }

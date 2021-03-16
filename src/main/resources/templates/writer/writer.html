@@ -65,7 +65,7 @@
                 <p>Written by: <a href="#" th:text="${username}">username</a></p>
                 <div class="more label" style="margin-bottom: 20px"><a href="#">Read more</a></div>
                 <a th:href="@{/index}" class="btn btn-primary">Edit post</a>
-                <a th:href="@{/index}" class="btn btn-primary">Delete post</a>
+                <a th:href="@{'/deletepost/' + ${post.id}}" class="btn btn-primary">Delete post</a>
             </li>
                 <div class="clear"></div>
             <hr>

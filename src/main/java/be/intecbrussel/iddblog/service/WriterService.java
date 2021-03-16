@@ -9,4 +9,5 @@ public interface WriterService {
 
     List<WriterPost> findWriterPostsByUserId(long userId);
     List<WriterPost> findAll();
+    void deleteById(Long writerPostId);
 }

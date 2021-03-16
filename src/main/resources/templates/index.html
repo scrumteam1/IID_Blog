@@ -27,8 +27,8 @@
         <li>
             <p th:text="${post.creationDate}" >Creation Date</p>
             <h1 th:text="${post.title}"style="color: #447EB9">title</h1>
+            <p>Written by <a href="#" th:text="${post.registeredVisitor.getUsername()}">username</a></p>
             <p th:text="${post.intro}">Content</p>
-<!--            <p>Written by: <a href="#" th:text="${username}">username</a></p>-->
             <div class="more label" style="margin-bottom: 20px"><a href="#">Read more</a></div>
         </li>
         <div class="clear"></div>

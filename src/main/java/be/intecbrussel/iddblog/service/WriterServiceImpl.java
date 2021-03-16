@@ -27,4 +27,9 @@ public class WriterServiceImpl implements WriterService{
     public List<WriterPost> findAll() {
         return writerPostRepository.findAll();
     }
+
+    @Override
+    public void deleteById(Long writerPostId) {
+        writerPostRepository.deleteById(writerPostId);
+    }
 }
