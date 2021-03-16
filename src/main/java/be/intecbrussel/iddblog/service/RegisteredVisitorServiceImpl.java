@@ -75,7 +75,10 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
     }
 
     @Override
-    public List<RegisteredVisitor> findAll() {
+    public List<RegisteredVisitor> findAll(String keyword) {
+        if(keyword != null) {
+            return registeredVisitorRepository.findAll(keyword);
+        }
         return registeredVisitorRepository.findAll();
     }
 

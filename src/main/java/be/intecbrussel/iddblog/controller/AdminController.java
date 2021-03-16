@@ -4,6 +4,7 @@ import be.intecbrussel.iddblog.domain.Authority;
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
 import be.intecbrussel.iddblog.service.AuthService;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
+import org.springframework.data.repository.query.Param;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -25,12 +26,13 @@ public class AdminController {
     }
 
     @GetMapping("/admin")
-    public String showAdmin(Model model) {
+    public String showAdmin(Model model, @Param("keyword") String keyword) {
 
         userContext(model);
 
-        List<RegisteredVisitor> users = registeredVisitorService.findAll();
+        List<RegisteredVisitor> users = registeredVisitorService.findAll(keyword);
         model.addAttribute("users", users);
+        model.addAttribute("keyword", keyword);
 
         return "/admin/admin";
     }

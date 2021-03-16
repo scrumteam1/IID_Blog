@@ -1,6 +1,7 @@
 package be.intecbrussel.iddblog.repository;
 
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -11,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface RegisteredVisitorRepository extends CrudRepository<RegisteredVisitor, Long> {
+public interface RegisteredVisitorRepository extends JpaRepository<RegisteredVisitor, Long> {
 
     RegisteredVisitor save(RegisteredVisitor visitor);
 
@@ -22,6 +23,12 @@ public interface RegisteredVisitorRepository extends CrudRepository<RegisteredVi
     RegisteredVisitor findByUsername(String username);
 
     List<RegisteredVisitor> findAll();
+
+    @Query("select u from RegisteredVisitor u where u.username like %?1%" +
+            " or u.emailAddress like %?1%" +
+            " or u.firstName like %?1%" +
+            " or u.lastName like %?1%")
+    List<RegisteredVisitor> findAll(String keyword);
 
     @Modifying
     @Query("update RegisteredVisitor u set u.username = :username, u.firstName = :firstName, u.lastName = :lastName , " +

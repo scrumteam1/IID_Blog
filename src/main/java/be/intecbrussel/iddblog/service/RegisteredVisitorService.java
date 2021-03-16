@@ -17,7 +17,7 @@ public interface RegisteredVisitorService {
 
     RegisteredVisitor findByEmailAddress(String email);
 
-    List<RegisteredVisitor> findAll();
+    List<RegisteredVisitor> findAll(String keyword);
 
     void updateVisitorWithoutPwd( RegisteredVisitor registeredVisitor);
 
