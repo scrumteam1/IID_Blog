@@ -27,8 +27,8 @@
             <p th:text="${post.creationDate}" >Creation Date</p>
             <h1 th:text="${post.title}"style="color: #447EB9">title</h1>
             <p>Written by: <a th:href="@{'/writer/'+${post.userId}}" th:text="${post.getRegisteredVisitor().username}">username</a></p>
-            <p th:text="${post.intro}">Introduction</p>
-            <p th:text="${post.content}">Content</p>
+            <p th:text="${post.intro}"style="text-align: justify">Introduction</p>
+            <p th:text="${post.content}"style="text-align: justify">Content</p>
         </li>
         <div class="clear"></div>
         <hr>
