@@ -12,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
@@ -24,6 +25,9 @@ import static org.mockito.Mockito.*;
 class RegisteredVisitorServiceImplTest {
 
     RegisteredVisitorServiceImpl visitorService;
+
+    @Mock
+    NamedParameterJdbcTemplate jdbcTemplate;
 
     @Mock
     PasswordEncoder passwordEncoder;
@@ -46,8 +50,8 @@ class RegisteredVisitorServiceImplTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        visitorService = new RegisteredVisitorServiceImpl(visitorRepository, passwordEncoder, authService,
-                verifTokenRepository, writerService);
+        visitorService = new RegisteredVisitorServiceImpl(jdbcTemplate,visitorRepository,passwordEncoder,authService,
+                verifTokenRepository,writerService);
 
 
         visitor = RegisteredVisitor.builder().id(2L).username("akyare")

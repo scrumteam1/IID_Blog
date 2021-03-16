@@ -12,5 +12,4 @@ public class IddblogApplication {
         SpringApplication.run(IddblogApplication.class, args);
     }
 
-
 }

@@ -9,6 +9,9 @@ import be.intecbrussel.iddblog.repository.VerifTokenRepository;
 import be.intecbrussel.iddblog.validation.error.UserAlreadyExistException;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +22,8 @@ import java.util.List;
 @Service
 @Transactional
 public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
+
+    private final NamedParameterJdbcTemplate jdbcTemplate;
 
     private final RegisteredVisitorRepository registeredVisitorRepository;
 
@@ -31,7 +36,11 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
     private final WriterService writerService;
 
 
-    public RegisteredVisitorServiceImpl(RegisteredVisitorRepository registeredVisitorRepository, PasswordEncoder passwordEncoder, AuthService authService, VerifTokenRepository tokenRepository, WriterService writerService) {
+    public RegisteredVisitorServiceImpl(NamedParameterJdbcTemplate jdbcTemplate, RegisteredVisitorRepository registeredVisitorRepository,
+                                        PasswordEncoder passwordEncoder, AuthService authService, VerifTokenRepository tokenRepository,
+                                        WriterService writerService) {
+
+        this.jdbcTemplate = jdbcTemplate;
         this.registeredVisitorRepository = registeredVisitorRepository;
         this.passwordEncoder = passwordEncoder;
         this.authService = authService;
@@ -77,7 +86,17 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
     @Override
     public List<RegisteredVisitor> findAll(String keyword) {
         if(keyword != null) {
-            return registeredVisitorRepository.findAll(keyword);
+
+            String sql = "select * from users where " +
+                    "concat(id, username, email_address, first_name, last_name)" +
+                    " like :keyword";
+
+            MapSqlParameterSource params = new MapSqlParameterSource();
+            params.addValue("keyword","%" + keyword + "%");
+
+            List<RegisteredVisitor> users = jdbcTemplate.query(sql, params ,new BeanPropertyRowMapper(RegisteredVisitor.class));
+
+            return users;
         }
         return registeredVisitorRepository.findAll();
     }
