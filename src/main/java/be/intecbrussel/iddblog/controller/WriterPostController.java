@@ -34,7 +34,7 @@ public class WriterPostController  {
     public String showPostsList (@PathVariable Long id, Model model){
         userContext(model);
         model.addAttribute("posts", writerService.findWriterPostsByUserId(id));
-        model.addAttribute("username",registeredVisitorService.findById(id).getUsername());
+        model.addAttribute("user",registeredVisitorService.findById(id));
         model.addAttribute("avatar", registeredVisitorService.findById(id).getAvatar());
         return "/writer/writer";
     }

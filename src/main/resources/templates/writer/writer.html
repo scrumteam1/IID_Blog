@@ -41,7 +41,7 @@
 </header>
 
 <div class="container">
-    <div><a class="btn btn-primary float-right" th:href="@{/index}" th:if="${loggedinuser.equals(username)}">Create new Blogpost</a></div>
+    <div><a class="btn btn-primary float-right" th:href="@{/index}" th:if="${loggedinuser.equals(user.username)&&user.isWriter}">Create new Blogpost</a></div>
         <ul class="align-items-end " style="  display: flex;  list-style: none">
             <li>
             <a th:href="@{/index}" class="btn btn-primary">
@@ -51,7 +51,7 @@
                 </svg>
             </a></li>
             <li>  /   Authors   /   </li>
-            <li th:text="${username}"></li>
+            <li th:text="${user.username}"></li>
             <li><img style="width: 40px" th:src="@{'data:image/png;base64,'+${avatar}}"th:if="${avatar!= null}"/></li>
 
         </ul>
@@ -64,8 +64,8 @@
                 <p th:text="${post.intro}" style="text-align: justify">Content</p>
                 <p>Written by: <a th:href="@{'/writer/'+${post.userId}}" th:text="${post.getRegisteredVisitor().username}">username</a></p>
                 <div class="more label" style="margin-bottom: 20px"><a th:href="@{'/writer/'+${post.userId} +'/'+ ${post.title}}">Read more</a></div>
-                <a th:href="@{/index}" class="btn btn-primary" th:if="${loggedinuser.equals(username)}">Edit post</a>
-                <a th:href="@{/index}" class="btn btn-primary"th:if="${loggedinuser.equals(username)}">Delete post</a>
+                <a th:href="@{/index}" class="btn btn-primary" th:if="${loggedinuser.equals(user.username)&& user.isWriter}">Edit post</a>
+                <a th:href="@{/index}" class="btn btn-primary"th:if="${loggedinuser.equals(user.username)&& user.isWriter}">Delete post</a>
             </li>
                 <div class="clear"></div>
             <hr>
