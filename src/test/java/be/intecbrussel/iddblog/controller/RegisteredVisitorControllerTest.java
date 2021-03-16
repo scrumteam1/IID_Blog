@@ -1,5 +1,6 @@
 package be.intecbrussel.iddblog.controller;
 
+import be.intecbrussel.iddblog.domain.Authority;
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +17,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -54,6 +57,10 @@ class RegisteredVisitorControllerTest {
 
     @Test
     void showById() throws Exception {
+        List<Authority> authorities = new ArrayList<>();
+        authorities.add(Authority.builder().id(2L).authority("ADMIN").build());
+        savedVisitor.setAuthority(authorities);
+
         when(visitorService.findById(ArgumentMatchers.any())).thenReturn(savedVisitor);
 
         mockMvc.perform(get("/registeredvisitor/1/show"))

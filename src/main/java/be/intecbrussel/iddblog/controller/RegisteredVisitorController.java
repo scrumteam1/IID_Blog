@@ -25,7 +25,15 @@ public class RegisteredVisitorController {
 
     @GetMapping("registeredvisitor/{id}/show")
     public String showById(@PathVariable String id, Model model) {
-        model.addAttribute("registeredvisitor", registeredVisitorService.findById(Long.valueOf(id)));
+
+        RegisteredVisitor registeredVisitor = registeredVisitorService.findById(Long.valueOf(id));
+
+        // if admin then cannot delete his profile
+        boolean isAdmin = registeredVisitor.getAuthority().stream().anyMatch(a -> a.getAuthority().equals("ADMIN"));
+        model.addAttribute("isAdmin", isAdmin);
+
+        model.addAttribute("registeredvisitor", registeredVisitor);
+
         return "registeredVisitor/profileview";
     }
 

@@ -11,8 +11,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import javax.sql.DataSource;
-
 @Configuration
 @EnableWebSecurity
 public class SecSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -36,9 +34,9 @@ public class SecSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/admin/**").hasAuthority("ADMIN")
-                .antMatchers("/writer/**").hasAuthority("WRITER")
                 .antMatchers("/registeredVisitor/**").hasAnyAuthority("USER","ADMIN","WRITER")
                 .antMatchers("/**").permitAll()
+                .antMatchers("/writer/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
