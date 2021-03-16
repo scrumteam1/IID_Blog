@@ -24,10 +24,9 @@ public interface RegisteredVisitorRepository extends JpaRepository<RegisteredVis
 
     List<RegisteredVisitor> findAll();
 
-    @Query("select u from RegisteredVisitor u where u.username like %?1%" +
-            " or u.emailAddress like %?1%" +
-            " or u.firstName like %?1%" +
-            " or u.lastName like %?1%")
+    @Query("select u from RegisteredVisitor u where " +
+            "concat(u.id, u.username, u.emailAddress, u.firstName, u.lastName)" +
+            " like %?1%")
     List<RegisteredVisitor> findAll(String keyword);
 
     @Modifying
