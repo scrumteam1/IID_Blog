@@ -1,10 +1,8 @@
 package be.intecbrussel.iddblog.service;
 
-import be.intecbrussel.iddblog.repository.AuthRepository;
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
 import be.intecbrussel.iddblog.repository.RegisteredVisitorRepository;
 import be.intecbrussel.iddblog.repository.VerifTokenRepository;
-import be.intecbrussel.iddblog.repository.WriterPostRepository;
 import be.intecbrussel.iddblog.validation.error.UserAlreadyExistException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,7 +10,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
@@ -25,9 +22,6 @@ import static org.mockito.Mockito.*;
 class RegisteredVisitorServiceImplTest {
 
     RegisteredVisitorServiceImpl visitorService;
-
-    @Mock
-    NamedParameterJdbcTemplate jdbcTemplate;
 
     @Mock
     PasswordEncoder passwordEncoder;
@@ -50,7 +44,7 @@ class RegisteredVisitorServiceImplTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        visitorService = new RegisteredVisitorServiceImpl(jdbcTemplate,visitorRepository,passwordEncoder,authService,
+        visitorService = new RegisteredVisitorServiceImpl(visitorRepository,passwordEncoder,authService,
                 verifTokenRepository,writerService);
 
 

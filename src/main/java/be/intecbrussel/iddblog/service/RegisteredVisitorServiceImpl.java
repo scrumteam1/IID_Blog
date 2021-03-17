@@ -13,9 +13,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,8 +23,6 @@ import java.util.List;
 @Service
 @Transactional
 public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
-
-    private final NamedParameterJdbcTemplate jdbcTemplate;
 
     private final RegisteredVisitorRepository registeredVisitorRepository;
 
@@ -40,11 +35,10 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
     private final WriterService writerService;
 
 
-    public RegisteredVisitorServiceImpl(NamedParameterJdbcTemplate jdbcTemplate, RegisteredVisitorRepository registeredVisitorRepository,
+    public RegisteredVisitorServiceImpl(RegisteredVisitorRepository registeredVisitorRepository,
                                         PasswordEncoder passwordEncoder, AuthService authService, VerifTokenRepository tokenRepository,
                                         WriterService writerService) {
 
-        this.jdbcTemplate = jdbcTemplate;
         this.registeredVisitorRepository = registeredVisitorRepository;
         this.passwordEncoder = passwordEncoder;
         this.authService = authService;

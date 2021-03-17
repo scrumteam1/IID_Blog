@@ -3,8 +3,6 @@ package be.intecbrussel.iddblog.service;
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
 import be.intecbrussel.iddblog.domain.WriterPost;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.query.Param;
 
 import java.util.Date;
 import java.util.List;

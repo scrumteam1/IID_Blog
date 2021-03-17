@@ -5,9 +5,6 @@ import be.intecbrussel.iddblog.domain.VerificationToken;
 import org.springframework.data.domain.Page;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
-
-
 public interface RegisteredVisitorService {
 
     RegisteredVisitor saveVisitor(RegisteredVisitor registeredVisitor);

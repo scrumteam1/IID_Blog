@@ -16,6 +16,10 @@
         $(document).ready(function(){
             $(".active").removeClass("active");
             $("#admin").addClass("active");
+
+            if($("#admin").hasClass("active")) {
+                $("#searchAdmin").attr("action","/admin");
+            }
         });
     </script>
 

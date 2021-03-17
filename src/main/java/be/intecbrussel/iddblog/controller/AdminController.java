@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class AdminController {
     }
 
     @GetMapping("/admin")
-    public String showAdmin(Model model,@Param("keyword") String keyword) {
+    public String showAdmin(Model model, @RequestParam(name = "keyword", defaultValue = "") String keyword) {
 
         return listAdminByPage(model,keyword ,1, "username", "asc");
     }

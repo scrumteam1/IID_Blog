@@ -16,6 +16,15 @@
         $(document).ready(function(){
             $(".active").removeClass("active");
             $("#writer").addClass("active");
+
+            if(window.location.href.includes('/writer/')) {
+                let writerId = [[${user.id}]];
+                $("#searchHeader").attr("action","/writer/" + writerId);
+                $("#searchAdmin").attr("action","/writer/" + writerId);
+                $("#searchLoggedin").attr("action","/writer/" + writerId);
+                $("#searchWriter").attr("action","/writer/" + writerId);
+            }
+
         });
     </script>
 
@@ -97,6 +106,8 @@
         <span th:unless="${currentPage < totalPages}">Last</span>
         &nbsp;&nbsp;
     </div>
+
+
 
 </div>
 </body>

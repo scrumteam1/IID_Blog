@@ -18,7 +18,7 @@ public interface WriterPostRepository extends JpaRepository<WriterPost, Long> {
     List<WriterPost> findWriterPostsByRegisteredVisitor(RegisteredVisitor visitor);
 
     @Query("select p from WriterPost p where " +
-            "concat(p.title)" +
+            "p.title" +
             " like %:keyword% and p.registeredVisitor = :visitor")
     Page<WriterPost> findWriterPostsByRegisteredVisitor(@Param("visitor") RegisteredVisitor visitor, @Param("keyword") String keyword, Pageable pageable);
 

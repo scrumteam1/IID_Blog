@@ -15,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -33,11 +34,7 @@ public class WriterPostController {
     }
 
     @GetMapping("/writer/{id}")
-    public String showPostsList(@PathVariable Long id, Model model ,@Param("keyword") String keyword) {
-        //userContext(model);
-//        model.addAttribute("posts", writerService.findWriterPostsByRegisteredVisitor(registeredVisitorService.findById(id)));
-//        model.addAttribute("user", registeredVisitorService.findById(id));
-//        model.addAttribute("avatar", registeredVisitorService.findById(id).getAvatar());
+    public String showPostsList(@PathVariable Long id, Model model , @RequestParam(name = "keyword", defaultValue = "") String keyword) {
 
         return showPostsByPage(id, model, keyword ,1, "creationDate", "desc");
     }
@@ -73,7 +70,7 @@ public class WriterPostController {
     }
 
     @GetMapping("/writer/{id}/{title}")
-    public String showPost(@PathVariable Long id, @PathVariable String title, Model model) {
+    public String showPost(@PathVariable String title, Model model) {
         userContext(model);
         model.addAttribute("post", writerService.findByTitle(title));
         return "/writer/blogpost-view";
