@@ -2,6 +2,7 @@ package be.intecbrussel.iddblog.controller;
 
 import be.intecbrussel.iddblog.domain.Authority;
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
+import be.intecbrussel.iddblog.domain.WriterPost;
 import be.intecbrussel.iddblog.service.AuthService;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
 import be.intecbrussel.iddblog.service.WriterService;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -57,10 +60,12 @@ public class IndexController {
 
     @GetMapping({"/", "/index"})
     public String getIndex(Model model) {
-
         userContext(model);
-
-        model.addAttribute("posts", writerService.findAll());
+        List<WriterPost> writerPostList = writerService.findOrderByCreationDate(Calendar.getInstance().getTime());
+        if (writerPostList.size() >6) {
+            model.addAttribute("posts", writerPostList.subList(0, 6));
+        }
+        else model.addAttribute("posts", writerPostList);
 
         return "index";
     }

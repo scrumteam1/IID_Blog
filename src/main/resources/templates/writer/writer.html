@@ -41,7 +41,7 @@
 </header>
 
 <div class="container">
-    <div><a class="btn btn-primary float-right" th:href="@{/index}"  >Create new Blogpost</a></div>
+    <div><a class="btn btn-primary float-right" th:href="@{/index}" th:if="${loggedinuser.equals(user.username)&&user.isWriter}">Create new Blogpost</a></div>
         <ul class="align-items-end " style="  display: flex;  list-style: none">
             <li>
             <a th:href="@{/index}" class="btn btn-primary">
@@ -51,7 +51,7 @@
                 </svg>
             </a></li>
             <li>  /   Authors   /   </li>
-            <li th:text="${username}"></li>
+            <li th:text="${user.username}"></li>
             <li><img style="width: 40px" th:src="@{'data:image/png;base64,'+${avatar}}"th:if="${avatar!= null}"/></li>
 
         </ul>
@@ -61,11 +61,11 @@
             <li>
                 <p th:text="${post.creationDate}" >Creation Date</p>
                 <h1 th:text="${post.title}"style="color: #447EB9">title</h1>
-                <p th:text="${post.intro}">Content</p>
-                <p>Written by: <a href="#" th:text="${username}">username</a></p>
-                <div class="more label" style="margin-bottom: 20px"><a href="#">Read more</a></div>
-                <a th:href="@{/index}" class="btn btn-primary">Edit post</a>
-                <a th:href="@{/index}" class="btn btn-primary">Delete post</a>
+                <p th:text="${post.intro}" style="text-align: justify">Content</p>
+                <p>Written by: <a th:href="@{'/writer/'+${post.userId}}" th:text="${post.getRegisteredVisitor().username}">username</a></p>
+                <div class="more label" style="margin-bottom: 20px"><a th:href="@{'/writer/'+${post.userId} +'/'+ ${post.title}}">Read more</a></div>
+                <a th:href="@{/index}" class="btn btn-primary" th:if="${loggedinuser.equals(user.username)&& user.isWriter}">Edit post</a>
+                <a th:href="@{'/deletepost/' + ${post.id}}" class="btn btn-primary"th:if="${loggedinuser.equals(user.username)&& user.isWriter}">Delete post</a>
             </li>
                 <div class="clear"></div>
             <hr>

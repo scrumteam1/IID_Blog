@@ -2,6 +2,7 @@ package be.intecbrussel.iddblog.controller;
 
 import be.intecbrussel.iddblog.domain.Authority;
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
+import be.intecbrussel.iddblog.domain.WriterPost;
 import be.intecbrussel.iddblog.service.AuthService;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
 import be.intecbrussel.iddblog.service.WriterService;
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import java.security.Principal;
+
 import java.util.List;
 
 @Slf4j
@@ -31,15 +32,18 @@ public class WriterPostController  {
     }
 
     @GetMapping("/writer/{id}")
-    public String showPostsList (@PathVariable Long id, Model model, Principal principal){
-        if (!principal.getName().equals(registeredVisitorService.findById(id).getUsername())) {
-            return "redirect:/forbidden-page";
-        }
-        model.addAttribute("posts", writerService.findWriterPostsByUserId(id));
-        model.addAttribute("username",principal.getName());
-        model.addAttribute("avatar", registeredVisitorService.findById(id).getAvatar());
+    public String showPostsList (@PathVariable Long id, Model model){
         userContext(model);
-        return "writer/writer";
+        model.addAttribute("posts", writerService.findWriterPostsByUserId(id));
+        model.addAttribute("user",registeredVisitorService.findById(id));
+        model.addAttribute("avatar", registeredVisitorService.findById(id).getAvatar());
+        return "/writer/writer";
+    }
+    @GetMapping("/writer/{id}/{title}")
+    public String showPost (@PathVariable Long id,@PathVariable String title, Model model){
+        userContext(model);
+        model.addAttribute("post", writerService.findByTitle(title));
+        return "/writer/blogpost-view";
     }
     private void userContext(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -66,5 +70,13 @@ public class WriterPostController  {
         model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("isWriter", isWriter);
         model.addAttribute("isRegistered", isRegistered);
+    }
+
+    @GetMapping("/deletepost/{id}")
+    public String deleteWriterPost(WriterPost writerPost) {
+        long id = writerPost.getId();
+        writerService.deleteById(id);
+
+        return "redirect:/index";
     }
 }
