@@ -38,11 +38,8 @@ public class WriterPost {
     @Column (name = "status")
     private String status;
 
-    @Column(name = "user_id")
-    private Long userId;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    @JoinColumn(name = "user_id")
     private RegisteredVisitor registeredVisitor;
 
     private Boolean isEnabled = true;

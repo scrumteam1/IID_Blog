@@ -99,7 +99,6 @@
                 <a th:if="${currentPage < totalPages}" th:href="@{'/admin/page/' + ${totalPages} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + '&keyword=' + ${keyword} }">Last</a>
                 <span th:unless="${currentPage < totalPages}">Last</span>
                 &nbsp;&nbsp;
-
             </div>
 
         </div>

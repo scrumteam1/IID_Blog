@@ -1,8 +1,14 @@
 package be.intecbrussel.iddblog.service;
 
+import be.intecbrussel.iddblog.domain.RegisteredVisitor;
 import be.intecbrussel.iddblog.domain.WriterPost;
 import be.intecbrussel.iddblog.repository.WriterPostRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,8 +27,20 @@ public class WriterServiceImpl implements WriterService{
     }
 
     @Override
-    public List<WriterPost> findWriterPostsByUserId(long userId){
-        return writerPostRepository.findWriterPostsByUserId(userId);
+    public List<WriterPost> findWriterPostsByRegisteredVisitor(RegisteredVisitor visitor){
+        return writerPostRepository.findWriterPostsByRegisteredVisitor(visitor);
+    }
+
+    public Page<WriterPost> findWriterPostsByRegisteredVisitor(RegisteredVisitor visitor, String keyword, int pageNumber, String sortField, String sortDir) {
+        Sort sort = Sort.by(sortField);
+        sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
+
+        Pageable pageable = PageRequest.of(pageNumber - 1 ,2, sort);
+
+        if(keyword != null) {
+            return writerPostRepository.findWriterPostsByRegisteredVisitor(visitor,keyword, pageable);
+        }
+        return writerPostRepository.findWriterPostsByRegisteredVisitor(visitor,pageable);
     }
 
     @Override

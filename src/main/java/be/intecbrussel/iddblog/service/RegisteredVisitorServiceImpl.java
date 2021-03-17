@@ -128,7 +128,7 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
 
         authService.save(authority);
 
-        List<WriterPost> posts = writerService.findWriterPostsByUserId(udpatedVisitor.getId());
+        List<WriterPost> posts = writerService.findWriterPostsByRegisteredVisitor(udpatedVisitor);
         posts.forEach(p -> log.warn("post: " + p.getTitle()));
 
         // if admin then will not have posts and posts.size will zero

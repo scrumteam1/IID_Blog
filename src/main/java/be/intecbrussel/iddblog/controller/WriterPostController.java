@@ -6,19 +6,20 @@ import be.intecbrussel.iddblog.domain.WriterPost;
 import be.intecbrussel.iddblog.service.AuthService;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
 import be.intecbrussel.iddblog.service.WriterService;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.repository.query.Param;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 
-@Slf4j
 @Controller
-public class WriterPostController  {
+public class WriterPostController {
 
     private final RegisteredVisitorService registeredVisitorService;
 
@@ -32,19 +33,52 @@ public class WriterPostController  {
     }
 
     @GetMapping("/writer/{id}")
-    public String showPostsList (@PathVariable Long id, Model model){
+    public String showPostsList(@PathVariable Long id, Model model ,@Param("keyword") String keyword) {
+        //userContext(model);
+//        model.addAttribute("posts", writerService.findWriterPostsByRegisteredVisitor(registeredVisitorService.findById(id)));
+//        model.addAttribute("user", registeredVisitorService.findById(id));
+//        model.addAttribute("avatar", registeredVisitorService.findById(id).getAvatar());
+
+        return showPostsByPage(id, model, keyword ,1, "creationDate", "desc");
+    }
+
+    @RequestMapping("/writer/{id}/page/{pageNumber}")
+    public String showPostsByPage(@PathVariable Long id,Model model, @Param("keyword") String keyword,
+                                  @PathVariable(name = "pageNumber") int currentPage,
+                                  @Param("sortField") String sortField,
+                                  @Param("sortDir") String sortDir) {
+
         userContext(model);
-        model.addAttribute("posts", writerService.findWriterPostsByUserId(id));
-        model.addAttribute("user",registeredVisitorService.findById(id));
-        model.addAttribute("avatar", registeredVisitorService.findById(id).getAvatar());
+
+        RegisteredVisitor visitor = registeredVisitorService.findById(id);
+
+        Page<WriterPost> page = writerService.findWriterPostsByRegisteredVisitor(visitor, keyword, currentPage,sortField, sortDir);
+        List<WriterPost> posts = page.getContent();
+        int totalItems = page.getNumberOfElements();
+        int totalPages = page.getTotalPages();
+
+        model.addAttribute("posts", posts);
+        model.addAttribute("avatar", visitor.getAvatar());
+        model.addAttribute("user", visitor);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("totalItems", totalItems);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("sortDir", sortDir);
+        String reverseSortDir = sortDir.equals("asc") ? "desc" : "asc";
+        model.addAttribute("reverseSortDir", reverseSortDir);
+
         return "/writer/writer";
     }
+
     @GetMapping("/writer/{id}/{title}")
-    public String showPost (@PathVariable Long id,@PathVariable String title, Model model){
+    public String showPost(@PathVariable Long id, @PathVariable String title, Model model) {
         userContext(model);
         model.addAttribute("post", writerService.findByTitle(title));
         return "/writer/blogpost-view";
     }
+
     private void userContext(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
