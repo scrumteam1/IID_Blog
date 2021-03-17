@@ -3,19 +3,41 @@
     <meta charset="UTF-8">
     <title>Email sent</title>
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"
-          th:href="@{/webjars/bootstrap/3.3.7-1/css/bootstrap.min.css}">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+
+    <script>
+        $(window).load(function(){
+                  $("#myModal").modal('show');
+            setInterval(function(){
+                window.location = "/index";
+            },5000)
+
+        });
+    </script>
 </head>
 <body>
 
-<div class="col-md-offset-1">
-    <h1> An email is sent to your email address.</h1>
-    <span style="font-size: large">If you do not receive it, please check your spam.</span>
-</div>
-<div class="col-sm col-md-offset-3">
-    <p><a th:href="@{'/index'}" class="btn btn-primary">Go Home</a></p>
-</div>
+<div class="container">
+    <div class="modal fade" id="myModal" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" style="color: #447EB9">Email Sent</h3>
+                </div>
+                <div class="modal-body">
+                    <p>An email is sent to your email address!</p>
+                    <p>If you do not receive it, please check your spam</p>
+                </div>
+                <div class="modal-footer">
+                    <h6>you will be redirect to the home page after 5 seconds</h6>
+                </div>
+            </div>
 
+        </div>
+    </div>
+</div>
 </body>
 </html>
