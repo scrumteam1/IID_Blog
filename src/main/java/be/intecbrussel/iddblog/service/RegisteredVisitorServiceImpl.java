@@ -9,6 +9,10 @@ import be.intecbrussel.iddblog.repository.VerifTokenRepository;
 import be.intecbrussel.iddblog.validation.error.UserAlreadyExistException;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -84,11 +88,16 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
     }
 
     @Override
-    public List<RegisteredVisitor> findAll(String keyword) {
+    public Page<RegisteredVisitor> findAll(String keyword, int pageNumber, String sortField, String sortDir) {
+
+        Sort sort = Sort.by(sortField);
+        sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
+        Pageable pageable = PageRequest.of(pageNumber - 1 ,5, sort);
+
         if(keyword != null) {
-            return registeredVisitorRepository.findAll(keyword);
+            return registeredVisitorRepository.findAll(keyword, pageable);
         }
-        return registeredVisitorRepository.findAll();
+        return registeredVisitorRepository.findAll(pageable);
     }
 
     @Override

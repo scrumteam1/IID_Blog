@@ -2,6 +2,7 @@ package be.intecbrussel.iddblog.service;
 
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
 import be.intecbrussel.iddblog.domain.VerificationToken;
+import org.springframework.data.domain.Page;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
@@ -17,7 +18,7 @@ public interface RegisteredVisitorService {
 
     RegisteredVisitor findByEmailAddress(String email);
 
-    List<RegisteredVisitor> findAll(String keyword);
+    Page<RegisteredVisitor> findAll(String keyword, int pageNumber, String sortField, String sortDir);
 
     void updateVisitorWithoutPwd( RegisteredVisitor registeredVisitor);
 

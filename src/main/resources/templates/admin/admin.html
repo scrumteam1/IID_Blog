@@ -35,13 +35,27 @@
                 <table class="table table-striped table-responsive-md">
                     <thead>
                     <tr>
-                        <th>Id</th>
-                        <th>Username</th>
-                        <th>Firstname</th>
-                        <th>Lastname</th>
-                        <th>Email</th>
-                        <th>Gender</th>
-                        <th>Enabled</th>
+                        <th>
+                            <a th:href="@{'/admin/page/' + ${currentPage} + '?sortField=id&sortDir=' + ${reverseSortDir} + '&keyword=' + ${keyword} }">Id</a>
+                        </th>
+                        <th>
+                            <a th:href="@{'/admin/page/' + ${currentPage} + '?sortField=username&sortDir=' + ${reverseSortDir} + '&keyword=' + ${keyword} }">Username</a>
+                        </th>
+                        <th>
+                            <a th:href="@{'/admin/page/' + ${currentPage} + '?sortField=firstName&sortDir=' + ${reverseSortDir} + '&keyword=' + ${keyword} }">Firstname</a>
+                        </th>
+                        <th>
+                            <a th:href="@{'/admin/page/' + ${currentPage} + '?sortField=lastName&sortDir=' + ${reverseSortDir} + '&keyword=' + ${keyword} }">Lastname</a>
+                        </th>
+                        <th>
+                            <a th:href="@{'/admin/page/' + ${currentPage} + '?sortField=emailAddress&sortDir=' + ${reverseSortDir} + '&keyword=' + ${keyword} }">Email</a>
+                        </th>
+                        <th>
+                            <a th:href="@{'/admin/page/' + ${currentPage} + '?sortField=gender&sortDir=' + ${reverseSortDir} + '&keyword=' + ${keyword} }">Gender</a>
+                        </th>
+                        <th>
+                            <a th:href="@{'/admin/page/' + ${currentPage} + '?sortField=enabled&sortDir=' + ${reverseSortDir} + '&keyword=' + ${keyword} }">Enabled</a>
+                        </th>
                         <th>Ban/Unban</th>
                     </tr>
                     </thead>
@@ -59,6 +73,35 @@
                     </tbody>
                 </table>
             </div>
+
+            <div>
+                Total Items: [[${totalItems}]] - Page [[${currentPage}]] of [[${totalPages}]]
+                &nbsp;- &nbsp;
+
+                <a th:if="${currentPage > 1}" th:href="@{'/admin/page/1?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + '&keyword=' + ${keyword} }">First</a>
+                <span th:unless="${currentPage > 1}">First</span>
+                &nbsp;&nbsp;
+
+                <a th:if="${currentPage > 1}" th:href="@{'/admin/page/' + ${currentPage - 1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + '&keyword=' + ${keyword} }">Previous</a>
+                <span th:unless="${currentPage > 1}">Previous</span>
+                &nbsp;&nbsp;
+
+                <span th:each="i: ${#numbers.sequence(1, totalPages)}">
+                    <a th:if="${i != currentPage}" th:href="@{'/admin/page/' + ${i} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + '&keyword=' + ${keyword} } ">[[${i}]]</a>
+                    <span th:unless="${i != currentPage}">[[${i}]]</span>
+                    &nbsp;&nbsp;
+                </span>
+
+                <a th:if="${currentPage < totalPages}" th:href="@{'/admin/page/' + ${currentPage + 1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + '&keyword=' + ${keyword} }">Next</a>
+                <span th:unless="${currentPage < totalPages}">Next</span>
+                &nbsp;&nbsp;
+
+                <a th:if="${currentPage < totalPages}" th:href="@{'/admin/page/' + ${totalPages} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + '&keyword=' + ${keyword} }">Last</a>
+                <span th:unless="${currentPage < totalPages}">Last</span>
+                &nbsp;&nbsp;
+
+            </div>
+
         </div>
     </div>
 </div>

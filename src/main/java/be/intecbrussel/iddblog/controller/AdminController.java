@@ -4,6 +4,7 @@ import be.intecbrussel.iddblog.domain.Authority;
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
 import be.intecbrussel.iddblog.service.AuthService;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
+import org.springframework.data.domain.Page;
 import org.springframework.data.repository.query.Param;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 
@@ -26,13 +28,34 @@ public class AdminController {
     }
 
     @GetMapping("/admin")
-    public String showAdmin(Model model, @Param("keyword") String keyword) {
+    public String showAdmin(Model model,@Param("keyword") String keyword) {
+
+        return listAdminByPage(model,keyword ,1, "username", "asc");
+    }
+
+    @RequestMapping("/admin/page/{pageNumber}")
+    public String listAdminByPage(Model model, @Param("keyword") String keyword,
+                                  @PathVariable(name = "pageNumber") int currentPage,
+                                  @Param("sortField") String sortField,
+                                  @Param("sortDir") String sortDir) {
 
         userContext(model);
 
-        List<RegisteredVisitor> users = registeredVisitorService.findAll(keyword);
+        Page<RegisteredVisitor> page = registeredVisitorService.findAll(keyword, currentPage,sortField, sortDir);
+        List<RegisteredVisitor> users = page.getContent();
+        int totalItems = page.getNumberOfElements();
+        int totalPages = page.getTotalPages();
+
         model.addAttribute("users", users);
         model.addAttribute("keyword", keyword);
+        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("totalItems", totalItems);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("sortDir", sortDir);
+        String reverseSortDir = sortDir.equals("asc") ? "desc" : "asc";
+        model.addAttribute("reverseSortDir", reverseSortDir);
+
 
         return "/admin/admin";
     }
