@@ -24,6 +24,12 @@ public interface RegisteredVisitorRepository extends JpaRepository<RegisteredVis
 
     List<RegisteredVisitor> findAll();
 
+
+    @Query("select u from RegisteredVisitor u where " +
+            "concat(u.id, u.username, u.emailAddress, u.firstName, u.lastName)" +
+            " like %:keyword%")
+    List<RegisteredVisitor> findAll(@Param("keyword") String keyword);
+
     @Modifying
     @Query("update RegisteredVisitor u set u.username = :username, u.firstName = :firstName, u.lastName = :lastName , " +
             "u.emailAddress = :email, u.isWriter = :writer, u.gender = :gender where u.id = :id")

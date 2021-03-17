@@ -86,17 +86,7 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
     @Override
     public List<RegisteredVisitor> findAll(String keyword) {
         if(keyword != null) {
-
-            String sql = "select * from users where " +
-                    "concat(id, username, email_address, first_name, last_name)" +
-                    " like :keyword";
-
-            MapSqlParameterSource params = new MapSqlParameterSource();
-            params.addValue("keyword","%" + keyword + "%");
-
-            List<RegisteredVisitor> users = jdbcTemplate.query(sql, params ,new BeanPropertyRowMapper(RegisteredVisitor.class));
-
-            return users;
+            return registeredVisitorRepository.findAll(keyword);
         }
         return registeredVisitorRepository.findAll();
     }
