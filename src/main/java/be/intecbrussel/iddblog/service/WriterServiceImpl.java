@@ -44,10 +44,7 @@ public class WriterServiceImpl implements WriterService{
         return writerPostRepository.findWriterPostsByRegisteredVisitor(visitor,pageable);
     }
 
-    @Override
-    public List<WriterPost> findAll() {
-        return writerPostRepository.findAll();
-    }
+
     @Override
     public WriterPost save(WriterPost post) {
         return writerPostRepository.save(post);

@@ -1,6 +1,5 @@
 package be.intecbrussel.iddblog.repository;
 
-import be.intecbrussel.iddblog.domain.Authority;
 import be.intecbrussel.iddblog.domain.Tag;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;

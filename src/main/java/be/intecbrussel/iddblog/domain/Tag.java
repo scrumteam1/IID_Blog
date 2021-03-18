@@ -1,21 +1,19 @@
 package be.intecbrussel.iddblog.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity(name = "Tag")
 @Table(name = "tags")
 @DynamicUpdate
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -27,9 +25,24 @@ public class Tag {
 
     @ManyToMany(fetch = FetchType.EAGER,mappedBy = "tags")
     @Fetch(FetchMode.SELECT)
-    private List<WriterPost> posts;
+    private Set<WriterPost> posts = new HashSet<>();
 
     @Enumerated(EnumType.STRING)
     private Tagname tag ;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Tag tag1 = (Tag) o;
+
+        return tag == tag1.tag;
+    }
+
+    @Override
+    public int hashCode() {
+        return tag != null ? tag.hashCode() : 0;
+    }
 }
 

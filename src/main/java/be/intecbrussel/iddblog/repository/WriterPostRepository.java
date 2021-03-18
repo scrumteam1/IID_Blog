@@ -23,16 +23,16 @@ public interface WriterPostRepository extends JpaRepository<WriterPost, Long> {
 //            " like %:keyword% and p.registeredVisitor = :visitor")
 //    Page<WriterPost> findWriterPostsByRegisteredVisitor(@Param("visitor") RegisteredVisitor visitor, @Param("keyword") String keyword, Pageable pageable);
 
-    @Query(value = "select p.* from writerposts p " +
-            "left join users u on u.id = p.user_id " +
-            "left join writerposts_tags wt on p.id = wt.post_id " +
-            "left join tags t on t.id = wt.tag_id " +
+    @Query(value = "select distinct p.* from `writerposts` p " +
+            "left join `users` u on u.id = p.user_id " +
+            "left join `writerposts_tags` wt on p.id = wt.post_id " +
+            "left join `tags` t on t.id = wt.tag_id " +
             "where concat(p.title,t.tag) like %:keyword% "+
             "and u.id = :visitor",
             nativeQuery = true)
     Page<WriterPost> findWriterPostsByRegisteredVisitor(@Param("visitor") RegisteredVisitor visitor, @Param("keyword") String keyword, Pageable pageable);
 
-    @Query(value = "select * from writerposts p left join users u on u.id = p.user_id where u.id = :visitor",
+    @Query(value = "select p.* from `writerposts` p left join `users` u on u.id = p.user_id where u.id = :visitor",
             nativeQuery = true)
     Page<WriterPost> findWriterPostsByRegisteredVisitor(@Param("visitor") RegisteredVisitor visitor, Pageable pageable);
 

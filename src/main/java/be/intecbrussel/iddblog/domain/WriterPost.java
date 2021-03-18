@@ -1,20 +1,18 @@
 package be.intecbrussel.iddblog.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Entity(name = "WriterPost")
 @Table(name = "writerposts")
-@Data
+@Getter
+@Setter
 @DynamicUpdate
 @NoArgsConstructor
 @AllArgsConstructor
@@ -54,5 +52,5 @@ public class WriterPost {
             joinColumns = {@JoinColumn(name="POST_ID", referencedColumnName = "ID")},
             inverseJoinColumns = {@JoinColumn(name="TAG_ID", referencedColumnName = "ID")}
     )
-    private List<Tag> tags;
+    private Set<Tag> tags = new HashSet<>();
 }

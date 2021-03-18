@@ -6,7 +6,6 @@ import org.springframework.data.domain.Page;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 public interface WriterService {
 
@@ -15,7 +14,6 @@ public interface WriterService {
 
     Page<WriterPost> findWriterPostsByRegisteredVisitor(RegisteredVisitor visitor,String keyword, int pageNumber, String sortField, String sortDir);
 
-    List<WriterPost> findAll();
     WriterPost save(WriterPost post);
     List<WriterPost> findOrderByCreationDate(Date date);
     WriterPost findByTitle(String title);
