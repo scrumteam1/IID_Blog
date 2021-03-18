@@ -26,6 +26,7 @@
         <div class="alert alert-danger" th:if="${#fields.hasErrors('global')}">
             <p th:each="err : ${#fields.errors('global')}" th:text="${err}"></p>
         </div>
+
         <div class="alert alert-danger" th:if="${message!=null}">
             <p  th:text="${message}"></p>
         </div>

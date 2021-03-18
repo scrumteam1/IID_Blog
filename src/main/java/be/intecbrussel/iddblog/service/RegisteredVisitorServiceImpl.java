@@ -9,6 +9,10 @@ import be.intecbrussel.iddblog.repository.VerifTokenRepository;
 import be.intecbrussel.iddblog.validation.error.UserAlreadyExistException;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +35,10 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
     private final WriterService writerService;
 
 
-    public RegisteredVisitorServiceImpl(RegisteredVisitorRepository registeredVisitorRepository, PasswordEncoder passwordEncoder, AuthService authService, VerifTokenRepository tokenRepository, WriterService writerService) {
+    public RegisteredVisitorServiceImpl(RegisteredVisitorRepository registeredVisitorRepository,
+                                        PasswordEncoder passwordEncoder, AuthService authService, VerifTokenRepository tokenRepository,
+                                        WriterService writerService) {
+
         this.registeredVisitorRepository = registeredVisitorRepository;
         this.passwordEncoder = passwordEncoder;
         this.authService = authService;
@@ -75,8 +82,16 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
     }
 
     @Override
-    public List<RegisteredVisitor> findAll() {
-        return registeredVisitorRepository.findAll();
+    public Page<RegisteredVisitor> findAll(String keyword, int pageNumber, String sortField, String sortDir) {
+
+        Sort sort = Sort.by(sortField);
+        sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
+        Pageable pageable = PageRequest.of(pageNumber - 1 ,5, sort);
+
+        if(keyword != null) {
+            return registeredVisitorRepository.findAll(keyword, pageable);
+        }
+        return registeredVisitorRepository.findAll(pageable);
     }
 
     @Override
@@ -107,7 +122,7 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
 
         authService.save(authority);
 
-        List<WriterPost> posts = writerService.findWriterPostsByUserId(udpatedVisitor.getId());
+        List<WriterPost> posts = writerService.findWriterPostsByRegisteredVisitor(udpatedVisitor);
         posts.forEach(p -> log.warn("post: " + p.getTitle()));
 
         // if admin then will not have posts and posts.size will zero

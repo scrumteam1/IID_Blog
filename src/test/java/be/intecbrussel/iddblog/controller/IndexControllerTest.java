@@ -2,6 +2,7 @@ package be.intecbrussel.iddblog.controller;
 
 import be.intecbrussel.iddblog.domain.Authority;
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
+import be.intecbrussel.iddblog.domain.WriterPost;
 import be.intecbrussel.iddblog.service.AuthService;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
 import be.intecbrussel.iddblog.service.WriterService;
@@ -24,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -70,12 +70,22 @@ class IndexControllerTest {
     @Test
     void getIndexTest() throws Exception {
         savedVisitor.setId(1L);
+        Authority authority = Authority.builder().id(1L).authority("ADMIN").build();
+        List<Authority> authorities = new ArrayList<>();
+        authorities.add(authority);
+        WriterPost post = new WriterPost();
+        post.setId(1L);
+        List<WriterPost> posts = new ArrayList<>();
+        posts.add(post);
 
         SecurityContext securityContext = Mockito.mock(SecurityContext.class);
         Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
         SecurityContextHolder.setContext(securityContext);
         Mockito.when(securityContext.getAuthentication().getName()).thenReturn("test");
         when(visitorService.findByUsername(ArgumentMatchers.any())).thenReturn(savedVisitor);
+        when(authService.findAuthorityByUsername(ArgumentMatchers.any())).thenReturn(authorities);
+        when(authService.findAuthorityByUsername(ArgumentMatchers.any())).thenReturn(authorities);
+        when(writerService.findOrderByCreationDate(any())).thenReturn(posts);
 
         mockMvc.perform(get("/index/"))
                 .andExpect(status().isOk())

@@ -16,6 +16,15 @@
         $(document).ready(function(){
             $(".active").removeClass("active");
             $("#writer").addClass("active");
+
+            if(window.location.href.includes('/writer/')) {
+                let writerId = [[${user.id}]];
+                $("#searchHeader").attr("action","/writer/" + writerId);
+                $("#searchAdmin").attr("action","/writer/" + writerId);
+                $("#searchLoggedin").attr("action","/writer/" + writerId);
+                $("#searchWriter").attr("action","/writer/" + writerId);
+            }
+
         });
     </script>
 
@@ -41,7 +50,7 @@
 </header>
 
 <div class="container">
-    <div><a class="btn btn-primary float-right" th:href="@{/index}" th:if="${loggedinuser.equals(user.username)&&user.isWriter}">Create new Blogpost</a></div>
+    <div><a class="btn btn-primary float-right" th:href="@{'/writer/' + ${user.id} + '/newblogpost'}" th:if="${loggedinuser.equals(user.username)&&user.isWriter}">Create new Blogpost</a></div>
         <ul class="align-items-end " style="  display: flex;  list-style: none">
             <li>
             <a th:href="@{/index}" class="btn btn-primary">
@@ -62,8 +71,8 @@
                 <p th:text="${post.creationDate}" >Creation Date</p>
                 <h1 th:text="${post.title}"style="color: #447EB9">title</h1>
                 <p th:text="${post.intro}" style="text-align: justify">Content</p>
-                <p>Written by: <a th:href="@{'/writer/'+${post.userId}}" th:text="${post.getRegisteredVisitor().username}">username</a></p>
-                <div class="more label" style="margin-bottom: 20px"><a th:href="@{'/writer/'+${post.userId} +'/'+ ${post.title}}">Read more</a></div>
+                <p>Written by: <a th:href="@{'/writer/'+${post.registeredVisitor.id}}" th:text="${post.getRegisteredVisitor().username}">username</a></p>
+                <div class="more label" style="margin-bottom: 20px"><a th:href="@{'/writer/'+${post.registeredVisitor.id} +'/'+ ${post.title}}">Read more</a></div>
                 <a th:href="@{/index}" class="btn btn-primary" th:if="${loggedinuser.equals(user.username)&& user.isWriter}">Edit post</a>
                 <a th:href="@{'/deletepost/' + ${post.id}}" class="btn btn-primary"th:if="${loggedinuser.equals(user.username)&& user.isWriter}">Delete post</a>
             </li>
@@ -71,21 +80,35 @@
             <hr>
         </ul>
 
+    <div>
+        Total Items: [[${totalItems}]] - Page [[${currentPage}]] of [[${totalPages}]]
+        &nbsp;- &nbsp;
+
+        <a th:if="${currentPage > 1}" th:href="@{'/writer/' + ${id} + '/page/1?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + '&keyword=' + ${keyword} }">First</a>
+        <span th:unless="${currentPage > 1}">First</span>
+        &nbsp;&nbsp;
+
+        <a th:if="${currentPage > 1}" th:href="@{ '/writer/' + ${id} + '/page/' + ${currentPage - 1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + '&keyword=' + ${keyword} }">Previous</a>
+        <span th:unless="${currentPage > 1}">Previous</span>
+        &nbsp;&nbsp;
+
+        <span th:each="i: ${#numbers.sequence(1, totalPages)}">
+                    <a th:if="${i != currentPage}" th:href="@{ '/writer/' + ${id} + '/page/' + ${i} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + '&keyword=' + ${keyword} } ">[[${i}]]</a>
+                    <span th:unless="${i != currentPage}">[[${i}]]</span>
+                    &nbsp;&nbsp;
+                </span>
+
+        <a th:if="${currentPage < totalPages}" th:href="@{ '/writer/' + ${id} + '/page/' + ${currentPage + 1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + '&keyword=' + ${keyword} }">Next</a>
+        <span th:unless="${currentPage < totalPages}">Next</span>
+        &nbsp;&nbsp;
+
+        <a th:if="${currentPage < totalPages}" th:href="@{ '/writer/' + ${id} + '/page/' + ${totalPages} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + '&keyword=' + ${keyword} }">Last</a>
+        <span th:unless="${currentPage < totalPages}">Last</span>
+        &nbsp;&nbsp;
+    </div>
+
 </div>
 </body>
-<footer style="margin-bottom: 40px">
-
-    <div class="container">
-        <a href="#" >Previous</a>
-        <a href="#" >1</a>
-        <a href="#" >2</a>
-        <a href="#" >3</a>
-        <a href="#" >4</a>
-        <a href="#" >5</a>
-        <a href="#" >Next</a>
-        <a href="#" class="float-right" >Top of the page</a>
-    </div>
-</footer>
 </html>
 
 

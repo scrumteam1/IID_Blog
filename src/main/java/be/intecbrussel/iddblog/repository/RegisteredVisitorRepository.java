@@ -1,9 +1,11 @@
 package be.intecbrussel.iddblog.repository;
 
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
@@ -11,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface RegisteredVisitorRepository extends CrudRepository<RegisteredVisitor, Long> {
+public interface RegisteredVisitorRepository extends JpaRepository<RegisteredVisitor, Long> {
 
     RegisteredVisitor save(RegisteredVisitor visitor);
 
@@ -21,7 +23,13 @@ public interface RegisteredVisitorRepository extends CrudRepository<RegisteredVi
 
     RegisteredVisitor findByUsername(String username);
 
-    List<RegisteredVisitor> findAll();
+    Page<RegisteredVisitor> findAll(Pageable pageable);
+
+
+    @Query("select u from RegisteredVisitor u where " +
+            "concat(u.id, u.username, u.emailAddress, u.firstName, u.lastName)" +
+            " like %:keyword%")
+    Page<RegisteredVisitor> findAll(@Param("keyword") String keyword, Pageable pageable);
 
     @Modifying
     @Query("update RegisteredVisitor u set u.username = :username, u.firstName = :firstName, u.lastName = :lastName , " +
