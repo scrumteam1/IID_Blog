@@ -22,11 +22,12 @@
 
 
 <div class="container">
+    <h2 th:if = "${post == null}" style="color: #447EB9">The article you are looking for doesn't exist yet!</h2>
     <ul  class="timeline" style="list-style: none" >
         <li>
             <p th:text="${post.creationDate}" >Creation Date</p>
             <h1 th:text="${post.title}"style="color: #447EB9">title</h1>
-            <p>Written by: <a th:href="@{'/writer/'+${post.userId}}" th:text="${post.getRegisteredVisitor().username}">username</a></p>
+            <p>Written by: <a th:href="@{'/writer/'+${post.getRegisteredVisitor().id}}" th:text="${post.getRegisteredVisitor().username}">username</a></p>
             <p th:text="${post.intro}"style="text-align: justify">Introduction</p>
             <p th:text="${post.content}"style="text-align: justify">Content</p>
         </li>

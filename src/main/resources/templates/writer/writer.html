@@ -81,7 +81,7 @@
 
                 <br>
 
-                <div class="more label" style="margin-bottom: 20px"><a th:href="@{'/writer/'+${post.registeredVisitor.id} +'/'+ ${post.title}}">Read more</a></div>
+                <div class="more label" style="margin-bottom: 20px"><a th:href="@{'/writer/post/'+${post.id}}">Read more</a></div>
                 <a th:href="@{/index}" class="btn btn-primary" th:if="${loggedinuser.equals(user.username)&& user.isWriter}">Edit post</a>
                 <a th:href="@{'/deletepost/' + ${post.id}}" class="btn btn-primary"th:if="${loggedinuser.equals(user.username)&& user.isWriter}">Delete post</a>
             </li>
