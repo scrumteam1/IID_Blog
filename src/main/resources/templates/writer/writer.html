@@ -50,7 +50,7 @@
 </header>
 
 <div class="container">
-    <div><a class="btn btn-primary float-right" th:href="@{/index}" th:if="${loggedinuser.equals(user.username)&&user.isWriter}">Create new Blogpost</a></div>
+    <div><a class="btn btn-primary float-right" th:href="@{'/writer/' + ${user.id} + '/newblogpost'}" th:if="${loggedinuser.equals(user.username)&&user.isWriter}">Create new Blogpost</a></div>
         <ul class="align-items-end " style="  display: flex;  list-style: none">
             <li>
             <a th:href="@{/index}" class="btn btn-primary">
@@ -116,11 +116,8 @@
         &nbsp;&nbsp;
     </div>
 
-
-
 </div>
 </body>
-
 </html>
 
 

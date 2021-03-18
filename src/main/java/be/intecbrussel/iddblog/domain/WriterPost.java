@@ -4,10 +4,12 @@ import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.util.*;
+import java.time.LocalDate;
 
 @Entity(name = "WriterPost")
 @Table(name = "writerposts")
@@ -17,12 +19,14 @@ import java.util.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class WriterPost {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "Creation_date")
-    private Date creationDate;
+    @Column(name = "creation_date")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate creationDate;
 
     @Column(name = "title")
     private String title;

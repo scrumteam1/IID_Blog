@@ -1,0 +1,65 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:rows="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Register Form</title>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"
+          th:href="@{/webjars/bootstrap/3.3.7-1/css/bootstrap.min.css}" />
+
+    <script src="/webjars/jquery/1.11.1/jquery.min.js"></script>
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous" th:src="@{/webjars/bootstrap/3.3.7-1/js/bootstrap.min.js}"></script>
+
+    <!--datum-->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://unpkg.com/gijgo@1.9.11/js/gijgo.min.js" type="text/javascript"></script>
+    <link href="https://unpkg.com/gijgo@1.9.11/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+<!--/*@thymesVar id="writerPost" type="be.intecbrussel.iddblog.domain.WriterPost"*/-->
+<div class="container text-center text-center">
+    <form class="form-horizontal" role="form" th:object="${newpost}" th:action="@{'/writer/' + ${newpost.registeredVisitor.id} + '/new'}" method="post" enctype="multipart/form-data">
+        <center>  <h2>Blogpost Details </h2>  </center>
+
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Title</label>
+            <div class="col-sm-4">
+                <input th:field="*{title}" type="text" minlength=3  placeholder="Title" class="form-control" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label form="title" class="col-sm-3 control-label">Introduction</label>
+            <div class="col-sm-4">
+                <textarea type=text minlength=10 th:field="*{intro}" class="form-control"  placeholder="Introduction" rows="5" maxlength="500" required></textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label form="status" class="col-sm-3 control-label">Content</label>
+            <div class="col-sm-4" >
+                <textarea required type=text minlength="50" th:field="*{content}" class="form-control" placeholder="Content" rows="5"  maxlength="2000" ></textarea>
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <div class="col-md-2 col-sm-offset-3">
+                <button th:href="@{'/writer'}" type="submit" class="btn btn-primary">Submit</button>
+                <a th:href="@{'/writer'}" class="btn btn-primary" required>Cancel</a>
+            </div>
+        </div>
+    </form> <!-- /form -->
+</div> <!-- ./container -->
+</body>
+</html>

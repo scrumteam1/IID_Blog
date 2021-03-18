@@ -10,7 +10,6 @@ public class EmailServiceImpl implements EmailService {
 
     private static final String NOREPLY_ADDRESS = "akyare75@gmail.com";
 
-
     private final JavaMailSender emailSender;
 
     public EmailServiceImpl(JavaMailSender emailSender) {
@@ -30,6 +29,5 @@ public class EmailServiceImpl implements EmailService {
         } catch (MailException exception) {
             exception.printStackTrace();
         }
-
     }
 }

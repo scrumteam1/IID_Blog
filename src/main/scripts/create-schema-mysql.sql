@@ -1,8 +1,10 @@
-create table hibernate_sequence (next_val bigint) engine=InnoDB;
-insert into hibernate_sequence values ( 1 );
+create table hibernate_sequence
+(
+    next_val bigint null
+);
 
 
-create table if not exists users
+create table users
 (
     id bigint not null
         primary key,
@@ -13,12 +15,13 @@ create table if not exists users
     last_name varchar(20) null,
     password varchar(255) null,
     username varchar(20) null,
-    enabled tinyint default 1 not null,
+    enabled bit default b'0' not null,
+    avatar longtext null,
     constraint users_username_uindex
         unique (username)
 );
 
-create table if not exists authorities
+create table authorities
 (
     id bigint auto_increment
         primary key,
@@ -26,6 +29,17 @@ create table if not exists authorities
     username varchar(255) null,
     constraint ix_auth_username
         foreign key (username) references users (username)
+);
+
+create table verification_token
+(
+    id bigint not null
+        primary key,
+    expiry_date datetime null,
+    token varchar(255) null,
+    user_id bigint null,
+    constraint fk_veriftoken_users
+        foreign key (user_id) references users (id)
 );
 
 create table if not exists writerposts
