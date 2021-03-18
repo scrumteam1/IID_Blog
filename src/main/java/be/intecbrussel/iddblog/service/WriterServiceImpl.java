@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -47,10 +48,13 @@ public class WriterServiceImpl implements WriterService{
     public List<WriterPost> findAll() {
         return writerPostRepository.findAll();
     }
+
     @Override
     public WriterPost save(WriterPost post) {
+        post.setCreationDate(LocalDate.now());
         return writerPostRepository.save(post);
     }
+
     @Override
     public List<WriterPost> findOrderByCreationDate(Date date) {
         return writerPostRepository.findAll().stream().sorted(Comparator.comparing(WriterPost::getCreationDate))

@@ -6,6 +6,7 @@ import be.intecbrussel.iddblog.domain.WriterPost;
 import be.intecbrussel.iddblog.service.AuthService;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
 import be.intecbrussel.iddblog.service.WriterService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.repository.query.Param;
 import org.springframework.security.core.Authentication;
@@ -13,14 +14,17 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
 
+@Slf4j
 @Controller
-public class WriterPostController {
+public class WriterPostController  {
 
     private final RegisteredVisitorService registeredVisitorService;
 
@@ -76,6 +80,35 @@ public class WriterPostController {
         return "/writer/blogpost-view";
     }
 
+    @GetMapping("/writer/{id}/newblogpost")
+    public String getSavePost(Model model, @PathVariable Long id){
+
+    RegisteredVisitor writer = registeredVisitorService.findById(id);
+    WriterPost post = new WriterPost();
+    post.setRegisteredVisitor(writer);
+    model.addAttribute("newpost", post);
+
+    return "writer/newblogpost";
+}
+
+    @PostMapping("/writer/{id}/new")
+    public String postSavePost(@ModelAttribute WriterPost writerPost, @PathVariable Long id){
+
+        RegisteredVisitor writer = registeredVisitorService.findById(id);
+        writerPost.setRegisteredVisitor(writer);
+        writerService.save(writerPost);
+
+        return "redirect:/writer/" + id;
+    }
+
+    @GetMapping("/deletepost/{id}")
+    public String deleteWriterPost(WriterPost writerPost) {
+        long id = writerPost.getId();
+        writerService.deleteById(id);
+
+        return "redirect:/index";
+    }
+
     private void userContext(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -101,13 +134,5 @@ public class WriterPostController {
         model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("isWriter", isWriter);
         model.addAttribute("isRegistered", isRegistered);
-    }
-
-    @GetMapping("/deletepost/{id}")
-    public String deleteWriterPost(WriterPost writerPost) {
-        long id = writerPost.getId();
-        writerService.deleteById(id);
-
-        return "redirect:/index";
     }
 }
