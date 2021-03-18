@@ -22,7 +22,7 @@ public interface WriterPostRepository extends JpaRepository<WriterPost, Long> {
             "left join `users` u on u.id = p.user_id " +
             "left join `writerposts_tags` wt on p.id = wt.post_id " +
             "left join `tags` t on t.id = wt.tag_id " +
-            "where u.id = :visitor and p.title like concat('%',:keyword,'%')",
+            "where u.id = :visitor and concat(p.title, t.tag) like concat('%',:keyword,'%')",
             nativeQuery = true)
     Page<WriterPost> findWriterPostsByRegisteredVisitor(@Param("visitor") RegisteredVisitor visitor, @Param("keyword") String keyword, Pageable pageable);
 
