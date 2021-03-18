@@ -4,10 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.util.Date;
+import java.util.List;
 
 @Entity(name = "WriterPost")
 @Table(name = "writerposts")
@@ -43,4 +46,13 @@ public class WriterPost {
     private RegisteredVisitor registeredVisitor;
 
     private Boolean isEnabled = true;
+
+    @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    @Fetch(FetchMode.SELECT)
+    @JoinTable(
+            name="writerposts_tags",
+            joinColumns = {@JoinColumn(name="POST_ID", referencedColumnName = "ID")},
+            inverseJoinColumns = {@JoinColumn(name="TAG_ID", referencedColumnName = "ID")}
+    )
+    private List<Tag> tags;
 }

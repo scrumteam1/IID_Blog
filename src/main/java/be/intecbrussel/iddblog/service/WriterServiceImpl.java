@@ -31,12 +31,13 @@ public class WriterServiceImpl implements WriterService{
     }
 
     public Page<WriterPost> findWriterPostsByRegisteredVisitor(RegisteredVisitor visitor, String keyword, int pageNumber, String sortField, String sortDir) {
+        sortField = sortField.equals("creationDate") ? "creation_date" : sortField;
         Sort sort = Sort.by(sortField);
         sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
 
         Pageable pageable = PageRequest.of(pageNumber - 1 ,6, sort);
 
-        if(keyword != null) {
+        if(keyword != null && !keyword.equals("")) {
             return writerPostRepository.findWriterPostsByRegisteredVisitor(visitor,keyword, pageable);
         }
 
@@ -64,5 +65,10 @@ public class WriterServiceImpl implements WriterService{
     @Override
     public void deleteById(Long writerPostId) {
         writerPostRepository.deleteById(writerPostId);
+    }
+
+    @Override
+    public WriterPost findById(Long id) {
+        return writerPostRepository.findById(id).orElse(null);
     }
 }

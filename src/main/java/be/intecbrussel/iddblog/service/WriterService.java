@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 public interface WriterService {
 
@@ -19,4 +20,6 @@ public interface WriterService {
     List<WriterPost> findOrderByCreationDate(Date date);
     WriterPost findByTitle(String title);
     void deleteById(Long writerPostId);
+
+    WriterPost findById(Long id);
 }
