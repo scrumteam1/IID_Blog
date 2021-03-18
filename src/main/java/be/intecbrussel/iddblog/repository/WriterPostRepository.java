@@ -18,17 +18,11 @@ public interface WriterPostRepository extends JpaRepository<WriterPost, Long> {
 
     List<WriterPost> findWriterPostsByRegisteredVisitor(RegisteredVisitor visitor);
 
-//    @Query("select p from WriterPost p where " +
-//            "concat(p.title, p.content)" +
-//            " like %:keyword% and p.registeredVisitor = :visitor")
-//    Page<WriterPost> findWriterPostsByRegisteredVisitor(@Param("visitor") RegisteredVisitor visitor, @Param("keyword") String keyword, Pageable pageable);
-
     @Query(value = "select distinct p.* from `writerposts` p " +
             "left join `users` u on u.id = p.user_id " +
             "left join `writerposts_tags` wt on p.id = wt.post_id " +
             "left join `tags` t on t.id = wt.tag_id " +
-            "where concat(p.title,t.tag) like %:keyword% "+
-            "and u.id = :visitor",
+            "where u.id = :visitor and p.title like concat('%',:keyword,'%')",
             nativeQuery = true)
     Page<WriterPost> findWriterPostsByRegisteredVisitor(@Param("visitor") RegisteredVisitor visitor, @Param("keyword") String keyword, Pageable pageable);
 
