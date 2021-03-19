@@ -16,7 +16,6 @@ public interface WriterService {
 
     WriterPost save(WriterPost post);
     List<WriterPost> findOrderByCreationDate(Date date);
-    WriterPost findByTitle(String title);
     void deleteById(Long writerPostId);
 
     WriterPost findById(Long id);

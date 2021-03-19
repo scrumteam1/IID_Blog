@@ -33,8 +33,6 @@ public interface WriterPostRepository extends JpaRepository<WriterPost, Long> {
     List<WriterPost> findAll();
     WriterPost save(WriterPost post);
     List<WriterPost> findOrderByCreationDate(Date creationDate);
-    WriterPost findByTitle(String title);
-
     @Override
     void deleteById(Long writerPostId);
 

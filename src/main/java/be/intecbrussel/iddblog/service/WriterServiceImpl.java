@@ -54,12 +54,10 @@ public class WriterServiceImpl implements WriterService{
 
     @Override
     public List<WriterPost> findOrderByCreationDate(Date date) {
-        return writerPostRepository.findAll().stream().sorted(Comparator.comparing(WriterPost::getCreationDate))
+       List<WriterPost> list = writerPostRepository.findAll().stream().sorted(Comparator.comparing(WriterPost::getCreationDate))
                 .collect(Collectors.toList());
-    }
-    @Override
-    public WriterPost findByTitle(String title){
-        return writerPostRepository.findByTitle(title);
+       Collections.reverse(list);
+       return list;
     }
 
     @Override

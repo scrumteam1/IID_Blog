@@ -73,10 +73,10 @@ public class WriterPostController  {
         return "/writer/writer";
     }
 
-    @GetMapping("/writer/{id}/{title}")
-    public String showPost(@PathVariable String title, Model model) {
+    @GetMapping("/writer/post/{id}")
+    public String showPost(@PathVariable Long id, Model model) {
         userContext(model);
-        model.addAttribute("post", writerService.findByTitle(title));
+        model.addAttribute("post", writerService.findById(id));
         return "/writer/blogpost-view";
     }
 

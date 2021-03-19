@@ -9,7 +9,21 @@
 
 
     <script>
-        $(window).load(function(){
+            window.onload = function(){
+                var counter = 5;
+                setInterval(function() {
+                    counter--;
+                    if (counter >= 0) {
+                        span = document.getElementById("count");
+                        span.innerHTML = counter;
+                    }
+                    if (counter === 0) {
+                        clearInterval(counter);
+                    }
+                }, 1000);
+        }
+
+            $(window).load(function(){
                   $("#myModal").modal('show');
             setInterval(function(){
                 window.location = "/index";
@@ -32,7 +46,7 @@
                     <p>If you do not receive it, please check your spam</p>
                 </div>
                 <div class="modal-footer">
-                    <h6>you will be redirect to the home page after 5 seconds</h6>
+                    <h6>you will be redirect to the home page after <span id="count">5</span> seconds</h6>
                 </div>
             </div>
 
