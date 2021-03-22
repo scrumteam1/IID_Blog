@@ -53,10 +53,10 @@
         </div>
 
         <div class="form-group">
-            <ul class="checkbox" style="column-count: 3; list-style: none">
-                <li th:each="tag : ${tags}" style="display: flex;align-items: center;">
-                    <input style="margin: 5px -80px;" type="checkbox" th:value="${tag.id}" >
-                    <label style="margin: 5px -80px;"  th:text="${tag.tag.name()}"> Example </label>
+            <ul class="checkbox" style="column-count: 3; margin: 10px 400px 10px 250px;">
+                <li th:each="tag : ${tags}" style="display: flex;">
+                    <input type="checkbox" th:value="${tag.id}" >
+                    <label th:text="${tag.tag.name()}"> Example </label>
                 </li>
             </ul>
         </div>
