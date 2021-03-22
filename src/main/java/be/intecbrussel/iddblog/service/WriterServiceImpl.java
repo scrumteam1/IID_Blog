@@ -15,7 +15,6 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 @Transactional
 public class WriterServiceImpl implements WriterService{

@@ -4,5 +4,11 @@ public enum Tagname {
     Business,
     Comedy,
     Documentary,
-    Fiction
+    Fiction,
+    Biography,
+    Crime,
+    Culture,
+    Fantasy,
+    Horror,
+    Romance
 }
