@@ -14,9 +14,9 @@ public interface WriterService {
 
     Page<WriterPost> findWriterPostsByRegisteredVisitor(RegisteredVisitor visitor,String keyword, int pageNumber, String sortField, String sortDir);
 
-    List<WriterPost> findAll();
     WriterPost save(WriterPost post);
     List<WriterPost> findOrderByCreationDate(Date date);
-    WriterPost findByTitle(String title);
     void deleteById(Long writerPostId);
+
+    WriterPost findById(Long id);
 }

@@ -42,8 +42,10 @@ public class RegisteredVisitorController {
                                           HttpServletResponse response) {
         RegisteredVisitor registeredVisitor = registeredVisitorService.findById(id);
 
+        boolean isAdmin = registeredVisitor.getAuthority().stream().anyMatch(a -> a.getAuthority().equals("ADMIN"));
+
         // The user should only access his own data, otherwise redirect to another page
-        if (!principal.getName().equals(registeredVisitor.getUsername())) {
+        if (!principal.getName().equals(registeredVisitor.getUsername()) || isAdmin) {
             return "redirect:/forbidden-page";
         }
 

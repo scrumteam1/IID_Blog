@@ -73,6 +73,10 @@ class RegisteredVisitorControllerTest {
     @Test
     void deleteRegisteredVisitorTest() throws Exception {
         savedVisitor.setId(1L);
+        Authority authority = Authority.builder().authority("USER").build();
+        List<Authority> authorities = new ArrayList<>();
+        authorities.add(authority);
+        savedVisitor.setAuthority(authorities);
 
         when(visitorService.findById(any())).thenReturn(savedVisitor);
 
@@ -88,6 +92,10 @@ class RegisteredVisitorControllerTest {
     @Test
     void deleteRegisteredVisitorForbiddenTest() throws Exception {
         savedVisitor.setId(1L);
+        Authority authority = Authority.builder().authority("USER").build();
+        List<Authority> authorities = new ArrayList<>();
+        authorities.add(authority);
+        savedVisitor.setAuthority(authorities);
 
         when(visitorService.findById(any())).thenReturn(savedVisitor);
 

@@ -1,19 +1,20 @@
 package be.intecbrussel.iddblog.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.util.*;
 import java.time.LocalDate;
-
 
 @Entity(name = "WriterPost")
 @Table(name = "writerposts")
-@Data
+@Getter
+@Setter
 @DynamicUpdate
 @NoArgsConstructor
 @AllArgsConstructor
@@ -47,4 +48,13 @@ public class WriterPost {
     private RegisteredVisitor registeredVisitor;
 
     private Boolean isEnabled = true;
+
+    @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    @Fetch(FetchMode.SELECT)
+    @JoinTable(
+            name="writerposts_tags",
+            joinColumns = {@JoinColumn(name="POST_ID", referencedColumnName = "ID")},
+            inverseJoinColumns = {@JoinColumn(name="TAG_ID", referencedColumnName = "ID")}
+    )
+    private Set<Tag> tags = new HashSet<>();
 }
