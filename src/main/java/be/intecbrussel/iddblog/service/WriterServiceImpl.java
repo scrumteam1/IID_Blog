@@ -45,10 +45,6 @@ public class WriterServiceImpl implements WriterService{
         return writerPostRepository.findWriterPostsByRegisteredVisitor(visitor,pageable);
     }
 
-    @Override
-    public List<WriterPost> findAll() {
-        return writerPostRepository.findAll();
-    }
 
     @Override
     public WriterPost save(WriterPost post) {
@@ -58,19 +54,20 @@ public class WriterServiceImpl implements WriterService{
 
     @Override
     public List<WriterPost> findOrderByCreationDate(Date date) {
-       List<WriterPost> list = writerPostRepository.findAll().stream().sorted(Comparator.comparing(WriterPost::getCreationDate))
+        List<WriterPost> list = writerPostRepository.findAll().stream().sorted(Comparator.comparing(WriterPost::getCreationDate))
                 .collect(Collectors.toList());
-       Collections.reverse(list);
-       return list;
-    }
-    @Override
-    public WriterPost findByTitle(String title){
-        return writerPostRepository.findByTitle(title);
+        Collections.reverse(list);
+        return list;
     }
 
     @Override
     public void deleteById(Long writerPostId) {
         writerPostRepository.deleteById(writerPostId);
+    }
+
+    @Override
+    public void updateWriterPost(WriterPost post) {
+        writerPostRepository.updateWriterPost(post.getId(), post.getTitle(), post.getIntro(), post.getContent());
     }
 
     @Override

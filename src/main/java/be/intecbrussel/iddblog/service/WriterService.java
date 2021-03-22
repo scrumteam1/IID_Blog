@@ -18,5 +18,7 @@ public interface WriterService {
     List<WriterPost> findOrderByCreationDate(Date date);
     void deleteById(Long writerPostId);
 
+    void updateWriterPost(WriterPost post);
+
     WriterPost findById(Long id);
 }

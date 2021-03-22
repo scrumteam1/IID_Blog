@@ -3,6 +3,7 @@ package be.intecbrussel.iddblog.controller;
 import be.intecbrussel.iddblog.domain.Authority;
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
 import be.intecbrussel.iddblog.domain.WriterPost;
+import be.intecbrussel.iddblog.repository.WriterPostRepository;
 import be.intecbrussel.iddblog.service.AuthService;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
 import be.intecbrussel.iddblog.service.WriterService;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j
@@ -108,6 +110,27 @@ public class WriterPostController  {
 
         return "redirect:/index";
     }
+    @GetMapping("writer/{id}/update/{postId}")
+    public String updateWriterPost(@PathVariable long id, @PathVariable("postId") long postId, Model model){
+        WriterPost post = writerService.findById(postId);
+
+        model.addAttribute("post", post);
+
+        return "writer/blogpost-edit";
+    }
+
+    @PostMapping("writer/{id}/edit/{postId}")
+    public String updateWriterPost(@PathVariable("id") long id, @PathVariable("postId") long postId, @ModelAttribute("writerpost") @Valid WriterPost post){
+        WriterPost findPost = writerService.findById(postId);
+        findPost.setTitle(post.getTitle());
+        findPost.setIntro(post.getIntro());
+        findPost.setContent(post.getContent());
+
+        writerService.updateWriterPost(findPost);
+
+        return "redirect:/writer/" + id;
+    }
+
 
     private void userContext(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

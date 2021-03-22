@@ -5,6 +5,7 @@ import be.intecbrussel.iddblog.domain.WriterPost;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -29,6 +30,11 @@ public interface WriterPostRepository extends JpaRepository<WriterPost, Long> {
     @Query(value = "select p.* from `writerposts` p left join `users` u on u.id = p.user_id where u.id = :visitor",
             nativeQuery = true)
     Page<WriterPost> findWriterPostsByRegisteredVisitor(@Param("visitor") RegisteredVisitor visitor, Pageable pageable);
+
+    @Modifying
+    @Query("update WriterPost u set u.title = :title, u.intro = :intro, u.content = :content where u.id = :id")
+    void updateWriterPost(@Param(value = "id") Long id, @Param(value = "title") String title,
+                                 @Param(value = "intro") String intro, @Param(value = "content") String content);
 
     List<WriterPost> findAll();
     WriterPost save(WriterPost post);
