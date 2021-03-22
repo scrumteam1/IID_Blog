@@ -56,5 +56,5 @@ public class WriterPost {
             joinColumns = {@JoinColumn(name="POST_ID", referencedColumnName = "ID")},
             inverseJoinColumns = {@JoinColumn(name="TAG_ID", referencedColumnName = "ID")}
     )
-    private Set<Tag> tags = new HashSet<>();
+    private List<Tag> tags = new ArrayList<>();
 }

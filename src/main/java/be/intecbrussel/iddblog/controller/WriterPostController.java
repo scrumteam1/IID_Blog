@@ -22,7 +22,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
@@ -95,6 +98,10 @@ public class WriterPostController  {
 
     List<Tag> tags = tagService.findAll();
     model.addAttribute("tags", tags);
+//
+    List<Tag> tagsChecked = new ArrayList<>();
+    model.addAttribute("tagsChecked", tagsChecked);
+
 
     return "writer/newblogpost";
 }
@@ -104,6 +111,7 @@ public class WriterPostController  {
 
         RegisteredVisitor writer = registeredVisitorService.findById(id);
         writerPost.setRegisteredVisitor(writer);
+//        writerPost.setTags(tags.stream().collect(Collectors.toSet()));
         writerService.save(writerPost);
 
         return "redirect:/writer/" + id;

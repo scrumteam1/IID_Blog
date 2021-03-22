@@ -54,8 +54,8 @@
 
         <div class="form-group">
             <ul class="checkbox" style="column-count: 3; margin: 10px 400px 10px 250px;">
-                <li th:each="tag : ${tags}" style="display: flex;">
-                    <input type="checkbox" th:value="${tag.id}" >
+                <li th:each="tag, itemStat : ${tags}" style="display: flex;">
+                    <input type="checkbox" th:field="${newpost.tags}" th:value="${tag.id}">
                     <label th:text="${tag.tag.name()}"> Example </label>
                 </li>
             </ul>

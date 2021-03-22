@@ -5,6 +5,7 @@ import be.intecbrussel.iddblog.repository.TagRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class TagServiceImpl implements TagService{
