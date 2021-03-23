@@ -8,8 +8,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
 import java.util.*;
-import java.time.LocalDate;
 
 @Entity(name = "WriterPost")
 @Table(name = "writerposts")
@@ -26,7 +26,7 @@ public class WriterPost {
 
     @Column(name = "creation_date")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate creationDate;
+    private LocalDateTime creationDate;
 
     @Column(name = "title")
     private String title;

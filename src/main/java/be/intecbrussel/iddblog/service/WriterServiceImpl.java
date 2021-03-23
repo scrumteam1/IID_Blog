@@ -46,7 +46,7 @@ public class WriterServiceImpl implements WriterService{
 
     @Override
     public WriterPost save(WriterPost post) {
-        post.setCreationDate(LocalDate.now());
+//        post.setCreationDate(LocalDate.now());
         return writerPostRepository.save(post);
     }
 

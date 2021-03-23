@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -103,6 +104,7 @@ public class WriterPostController  {
     @PostMapping("/writer/{id}/new")
     public String postSavePost(@ModelAttribute WriterPost writerPost, @PathVariable Long id){
 
+        writerPost.setCreationDate(LocalDateTime.now());
         RegisteredVisitor writer = registeredVisitorService.findById(id);
         writerPost.setRegisteredVisitor(writer);
         writerService.save(writerPost);
@@ -123,6 +125,9 @@ public class WriterPostController  {
 
         model.addAttribute("post", post);
 
+        List<Tag> tags = tagService.findAll();
+        model.addAttribute("tags", tags);
+
         return "writer/blogpost-edit";
     }
 
@@ -132,8 +137,13 @@ public class WriterPostController  {
         findPost.setTitle(post.getTitle());
         findPost.setIntro(post.getIntro());
         findPost.setContent(post.getContent());
+        findPost.setTags(post.getTags());
 
-        writerService.updateWriterPost(findPost);
+        if(post.getCreationDate()==null) {
+            post.setCreationDate(LocalDateTime.now());
+        }
+
+        writerService.save(findPost);
 
         return "redirect:/writer/" + id;
     }
