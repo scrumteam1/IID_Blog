@@ -98,10 +98,6 @@ public class WriterPostController  {
 
     List<Tag> tags = tagService.findAll();
     model.addAttribute("tags", tags);
-//
-    List<Tag> tagsChecked = new ArrayList<>();
-    model.addAttribute("tagsChecked", tagsChecked);
-
 
     return "writer/newblogpost";
 }
