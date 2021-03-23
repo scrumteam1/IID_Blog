@@ -4,7 +4,6 @@ import be.intecbrussel.iddblog.domain.Authority;
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
 import be.intecbrussel.iddblog.domain.Tag;
 import be.intecbrussel.iddblog.domain.WriterPost;
-import be.intecbrussel.iddblog.repository.WriterPostRepository;
 import be.intecbrussel.iddblog.service.AuthService;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
 import be.intecbrussel.iddblog.service.TagService;
@@ -24,10 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
@@ -109,7 +105,6 @@ public class WriterPostController  {
 
         RegisteredVisitor writer = registeredVisitorService.findById(id);
         writerPost.setRegisteredVisitor(writer);
-//        writerPost.setTags(tags.stream().collect(Collectors.toSet()));
         writerService.save(writerPost);
 
         return "redirect:/writer/" + id;
