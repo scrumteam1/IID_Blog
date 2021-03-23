@@ -3,7 +3,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:rows="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8"/>
-    <title>Register Form</title>
+    <title>Blogpost Form</title>
 
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
@@ -52,6 +52,15 @@
             </div>
         </div>
 
+        <div class="form-group">
+            <label form="status" class="col-sm-3 control-label">Category</label>
+            <ul class="checkbox" style="column-count: 3; margin: 10px 400px 10px 250px;">
+                <li th:each="tag, itemStat : ${tags}" style="display: flex;">
+                    <input type="checkbox" th:field="${newpost.tags}" th:value="${tag.id}">
+                    <label th:text="${tag.tag.name()}"> Example </label>
+                </li>
+            </ul>
+        </div>
 
         <div class="form-group">
             <div class="col-md-2 col-sm-offset-3">

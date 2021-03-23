@@ -2,10 +2,12 @@ package be.intecbrussel.iddblog.controller;
 
 import be.intecbrussel.iddblog.domain.Authority;
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
+import be.intecbrussel.iddblog.domain.Tag;
 import be.intecbrussel.iddblog.domain.WriterPost;
 import be.intecbrussel.iddblog.repository.WriterPostRepository;
 import be.intecbrussel.iddblog.service.AuthService;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
+import be.intecbrussel.iddblog.service.TagService;
 import be.intecbrussel.iddblog.service.WriterService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -22,7 +24,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
@@ -32,11 +37,14 @@ public class WriterPostController  {
 
     private final AuthService authService;
     private final WriterService writerService;
+    private final TagService tagService;
 
-    public WriterPostController(RegisteredVisitorService registeredVisitorService, AuthService authService, WriterService writerService) {
+    public WriterPostController(RegisteredVisitorService registeredVisitorService, AuthService authService,
+                                WriterService writerService, TagService tagService) {
         this.registeredVisitorService = registeredVisitorService;
         this.authService = authService;
         this.writerService = writerService;
+        this.tagService = tagService;
     }
 
     @GetMapping("/writer/{id}")
@@ -90,6 +98,9 @@ public class WriterPostController  {
     post.setRegisteredVisitor(writer);
     model.addAttribute("newpost", post);
 
+    List<Tag> tags = tagService.findAll();
+    model.addAttribute("tags", tags);
+
     return "writer/newblogpost";
 }
 
@@ -98,6 +109,7 @@ public class WriterPostController  {
 
         RegisteredVisitor writer = registeredVisitorService.findById(id);
         writerPost.setRegisteredVisitor(writer);
+//        writerPost.setTags(tags.stream().collect(Collectors.toSet()));
         writerService.save(writerPost);
 
         return "redirect:/writer/" + id;
