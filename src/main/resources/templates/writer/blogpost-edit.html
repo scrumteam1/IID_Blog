@@ -23,26 +23,6 @@
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-  <script>
-    $("#postEditForm").validate({
-      rules: {
-        title: "required",
-        intro: "required",
-        content: "required",
-      },
-      messages: {
-        title: "Please enter a title to your post",
-        intro: "Please enter an introduction to your post",
-        content: "Your post has no content",
-      },
-      submitHandler: function (form) {
-        $("#exampleModal").modal('show');
-        $('#postEditForm').click(function () {
-          form.submit();
-        });
-      }
-    });
-  </script>
 </head>
 <body>
 <!--/*@thymesVar id="writerPost" type="be.intecbrussel.iddblog.domain.WriterPost"*/-->
@@ -85,8 +65,6 @@
     <div class="row">
       <div class="col-md col-md-offset-3">
         <button  type="submit" class="btn btn-primary">Edit post</button>
-
-        </button>
         <a th:href="@{'/writer/' + ${id}}" class="btn btn-primary">Cancel</a>
       </div>
     </div>
