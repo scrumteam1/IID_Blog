@@ -28,6 +28,7 @@ public class WriterPost {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime creationDate;
 
+    @NotBlank(message = "A title is mandatory")
     @Column(name = "title")
     private String title;
 

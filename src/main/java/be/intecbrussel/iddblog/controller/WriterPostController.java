@@ -15,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -132,7 +133,12 @@ public class WriterPostController  {
     }
 
     @PostMapping("writer/{id}/edit/{postId}")
-    public String updateWriterPost(@PathVariable("id") long id, @PathVariable("postId") long postId, @ModelAttribute("writerpost") @Valid WriterPost post){
+    public String updateWriterPost(@PathVariable("id") long id, @PathVariable("postId") long postId, @ModelAttribute("writerpost") @Valid WriterPost post, BindingResult bindingResult){
+
+        if(bindingResult.hasErrors()){
+            return "writer/blogpost-edit";
+        }
+
         WriterPost findPost = writerService.findById(postId);
         findPost.setTitle(post.getTitle());
         findPost.setIntro(post.getIntro());
