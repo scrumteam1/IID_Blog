@@ -28,7 +28,7 @@ public class WriterPost {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime creationDate;
 
-    @NotBlank(message = "A title is mandatory")
+    @NotBlank(message = "title is mandatory.")
     @Column(name = "title")
     private String title;
 
@@ -37,6 +37,7 @@ public class WriterPost {
     @Lob
     private String intro;
 
+    @NotBlank(message = "content is mandatory!")
     @Column(name = "content")
     @Lob
     private String content;
