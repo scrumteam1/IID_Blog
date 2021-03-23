@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <title>Edit blogpost</title>
 
-
   <!-- Latest compiled and minified CSS -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
         integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"
@@ -24,21 +23,38 @@
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script>
+    $("#postEditForm").validate({
+      rules: {
+        title: "required",
+        intro: "required",
+        content: "required",
+      },
+      messages: {
+        title: "Please enter a title to your post",
+        intro: "Please enter an introduction to your post",
+        content: "Your post has no content",
+      },
+      submitHandler: function (form) {
+        $("#exampleModal").modal('show');
+        $('#postEditForm').click(function () {
+          form.submit();
+        });
+      }
+    });
+  </script>
 </head>
 <body>
 <!--/*@thymesVar id="writerPost" type="be.intecbrussel.iddblog.domain.WriterPost"*/-->
+
 <div class ="container">
-  <form class="form-horizontal" role="form"  th:object="${post}" th:action="@{'/writer/' + ${id} + '/edit/' + ${postId}}" method="post">
+  <form class="form-horizontal" role="form"  id="postEditForm" th:object="${post}" th:action="@{'/writer/' + ${id} + '/edit/' + ${postId}}" method="post">
     <h2 class="col-md-offset-4">Edit blogpost</h2>
 
-    <div class="alert alert-danger" th:if="${#fields.hasErrors('global')}">
-      <p th:each="err : ${#fields.errors('global')}" th:text="${err}"></p>
-    </div>
 
     <div class = "form-group">
       <label for="title" class="col-sm-3 control-label">Title</label>
       <div class="col-sm-4">
-        <span th:if ="${#fields.hasErrors('title')}" th:errors ="*{title}" class ="text-danger"></span>
         <input th:field="*{title}" type="text" minlength="3" id="title" placeholder="Title" class="form-control" required>
 
       </div>
@@ -52,7 +68,7 @@
     <div class = "form-group">
       <label for="content" class="col-sm-3 control-label">Content</label>
       <div class="col-lg-6">
-        <textarea th:field="*{content}" type="text" id="content" minlength="50" maxlength="5000" rows="5" placeholder="Content" class="form-control"required></textarea>
+        <textarea th:field="*{content}" type="text" id="content" minlength="50" maxlength="2000" rows="5" placeholder="Content" class="form-control" required></textarea>
       </div>
     </div>
 
@@ -68,31 +84,10 @@
 
     <div class="row">
       <div class="col-md col-md-offset-3">
-        <button  type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+        <button  type="submit" class="btn btn-primary">Submit</button>
           Edit post
         </button>
-        <a th:href="@{'/index'}" class="btn btn-primary">Cancel</a>
-      </div>
-    </div>
-
-    <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Edit post</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            Are you sure you sure this is the definitive version?
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-            <button type="submit" class="btn btn-secondary">Edit</button>
-          </div>
-        </div>
+        <a th:href="@{'/writer/' + ${id}}" class="btn btn-primary">Cancel</a>
       </div>
     </div>
   </form>
