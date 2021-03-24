@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.validation.Valid;
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -89,9 +90,15 @@ public class WriterPostController  {
     }
 
     @GetMapping("/writer/{id}/newblogpost")
-    public String getSavePost(Model model, @PathVariable Long id){
+    public String getSavePost(Model model, @PathVariable Long id, Principal principal){
 
     RegisteredVisitor writer = registeredVisitorService.findById(id);
+
+        // The user should only access his own data, otherwise redirect to another page
+        if (principal == null || !principal.getName().equals(writer.getUsername())) {
+            return "redirect:/forbidden-page";
+        }
+
     WriterPost post = new WriterPost();
     post.setRegisteredVisitor(writer);
     model.addAttribute("newpost", post);
@@ -114,15 +121,29 @@ public class WriterPostController  {
     }
 
     @GetMapping("/deletepost/{id}")
-    public String deleteWriterPost(WriterPost writerPost) {
-        long id = writerPost.getId();
-        writerService.deleteById(id);
+    public String deleteWriterPost(@PathVariable(name = "id") Long postId, Principal principal) {
+
+        WriterPost post = writerService.findById(postId);
+
+        // The user should only access his own data, otherwise redirect to another page
+        if (principal == null || !principal.getName().equals(post.getRegisteredVisitor().getUsername())) {
+            return "redirect:/forbidden-page";
+        }
+
+        writerService.deleteById(post.getId());
 
         return "redirect:/index";
     }
     @GetMapping("writer/{id}/update/{postId}")
-    public String updateWriterPost(@PathVariable long id, @PathVariable("postId") long postId, Model model){
+    public String updateWriterPost(@PathVariable long id, @PathVariable("postId") long postId, Model model
+            , Principal principal){
+
         WriterPost post = writerService.findById(postId);
+
+        // The user should only access his own data, otherwise redirect to another page
+        if (principal == null || !principal.getName().equals(post.getRegisteredVisitor().getUsername())) {
+            return "redirect:/forbidden-page";
+        }
 
         model.addAttribute("post", post);
 
