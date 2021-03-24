@@ -36,7 +36,7 @@
 </div>
 
 <header>
-    <h1 style="color: #447EB9">Writer's bloghome</h1>
+<!--    <h1 style="color: #447EB9">Writer's bloghome</h1>-->
 
     <div class="nav-item dropdown float-right">
         <a style="color: #447EB9;" href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Sort by</a>
@@ -52,17 +52,13 @@
 <div class="container">
     <div><a class="btn btn-primary float-right" th:href="@{'/writer/' + ${user.id} + '/newblogpost'}" th:if="${loggedinuser.equals(user.username)&&user.isWriter}">Create new Blogpost</a></div>
     <ul class="align-items-end " style="  display: flex;  list-style: none">
-        <li>
-            <a th:href="@{/index}" class="btn btn-primary">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd" d="M2 13.5V7h1v6.5a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5V7h1v6.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5zm11-11V6l-2-2V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5z"/>
-                    <path fill-rule="evenodd" d="M7.293 1.5a1 1 0 0 1 1.414 0l6.647 6.646a.5.5 0 0 1-.708.708L8 2.207 1.354 8.854a.5.5 0 1 1-.708-.708L7.293 1.5z"/>
-                </svg>
-            </a></li>
+
+        <li >
+            <a style="background-color: white; border-color: white;margin-bottom: -5px;margin-right: -15px" th:href="@{/index}" class="btn btn-primary">
+                <i style="color:#23527c; font-size:23px;fill: red;" class="fa fa-home fa-fw fa-lg"></i> </a></li>
         <li>  /   Authors   /   </li>
         <li th:text="${user.username}"></li>
-        <li><img style="width: 40px" th:src="@{'data:image/png;base64,'+${avatar}}"th:if="${avatar!= null}"/></li>
-
+        <li><img style="width: 18px;margin-left: 3px;margin-bottom: 2px;" th:src="@{'data:image/png;base64,'+${avatar}}" th:if="${avatar!= null}"/></li>
     </ul>
     <hr>
     <h2 th:if = "${posts.isEmpty()}" style="color: #447EB9">No blogposts yet!</h2>
