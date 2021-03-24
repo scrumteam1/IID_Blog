@@ -132,7 +132,7 @@ public class WriterPostController  {
 
         writerService.deleteById(post.getId());
 
-        return "redirect:/index";
+        return "redirect:/writer/";
     }
     @GetMapping("writer/{id}/update/{postId}")
     public String updateWriterPost(@PathVariable long id, @PathVariable("postId") long postId, Model model
