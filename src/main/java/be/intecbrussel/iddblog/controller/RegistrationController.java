@@ -125,7 +125,7 @@ public class RegistrationController implements HandlerExceptionResolver {
         }
         registeredVisitorService.updateUserEnabled(visitor, true);
 
-        return "redirect:/login";
+        return "/confirmation-registration";
     }
 
     @Override

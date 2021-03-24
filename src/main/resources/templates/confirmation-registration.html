@@ -1,0 +1,56 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Email sent</title>
+
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+
+    <script>
+            window.onload = function(){
+                var counter = 5;
+                setInterval(function() {
+                    counter--;
+                    if (counter >= 0) {
+                        span = document.getElementById("count");
+                        span.innerHTML = counter;
+                    }
+                    if (counter === 0) {
+                        clearInterval(counter);
+                    }
+                }, 1000);
+        }
+
+            $(window).load(function(){
+                  $("#myModal").modal('show');
+            setInterval(function(){
+                window.location = "/login";
+            },5000)
+
+        });
+    </script>
+</head>
+<body>
+
+<div class="container">
+    <div class="modal fade" id="myModal" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" style="color: #447EB9">Registration confirmed</h3>
+                </div>
+                <div class="modal-body">
+                    <p>Your registration has been confirmed!</p>
+                </div>
+                <div class="modal-footer">
+                    <h6>you will be redirect to the login page after <span id="count">5</span> seconds</h6>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>
