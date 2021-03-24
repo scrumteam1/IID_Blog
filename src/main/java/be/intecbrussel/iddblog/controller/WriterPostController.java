@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import javax.validation.Valid;
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Slf4j
@@ -67,7 +68,10 @@ public class WriterPostController  {
         int totalItems = page.getNumberOfElements();
         int totalPages = page.getTotalPages();
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
         model.addAttribute("posts", posts);
+        model.addAttribute("formatter", formatter);
         model.addAttribute("avatar", visitor.getAvatar());
         model.addAttribute("user", visitor);
         model.addAttribute("keyword", keyword);
