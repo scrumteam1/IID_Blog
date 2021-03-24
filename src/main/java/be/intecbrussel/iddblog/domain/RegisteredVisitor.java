@@ -44,11 +44,14 @@ public class RegisteredVisitor{
     )
     private List<Authority> authority;
 
-    @OneToMany(mappedBy = "registeredVisitor",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "registeredVisitor", cascade = CascadeType.ALL)
     private List<VerificationToken> verificationToken;
 
     @OneToMany(mappedBy = "registeredVisitor", fetch=FetchType.LAZY, cascade = CascadeType.ALL)
     private List<WriterPost> writerPosts;
+
+    @OneToMany(mappedBy = "registeredVisitor", fetch=FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Comment> comments;
 
     @NotBlank(message = "first name is mandatory.")
     @Size(min = 1, max = 20)
@@ -86,6 +89,7 @@ public class RegisteredVisitor{
 
     @Column(name = "enabled")
     private boolean enabled = false;
+
 
     @Override
     public boolean equals(Object o) {

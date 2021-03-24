@@ -51,6 +51,9 @@ public class WriterPost {
 
     private Boolean isEnabled = true;
 
+    @OneToMany(fetch=FetchType.LAZY, cascade = CascadeType.ALL)
+    private List <Comment> comments;
+
     @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     @Fetch(FetchMode.SELECT)
     @JoinTable(
