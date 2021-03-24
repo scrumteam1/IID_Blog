@@ -79,14 +79,14 @@ public class WriterPostController  {
         String reverseSortDir = sortDir.equals("asc") ? "desc" : "asc";
         model.addAttribute("reverseSortDir", reverseSortDir);
 
-        return "/writer/writer";
+        return "writer/writer";
     }
 
     @GetMapping("/writer/post/{id}")
     public String showPost(@PathVariable Long id, Model model) {
         userContext(model);
         model.addAttribute("post", writerService.findById(id));
-        return "/writer/blogpost-view";
+        return "writer/blogpost-view";
     }
 
     @GetMapping("/writer/{id}/newblogpost")

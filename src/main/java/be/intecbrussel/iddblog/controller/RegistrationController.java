@@ -106,7 +106,7 @@ public class RegistrationController implements HandlerExceptionResolver {
         String text = "Dear, \n\n To confirm your registration, please use the lin below : \n   " + confirmationUrl + "\n\nKind Regards,\nThe Blog Post Team";
         emailService.sendSimpleMessage(recipientAddress, subject, text);
 
-        return "/email-sent";
+        return "email-sent";
     }
 
     @GetMapping("registeredvisitor/confirmRegistration")
@@ -115,17 +115,17 @@ public class RegistrationController implements HandlerExceptionResolver {
         VerificationToken verificationToken = registeredVisitorService.getVerificationToken(token);
         if (verificationToken == null) {
 
-            return "/verification-link-failed";
+            return "verification-link-failed";
         }
 
         RegisteredVisitor visitor = verificationToken.getRegisteredVisitor();
         Calendar cal = Calendar.getInstance();
         if ((verificationToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
-            return "/verification-link-failed";
+            return "verification-link-failed";
         }
         registeredVisitorService.updateUserEnabled(visitor, true);
 
-        return "/confirmation-registration";
+        return "confirmation-registration";
     }
 
     @Override
