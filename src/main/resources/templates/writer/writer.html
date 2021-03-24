@@ -80,7 +80,7 @@
             <div class="more label" style="margin-bottom: 20px"><a th:href="@{'/writer/post/'+${post.id}}">Read more</a></div>
             <a th:href="@{'/writer/' + ${post.registeredVisitor.id} + '/update/' + ${post.id}}" class="btn btn-primary" th:if="${loggedinuser.equals(user.username)&& user.isWriter}">Edit post</a>
 
-            <button th:unless="${isAdmin}" type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+            <button th:if="${loggedinuser.equals(user.username)&& user.isWriter}" type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
                 Delete Post
             </button>
 
