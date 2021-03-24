@@ -25,7 +25,7 @@ public class Comment {
     private Long id;
 
     @Column(name = "creation_date")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
     private LocalDateTime creationDate;
 
     @NotBlank(message = "Type your comment")
@@ -40,4 +40,5 @@ public class Comment {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private WriterPost writerPost;
+
 }

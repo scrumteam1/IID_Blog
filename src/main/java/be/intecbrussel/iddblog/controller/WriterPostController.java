@@ -4,10 +4,7 @@ import be.intecbrussel.iddblog.domain.Authority;
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
 import be.intecbrussel.iddblog.domain.Tag;
 import be.intecbrussel.iddblog.domain.WriterPost;
-import be.intecbrussel.iddblog.service.AuthService;
-import be.intecbrussel.iddblog.service.RegisteredVisitorService;
-import be.intecbrussel.iddblog.service.TagService;
-import be.intecbrussel.iddblog.service.WriterService;
+import be.intecbrussel.iddblog.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.repository.query.Param;
@@ -36,13 +33,15 @@ public class WriterPostController  {
     private final AuthService authService;
     private final WriterService writerService;
     private final TagService tagService;
+    private final CommentService commentService;
 
     public WriterPostController(RegisteredVisitorService registeredVisitorService, AuthService authService,
-                                WriterService writerService, TagService tagService) {
+                                WriterService writerService, TagService tagService, CommentService commentService) {
         this.registeredVisitorService = registeredVisitorService;
         this.authService = authService;
         this.writerService = writerService;
         this.tagService = tagService;
+        this.commentService = commentService;
     }
 
     @GetMapping("/writer/{id}")
@@ -85,6 +84,7 @@ public class WriterPostController  {
     public String showPost(@PathVariable Long id, Model model) {
         userContext(model);
         model.addAttribute("post", writerService.findById(id));
+        model.addAttribute("comments", commentService.findCommentsByWriterPost(writerService.findById(id)));
         return "/writer/blogpost-view";
     }
 

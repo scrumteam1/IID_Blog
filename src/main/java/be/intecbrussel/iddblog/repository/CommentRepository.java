@@ -13,7 +13,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     List<Comment> findCommentsByWriterPost(WriterPost writerPost);
 
-    List<Comment> findCommentsByRegisteredVisitor();
 
     Comment save(Comment comment);
 
