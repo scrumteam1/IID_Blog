@@ -75,7 +75,7 @@ public class IndexController {
 
         userContext(model);
 
-        return "/about";
+        return "about";
     }
 
 
