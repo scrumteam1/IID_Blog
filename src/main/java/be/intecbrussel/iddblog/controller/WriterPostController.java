@@ -68,7 +68,7 @@ public class WriterPostController  {
         int totalItems = page.getNumberOfElements();
         int totalPages = page.getTotalPages();
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 
         model.addAttribute("posts", posts);
         model.addAttribute("formatter", formatter);
