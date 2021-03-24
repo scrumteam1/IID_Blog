@@ -29,7 +29,7 @@
     </script>
 
 </head>
-<body>
+<body style="background-color: #F8F9FA">
 
 <div th:replace="fragments/header :: (${isAdmin} ? 'header-admin': (${isWriter} ? 'header-writer': (${isRegistered} ? 'header-loggedin': 'header')))">
     Intec blog
