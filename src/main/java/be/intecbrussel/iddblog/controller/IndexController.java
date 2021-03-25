@@ -68,7 +68,7 @@ public class IndexController {
 
         userContext(model);
 
-        return "/about";
+        return "about";
     }
 
     @RequestMapping("/page/{pageNumber}")

@@ -24,7 +24,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.validation.Valid;
+import java.security.Principal;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Slf4j
@@ -66,7 +69,10 @@ public class WriterPostController  {
         int totalItems = page.getNumberOfElements();
         int totalPages = page.getTotalPages();
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+
         model.addAttribute("posts", posts);
+        model.addAttribute("formatter", formatter);
         model.addAttribute("avatar", visitor.getAvatar());
         model.addAttribute("user", visitor);
         model.addAttribute("keyword", keyword);
@@ -78,20 +84,26 @@ public class WriterPostController  {
         String reverseSortDir = sortDir.equals("asc") ? "desc" : "asc";
         model.addAttribute("reverseSortDir", reverseSortDir);
 
-        return "/writer/writer";
+        return "writer/writer";
     }
 
     @GetMapping("/writer/post/{id}")
     public String showPost(@PathVariable Long id, Model model) {
         userContext(model);
         model.addAttribute("post", writerService.findById(id));
-        return "/writer/blogpost-view";
+        return "writer/blogpost-view";
     }
 
     @GetMapping("/writer/{id}/newblogpost")
-    public String getSavePost(Model model, @PathVariable Long id){
+    public String getSavePost(Model model, @PathVariable Long id, Principal principal){
 
     RegisteredVisitor writer = registeredVisitorService.findById(id);
+
+        // The user should only access his own data, otherwise redirect to another page
+        if (principal == null || !principal.getName().equals(writer.getUsername())) {
+            return "redirect:/forbidden-page";
+        }
+
     WriterPost post = new WriterPost();
     post.setRegisteredVisitor(writer);
     model.addAttribute("newpost", post);
@@ -114,15 +126,29 @@ public class WriterPostController  {
     }
 
     @GetMapping("/deletepost/{id}")
-    public String deleteWriterPost(WriterPost writerPost) {
-        long id = writerPost.getId();
-        writerService.deleteById(id);
+    public String deleteWriterPost(@PathVariable(name = "id") Long postId, Principal principal) {
 
-        return "redirect:/index";
+        WriterPost post = writerService.findById(postId);
+
+        // The user should only access his own data, otherwise redirect to another page
+        if (principal == null || !principal.getName().equals(post.getRegisteredVisitor().getUsername())) {
+            return "redirect:/forbidden-page";
+        }
+
+        writerService.deleteById(post.getId());
+
+        return "redirect:/writer/" + post.getRegisteredVisitor().getId();
     }
     @GetMapping("writer/{id}/update/{postId}")
-    public String updateWriterPost(@PathVariable long id, @PathVariable("postId") long postId, Model model){
+    public String updateWriterPost(@PathVariable long id, @PathVariable("postId") long postId, Model model
+            , Principal principal){
+
         WriterPost post = writerService.findById(postId);
+
+        // The user should only access his own data, otherwise redirect to another page
+        if (principal == null || !principal.getName().equals(post.getRegisteredVisitor().getUsername())) {
+            return "redirect:/forbidden-page";
+        }
 
         model.addAttribute("post", post);
 
