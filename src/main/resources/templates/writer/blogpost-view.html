@@ -1,6 +1,6 @@
 
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:form="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -37,7 +37,15 @@
 
 </div>
 <div class ="container">
+    <!--/*@thymesVar id="comment" type="be.intecbrussel.iddblog.domain.Comment"*/-->
     <h3>Comment section</h3>
+    <form method="post">
+        <textarea class="col-md-6" placeholder="Add a comment!" name="comment"></textarea>
+        <div class="col-md-1">
+            <button class="btn btn-primary " type="submit">Comment</button>
+        </div>
+    </form>
+</div>
     <ul th:each="comment : ${comments}" class="timeline" style="list-style: none">
         <li>
             <p th:text="${comment.getRegisteredVisitor().getUsername() + ' ' + comment.creationDate}" style="color: #5fbae9">comment by</p>
