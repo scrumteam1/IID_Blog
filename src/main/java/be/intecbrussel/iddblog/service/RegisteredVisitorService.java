@@ -19,7 +19,7 @@ public interface RegisteredVisitorService {
 
     void updateVisitorWithoutPwd( RegisteredVisitor registeredVisitor);
 
-    void updateUserPwd(@Param(value = "id") Long id, @Param(value = "password") String password);
+    void updateUserPwd(Long id,String password);
 
     boolean checkIfValidOldPassword(RegisteredVisitor visitor, String oldPassword);
 
