@@ -13,7 +13,7 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light" >
         <div class="collapse navbar-collapse" id="navbarNav">
             <div class="navbar-nav">
-                <a th:href="@{/index}" class="nav-item nav-link active">Home</a>
+                <a id = "home" th:href="@{/index}" class="nav-item nav-link active">Home</a>
                 <a id="about" th:href="@{/about}" class="nav-item nav-link">About</a>
             </div>
             <form id="searchHeader" class="form-inline ml-auto">
@@ -43,7 +43,7 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light" >
         <div class="collapse navbar-collapse" id="navbarNavLoggedIn">
             <div class="navbar-nav">
-                <a th:href="@{/index}" class="nav-item nav-link active">Home</a>
+                <a id = "home" th:href="@{/index}" class="nav-item nav-link active">Home</a>
                 <a id="about" th:href="@{/about}" class="nav-item nav-link">About</a>
             </div>
             <form id="searchLoggedin" class="form-inline ml-auto">
@@ -77,7 +77,7 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light" >
         <div class="collapse navbar-collapse" id="navbarNavAdmin">
             <div class="navbar-nav">
-                <a th:href="@{/index}" class="nav-item nav-link active">Home</a>
+                <a id = "home" th:href="@{/index}" class="nav-item nav-link active">Home</a>
                 <a id="about" th:href="@{/about}" class="nav-item nav-link">About</a>
                 <a id="admin" th:href="@{'/admin'}" class="nav-item nav-link">Admin</a>
             </div>
@@ -112,7 +112,7 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light" >
         <div class="collapse navbar-collapse" id="navbarNavWriter">
             <div class="navbar-nav">
-                <a th:href="@{/index}" class="nav-item nav-link active">Home</a>
+                <a id = "home" th:href="@{/index}" class="nav-item nav-link active">Home</a>
                 <a id="about" th:href="@{/about}" class="nav-item nav-link">About</a>
                 <a id="writer" th:href="@{'/writer/'+${idUser}}" class="nav-item nav-link">Writer</a>
             </div>

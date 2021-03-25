@@ -14,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -69,6 +70,8 @@ class IndexControllerTest {
 
     @Test
     void getIndexTest() throws Exception {
+
+        Page<WriterPost> page = Mockito.mock(Page.class);
         savedVisitor.setId(1L);
         Authority authority = Authority.builder().id(1L).authority("ADMIN").build();
         List<Authority> authorities = new ArrayList<>();
@@ -85,7 +88,7 @@ class IndexControllerTest {
         when(visitorService.findByUsername(ArgumentMatchers.any())).thenReturn(savedVisitor);
         when(authService.findAuthorityByUsername(ArgumentMatchers.any())).thenReturn(authorities);
         when(authService.findAuthorityByUsername(ArgumentMatchers.any())).thenReturn(authorities);
-        when(writerService.findOrderByCreationDate(any())).thenReturn(posts);
+        when(writerService.findWriterPostsByRegisteredVisitor("",1,"creationDate","desc")).thenReturn(page);
 
         mockMvc.perform(get("/index/"))
                 .andExpect(status().isOk())
