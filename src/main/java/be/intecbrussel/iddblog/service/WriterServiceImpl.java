@@ -43,6 +43,15 @@ public class WriterServiceImpl implements WriterService{
         return writerPostRepository.findWriterPostsByRegisteredVisitor(visitor,pageable);
     }
 
+    @Override
+    public Page<WriterPost> findWriterPostsByRegisteredVisitor(String keyword, int currentPage, String sortField, String sortDir) {
+        sortField = sortField.equals("creationDate") ? "creation_date" : sortField;
+        Sort sort = Sort.by(sortField);
+        sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
+        Pageable pageable = PageRequest.of(currentPage - 1 ,6, sort);
+
+        return writerPostRepository.findWriterPostsByRegisteredVisitor(keyword, pageable);
+    }
 
     @Override
     public WriterPost save(WriterPost post) {
@@ -71,4 +80,6 @@ public class WriterServiceImpl implements WriterService{
     public WriterPost findById(Long id) {
         return writerPostRepository.findById(id).orElse(null);
     }
+
+
 }

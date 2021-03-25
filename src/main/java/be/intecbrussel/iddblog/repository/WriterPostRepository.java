@@ -31,6 +31,14 @@ public interface WriterPostRepository extends JpaRepository<WriterPost, Long> {
             nativeQuery = true)
     Page<WriterPost> findWriterPostsByRegisteredVisitor(@Param("visitor") RegisteredVisitor visitor, Pageable pageable);
 
+    @Query(value = "select distinct p.* from `writerposts` p " +
+            "left join `users` u on u.id = p.user_id " +
+            "left join `writerposts_tags` wt on p.id = wt.post_id " +
+            "left join `tags` t on t.id = wt.tag_id " +
+            "where p.title like concat('%',:keyword,'%') or t.tag like concat('%',:keyword,'%') or u.username like concat('%',:keyword,'%')" ,
+            nativeQuery = true)
+    Page<WriterPost>findWriterPostsByRegisteredVisitor(@Param("keyword") String keyword, Pageable pageable);
+
     @Modifying
     @Query("update WriterPost u set u.title = :title, u.intro = :intro, u.content = :content where u.id = :id")
     void updateWriterPost(@Param(value = "id") Long id, @Param(value = "title") String title,
