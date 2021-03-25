@@ -109,7 +109,6 @@ class IndexControllerTest {
         Mockito.when(securityContext.getAuthentication().getName()).thenReturn("test");
         when(visitorService.findByUsername(ArgumentMatchers.any())).thenReturn(savedVisitor);
         when(authService.findAuthorityByUsername(ArgumentMatchers.any())).thenReturn(authorities);
-        when(authService.findAuthorityByUsername(ArgumentMatchers.any())).thenReturn(authorities);
         when(writerService.findWriterPostsByRegisteredVisitor("",1,"creationDate","desc")).thenReturn(page);
 
         mockMvc.perform(get("/index/"))

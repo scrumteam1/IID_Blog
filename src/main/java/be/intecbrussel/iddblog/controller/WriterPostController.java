@@ -139,6 +139,7 @@ public class WriterPostController  {
 
         return "redirect:/writer/" + post.getRegisteredVisitor().getId();
     }
+
     @GetMapping("writer/{id}/update/{postId}")
     public String updateWriterPost(@PathVariable long id, @PathVariable("postId") long postId, Model model
             , Principal principal){

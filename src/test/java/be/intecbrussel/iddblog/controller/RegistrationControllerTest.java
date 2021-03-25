@@ -1,6 +1,8 @@
 package be.intecbrussel.iddblog.controller;
 
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
+import be.intecbrussel.iddblog.domain.VerificationToken;
+import be.intecbrussel.iddblog.email.EmailService;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
 import be.intecbrussel.iddblog.validation.error.UserAlreadyExistException;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,6 +31,9 @@ class RegistrationControllerTest {
 
     @Mock
     RegisteredVisitorService visitorService;
+
+    @Mock
+    EmailService emailService;
 
     @InjectMocks
     RegistrationController visitorController;
@@ -211,4 +216,29 @@ class RegistrationControllerTest {
 
         verify(visitorService, times(0)).saveVisitor(ArgumentMatchers.any());
     }
+
+    @Test
+    void confirmRegistrationTest() throws Exception{
+        savedVisitor.setId(1L);
+
+        when(visitorService.findById(any())).thenReturn(savedVisitor);
+
+        mockMvc.perform(get("/registeredvisitor/confirm/1"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("email-sent"));
+    }
+
+    @Test
+    void registrationConfirmedTest() throws Exception{
+
+        VerificationToken token = new VerificationToken("test");
+
+        when(visitorService.getVerificationToken(any())).thenReturn(token);
+
+        mockMvc.perform(get("/registeredvisitor/confirmRegistration")
+                .param("token", "test"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("confirmation-registration"));
+    }
+
 }
