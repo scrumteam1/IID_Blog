@@ -40,7 +40,7 @@
     <h2 th:if = "${posts.isEmpty()}" style="color: #447EB9">No blogposts yet!</h2>
     <ul th:each="post : ${posts}" class="timeline" style="list-style: none" >
         <li>
-            <p th:text="${post.creationDate}" >Creation Date</p>
+            <p th:text="${post.creationDate.format(formatter)}" >Creation Date</p>
             <h1 th:text="${post.title}"style="color: #447EB9">title</h1>
             <p th:text="${post.intro}"style="text-align: justify">Content</p>
             <p>Written by: <a th:href="@{'/writer/'+${post.registeredVisitor.id}}" th:text="${post.getRegisteredVisitor().username}">username</a></p>

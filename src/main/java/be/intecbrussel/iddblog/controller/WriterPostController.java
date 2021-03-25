@@ -89,7 +89,9 @@ public class WriterPostController  {
 
     @GetMapping("/writer/post/{id}")
     public String showPost(@PathVariable Long id, Model model) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
         userContext(model);
+        model.addAttribute("formatter", formatter);
         model.addAttribute("post", writerService.findById(id));
         return "writer/blogpost-view";
     }

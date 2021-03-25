@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.List;
 
@@ -83,6 +84,8 @@ public class IndexController {
         List<WriterPost> posts = page.getContent();
         int totalItems = page.getNumberOfElements();
         int totalPages = page.getTotalPages();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+
 
         model.addAttribute("posts", posts);
         model.addAttribute("keyword", keyword);
@@ -93,7 +96,7 @@ public class IndexController {
         model.addAttribute("sortDir", sortDir);
         String reverseSortDir = sortDir.equals("asc") ? "desc" : "asc";
         model.addAttribute("reverseSortDir", reverseSortDir);
-
+        model.addAttribute("formatter", formatter);
         return "index";
     }
 
