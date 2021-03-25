@@ -58,7 +58,7 @@ public class AdminController {
         model.addAttribute("reverseSortDir", reverseSortDir);
 
 
-        return "/admin/admin";
+        return "admin/admin";
     }
 
 
