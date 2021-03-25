@@ -86,7 +86,7 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
 
         Sort sort = Sort.by(sortField);
         sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
-        Pageable pageable = PageRequest.of(pageNumber - 1 ,5, sort);
+        Pageable pageable = PageRequest.of(pageNumber - 1 ,10, sort);
 
         if(keyword != null) {
             return registeredVisitorRepository.findAll(keyword, pageable);

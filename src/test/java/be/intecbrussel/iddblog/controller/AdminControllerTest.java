@@ -89,7 +89,7 @@ class AdminControllerTest {
                 .param("sortField","username")
                 .param("sortDir","asc"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("/admin/admin"));
+                .andExpect(view().name("admin/admin"));
     }
 
     @Test
