@@ -28,26 +28,48 @@
             <p th:text="${post.creationDate}" >Creation Date</p>
             <h1 th:text="${post.title}"style="color: #447EB9">title</h1>
             <p th:text="${post.intro}"style="text-align: justify">Content</p>
-            <p>Written by: <a th:href="@{'/writer/'+${post.getRegisteredVisitor().id}}" th:text="${post.getRegisteredVisitor().username}">username</a></p>
+            <p>Written by: <a th:href="@{'/writer/'+${post.registeredVisitor.id}}" th:text="${post.getRegisteredVisitor().username}">username</a></p>
+            <ul th:each="tag, iterStat : ${post.tags}" style="list-style-type: none;margin:0; padding:0;">
+                <li th:text="!${iterStat.last} ? ${tag.getTag().name()} + ',' : ${tag.getTag().name()}" style="display:inline; color: #398049;
+                        font-size: x-small; float:left; padding:0px 2px; margin:0; float:left; display: block;">
+                </li>
+            </ul>
+            <br>
             <div class="more label" style="margin-bottom: 20px"><a th:href="@{'/writer/post/'+${post.id}}">Read more</a></div>
         </li>
         <div class="clear"></div>
         <hr>
     </ul>
 
+    <div>
+        Total Items: [[${totalItems}]] - Page [[${currentPage}]] of [[${totalPages}]]
+        &nbsp;- &nbsp;
+
+        <a th:if="${currentPage > 1}" th:href="@{'/page/1?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + '&keyword=' + ${keyword} }">First</a>
+        <span th:unless="${currentPage > 1}">First</span>
+        &nbsp;&nbsp;
+
+        <a th:if="${currentPage > 1}" th:href="@{ '/page/' + ${currentPage - 1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + '&keyword=' + ${keyword} }">Previous</a>
+        <span th:unless="${currentPage > 1}">Previous</span>
+        &nbsp;&nbsp;
+
+        <span th:each="i: ${#numbers.sequence(1, totalPages)}">
+                    <a th:if="${i != currentPage}" th:href="@{ '/page/' + ${i} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + '&keyword=' + ${keyword} } ">[[${i}]]</a>
+                    <span th:unless="${i != currentPage}">[[${i}]]</span>
+                    &nbsp;&nbsp;
+                </span>
+
+        <a th:if="${currentPage < totalPages}" th:href="@{ '/page/' + ${currentPage + 1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + '&keyword=' + ${keyword} }">Next</a>
+        <span th:unless="${currentPage < totalPages}">Next</span>
+        &nbsp;&nbsp;
+
+        <a th:if="${currentPage < totalPages}" th:href="@{ '/page/' + ${totalPages} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + '&keyword=' + ${keyword} }">Last</a>
+        <span th:unless="${currentPage < totalPages}">Last</span>
+        &nbsp;&nbsp;
+    </div>
+
 </div>
 </body>
-<footer style="margin-bottom: 40px">
 
-    <div class="container">
-        <a href="#" >Previous</a>
-        <a href="#" >1</a>
-        <a href="#" >2</a>
-        <a href="#" >3</a>
-        <a href="#" >4</a>
-        <a href="#" >5</a>
-        <a href="#" >Next</a>
-        <a href="#" class="float-right" >Top of the page</a>
-    </div>
 </footer>
 </html>

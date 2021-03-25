@@ -17,7 +17,7 @@
                 <a id="about" th:href="@{/about}" class="nav-item nav-link">About</a>
             </div>
             <form id="searchHeader" class="form-inline ml-auto">
-                <input name="keyword" th:value="${keyword}" style="width: 400px;" type="text" class="form-control mr-sm-2" placeholder="Search">
+                <input name="keyword" th:value="${keyword}==null?'':${keyword}" style="width: 400px;" type="text" class="form-control mr-sm-2" placeholder="Search">
                 <div class="input-group-append">
                     <button type="submit" class="btn btn-secondary"><i class="fa fa-search"></i></button>
                 </div>
@@ -47,7 +47,7 @@
                 <a id="about" th:href="@{/about}" class="nav-item nav-link">About</a>
             </div>
             <form id="searchLoggedin" class="form-inline ml-auto">
-                <input name="keyword" th:value="${keyword}" style="width: 400px;" type="text" class="form-control mr-sm-2" placeholder="Search">
+                <input name="keyword" th:value="${keyword}==null?'':${keyword}" style="width: 400px;" type="text" class="form-control mr-sm-2" placeholder="Search">
                 <div class="input-group-append">
                     <button type="submit" class="btn btn-secondary"><i class="fa fa-search"></i></button>
                 </div>
@@ -82,7 +82,7 @@
                 <a id="admin" th:href="@{'/admin'}" class="nav-item nav-link">Admin</a>
             </div>
             <form id="searchAdmin" class="form-inline ml-auto">
-                <input name="keyword" th:value="${keyword}" style="width: 400px;" type="text" class="form-control mr-sm-2" placeholder="Search">
+                <input name="keyword" th:value="${keyword}==null?'':${keyword}" style="width: 400px;" type="text" class="form-control mr-sm-2" placeholder="Search">
                 <div class="input-group-append">
                     <button type="submit" class="btn btn-secondary"><i class="fa fa-search"></i></button>
                 </div>
