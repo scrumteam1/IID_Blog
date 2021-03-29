@@ -45,8 +45,8 @@
             <p th:text="${post.intro}"style="text-align: justify">Content</p>
             <p>Written by: <a th:href="@{'/writer/'+${post.registeredVisitor.id}}" th:text="${post.getRegisteredVisitor().username}">username</a></p>
             <ul th:each="tag, iterStat : ${post.tags}" style="list-style-type: none;margin:0; padding:0;">
-                <li th:text="!${iterStat.last} ? ${tag.getTag().name()} + ',' : ${tag.getTag().name()}" style="display:inline; color: #398049;
-                        font-size: x-small; float:left; padding:0px 2px; margin:0; float:left; display: block;">
+                <li th:text="${!iterStat.last} ? ${tag.getTag().name()} + ',' : ${tag.getTag().name()}" style="display:inline; color: #398049;
+                        font-size: medium; float:left; padding:0px 2px; margin:0; float:left; display: block;">
                 </li>
             </ul>
             <br>
