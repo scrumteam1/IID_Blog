@@ -1,4 +1,4 @@
-use blog_dev;
+
 
 drop table if exists user_authority;
 drop table if exists writerposts_tags;
