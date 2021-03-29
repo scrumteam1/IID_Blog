@@ -1,6 +1,6 @@
 
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:form="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:form="http://www.w3.org/1999/xhtml" xmlns="">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -40,15 +40,19 @@
     <!--/*@thymesVar id="comment" type="be.intecbrussel.iddblog.domain.Comment"*/-->
     <h3>Comment section</h3>
     <form method="post">
-        <textarea class="col-md-6" placeholder="Add a comment!" name="comment"></textarea>
+
+            <textarea class="col-lg-6" maxlength="300" placeholder="Add a comment!" name="comment"></textarea>
+
         <div class="col-md-1">
             <button class="btn btn-primary " type="submit">Comment</button>
         </div>
     </form>
-</div>
+<br>
+    <br>
     <ul th:each="comment : ${comments}" class="timeline" style="list-style: none">
         <li>
-            <p th:text="${comment.getRegisteredVisitor().getUsername() + ' ' + comment.creationDate}" style="color: #5fbae9">comment by</p>
+        <img style="width: 40px" th:src="@{'data:image/png;base64,'+${comment.getRegisteredVisitor().getAvatar()}}" th:if="${comment.getRegisteredVisitor().getAvatar()!= null}"/>
+            <p th:text="${comment.getRegisteredVisitor().getUsername() + ' ' + comment.getDaysAgo(comment.getCreationDate())} + ' days ago'" style="color: #5fbae9">comment by</p>
             <p th:text="${comment.content}">content</p>
             <a href="#" class="btn"th:if="${loggedinuser.equals(comment.getRegisteredVisitor().getUsername())}">Edit comment</a>
             <a href="#" class="btn"th:if="${loggedinuser.equals(comment.getRegisteredVisitor().getUsername())}">Delete comment</a>

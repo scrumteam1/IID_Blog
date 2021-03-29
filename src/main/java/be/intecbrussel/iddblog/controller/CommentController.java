@@ -11,7 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Controller
 public class CommentController {
@@ -33,7 +33,7 @@ public class CommentController {
             return "redirect:/login";
         }
         WriterPost thisPost = writerService.findById(id);
-        LocalDateTime commentTime = LocalDateTime.now();
+        LocalDate commentTime = LocalDate.now();
 
         if(content != null){
             Comment commentToSave = new Comment();

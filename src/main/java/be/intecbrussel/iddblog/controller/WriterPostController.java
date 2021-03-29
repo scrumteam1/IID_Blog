@@ -84,7 +84,7 @@ public class WriterPostController  {
     public String showPost(@PathVariable Long id, Model model) {
         userContext(model);
         model.addAttribute("post", writerService.findById(id));
-        model.addAttribute("comments", commentService.findCommentsByWriterPost(writerService.findById(id)));
+        model.addAttribute("comments", commentService.findCommentsByWriterPostOrderByCreationDate(writerService.findById(id)));
         return "/writer/blogpost-view";
     }
 

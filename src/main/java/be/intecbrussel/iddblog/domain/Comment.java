@@ -9,7 +9,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.Period;
 
 @Entity(name = "comment")
 @Table(name = "comments")
@@ -26,7 +27,7 @@ public class Comment {
 
     @Column(name = "creation_date")
     @DateTimeFormat(pattern = "dd-MM-yyyy")
-    private LocalDateTime creationDate;
+    private LocalDate creationDate;
 
     @NotBlank(message = "Type your comment")
     @Column(name = "content")
@@ -41,4 +42,8 @@ public class Comment {
     @JoinColumn(name = "post_id")
     private WriterPost writerPost;
 
+    public int getDaysAgo(LocalDate creationDate){
+        LocalDate today = LocalDate.now();
+        return Period.between(today, creationDate).getDays();
+    }
 }

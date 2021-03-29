@@ -12,6 +12,7 @@ import java.util.List;
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     List<Comment> findCommentsByWriterPost(WriterPost writerPost);
+    List<Comment> findCommentsByWriterPostOrderByCreationDate(WriterPost writerPost);
 
 
     Comment save(Comment comment);
