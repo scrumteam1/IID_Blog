@@ -79,6 +79,9 @@ public class IndexController {
                                   @Param("sortDir") String sortDir) {
 
         userContext(model);
+        if (currentPage >= 1 && sortField == null){
+            return "redirect:/index?keyword="+keyword;
+        }
 
         Page<WriterPost> page = writerService.findWriterPostsByRegisteredVisitor(keyword, currentPage,sortField, sortDir);
         List<WriterPost> posts = page.getContent();

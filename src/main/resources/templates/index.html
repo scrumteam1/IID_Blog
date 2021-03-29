@@ -42,7 +42,8 @@
         <li>
             <p th:text="${post.creationDate.format(formatter)}" >Creation Date</p>
             <h1 th:text="${post.title}"style="color: #447EB9">title</h1>
-            <p th:text="${post.intro}"style="text-align: justify">Content</p>
+            <p  th:text="${post.intro}"style="text-align: justify">intro </p>
+            <br>
             <p>Written by: <a th:href="@{'/writer/'+${post.registeredVisitor.id}}" th:text="${post.getRegisteredVisitor().username}">username</a></p>
             <ul th:each="tag, iterStat : ${post.tags}" style="list-style-type: none;margin:0; padding:0;">
                 <li th:text="!${iterStat.last} ? ${tag.getTag().name()} + ',' : ${tag.getTag().name()}" style="display:inline; color: #398049;
