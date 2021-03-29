@@ -35,20 +35,6 @@
     Intec blog
 </div>
 
-<header>
-<!--    <h1 style="color: #447EB9">Writer's bloghome</h1>-->
-
-    <div class="nav-item dropdown float-right">
-        <a style="color: #447EB9;" href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Sort by</a>
-        <div class="dropdown-menu dropdown-menu-right">
-            <a class="dropdown-item" th:href="@{/index}" >Recent first</a>
-            <a class="dropdown-item" th:href="@{/index}" >Oldest first</a>
-            <a class="dropdown-item" th:href="@{/index}" >By Popularity</a>
-        </div>
-    </div>
-
-</header>
-
 <div class="container">
     <ol class="breadcrumb">
     <ul class="align-items-end " style="  display: flex;  list-style: none">
@@ -73,7 +59,7 @@
             <p>Written by: <a th:href="@{'/writer/'+${post.registeredVisitor.id}}" th:text="${post.getRegisteredVisitor().username}">username</a></p>
 
             <ul th:each="tag, iterStat : ${post.tags}" style="list-style-type: none;margin:0; padding:0;">
-                <li th:text="!${iterStat.last} ? ${tag.getTag().name()} + ',' : ${tag.getTag().name()}" style="display:inline; color: #398049;
+                <li th:text="${!iterStat.last} ? ${tag.getTag().name()} + ',' : ${tag.getTag().name()}" style="display:inline; color: #398049;
                         font-size: medium; float:left; padding:0px 2px; margin:0; float:left; display: block;"> test
                 </li>
             </ul>
