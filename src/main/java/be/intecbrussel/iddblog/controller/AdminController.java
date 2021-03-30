@@ -42,7 +42,7 @@ public class AdminController {
 
         userContext(model);
 
-        Page<RegisteredVisitor> page = registeredVisitorService.findAll(keyword, currentPage,sortField, sortDir);
+        Page<RegisteredVisitor> page = registeredVisitorService.findAllExceptAdmin(keyword, currentPage,sortField, sortDir);
         List<RegisteredVisitor> users = page.getContent();
         int totalItems = page.getNumberOfElements();
         int totalPages = page.getTotalPages();

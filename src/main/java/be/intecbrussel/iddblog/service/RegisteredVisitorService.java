@@ -3,7 +3,6 @@ package be.intecbrussel.iddblog.service;
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
 import be.intecbrussel.iddblog.domain.VerificationToken;
 import org.springframework.data.domain.Page;
-import org.springframework.data.repository.query.Param;
 
 public interface RegisteredVisitorService {
 
@@ -15,7 +14,7 @@ public interface RegisteredVisitorService {
 
     RegisteredVisitor findByEmailAddress(String email);
 
-    Page<RegisteredVisitor> findAll(String keyword, int pageNumber, String sortField, String sortDir);
+    Page<RegisteredVisitor> findAllExceptAdmin(String keyword, int pageNumber, String sortField, String sortDir);
 
     void updateVisitorWithoutPwd( RegisteredVisitor registeredVisitor);
 

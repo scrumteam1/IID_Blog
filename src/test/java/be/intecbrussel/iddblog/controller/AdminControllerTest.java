@@ -76,7 +76,7 @@ class AdminControllerTest {
         Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
 
         Page<RegisteredVisitor> page = Mockito.mock(Page.class);
-        when(visitorService.findAll("",1,"username","asc")).thenReturn(page);
+        when(visitorService.findAllExceptAdmin("",1,"username","asc")).thenReturn(page);
 
         SecurityContextHolder.setContext(securityContext);
         Mockito.when(securityContext.getAuthentication().getName()).thenReturn("test");
