@@ -3,10 +3,7 @@ package be.intecbrussel.iddblog.controller;
 import be.intecbrussel.iddblog.domain.Authority;
 import be.intecbrussel.iddblog.domain.RegisteredVisitor;
 import be.intecbrussel.iddblog.domain.WriterPost;
-import be.intecbrussel.iddblog.service.AuthService;
-import be.intecbrussel.iddblog.service.RegisteredVisitorService;
-import be.intecbrussel.iddblog.service.TagService;
-import be.intecbrussel.iddblog.service.WriterService;
+import be.intecbrussel.iddblog.service.*;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -52,6 +49,9 @@ class WriterPostControllerTest {
     @Mock
     WriterService writerService;
 
+    @Mock
+    CommentService commentService;
+
     @InjectMocks
     WriterPostController writerPostController;
 
@@ -80,7 +80,7 @@ class WriterPostControllerTest {
                 .build();
 
         post = new WriterPost(1L, LocalDateTime.now(), "test", "test", "test", "test",
-                savedVisitor, true, null);
+                savedVisitor, true, null,null);
 
         Authority authority = Authority.builder().id(1L).authority("WRITER").build();
         authorities = new ArrayList<>();
