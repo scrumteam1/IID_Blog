@@ -91,3 +91,17 @@ create table if not exists writerposts_tags
         foreign key (post_id) references writerposts (id)
 );
 
+create table if not exists comments(
+    id bigint not null,
+    content longtext,
+    creation_date date,
+    user_id bigint,
+    post_id bigint,
+    primary key (id)
+)engine=InnoDB;
+create table writerposts_comments(
+    writer_post_id bigint not null,
+    comments_id bigint not null,
+    foreign key (writer_post_id) references writerposts(id),
+    foreign key (comments_id) references comments(id)
+);
