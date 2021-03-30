@@ -14,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,11 +25,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
@@ -52,6 +51,8 @@ class IndexControllerTest {
 
     Authentication authentication;
 
+    List<Authority> authorities;
+
     @BeforeEach
     void setUp() {
 
@@ -65,10 +66,33 @@ class IndexControllerTest {
                 .username("akhyare").emailAddress("ak@hotmail.com").password("uD45Pj6J*@cH$u")
                 .confirmPassword("uD45Pj6J*@cH$u").gender("Male").isWriter(false)
                 .build();
+
+        Authority authority = Authority.builder().id(1L).authority("ADMIN").build();
+        authorities = new ArrayList<>();
+        authorities.add(authority);
+    }
+
+    @Test
+    void LoginTest() throws Exception{
+
+        mockMvc.perform(get("/login/"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("login"));
+    }
+
+    @Test
+    void LoginErrorTest() throws Exception{
+
+        mockMvc.perform(get("/login-error"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("login"))
+                .andExpect(model().attributeExists("loginError"));
     }
 
     @Test
     void getIndexTest() throws Exception {
+
+        Page<WriterPost> page = Mockito.mock(Page.class);
         savedVisitor.setId(1L);
         Authority authority = Authority.builder().id(1L).authority("ADMIN").build();
         List<Authority> authorities = new ArrayList<>();
@@ -84,21 +108,40 @@ class IndexControllerTest {
         Mockito.when(securityContext.getAuthentication().getName()).thenReturn("test");
         when(visitorService.findByUsername(ArgumentMatchers.any())).thenReturn(savedVisitor);
         when(authService.findAuthorityByUsername(ArgumentMatchers.any())).thenReturn(authorities);
-        when(authService.findAuthorityByUsername(ArgumentMatchers.any())).thenReturn(authorities);
-        when(writerService.findOrderByCreationDate(any())).thenReturn(posts);
+        when(writerService.findWriterPostsByRegisteredVisitor("",1,"creationDate","desc")).thenReturn(page);
 
         mockMvc.perform(get("/index/"))
                 .andExpect(status().isOk())
+                .andExpect(view().name("index"))
                 .andExpect(model().attributeExists("loggedinuser"));
     }
 
     @Test
-    void logOutTest() throws Exception {
+    void logoutTest() throws Exception {
+
         SecurityContext securityContext = Mockito.mock(SecurityContext.class);
         Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
         SecurityContextHolder.setContext(securityContext);
 
         mockMvc.perform(get("/logout"))
                 .andExpect(status().is3xxRedirection());
+    }
+
+    @Test
+    void showAbout() throws Exception {
+
+        savedVisitor.setId(1L);
+
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
+        Mockito.when(securityContext.getAuthentication().getName()).thenReturn("test");
+        when(visitorService.findByUsername(ArgumentMatchers.any())).thenReturn(savedVisitor);
+        when(authService.findAuthorityByUsername(ArgumentMatchers.any())).thenReturn(authorities);
+        when(authService.findAuthorityByUsername(ArgumentMatchers.any())).thenReturn(authorities);
+
+        mockMvc.perform(get("/about/"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("about"));
     }
 }

@@ -6,18 +6,18 @@ import be.intecbrussel.iddblog.domain.WriterPost;
 import be.intecbrussel.iddblog.service.AuthService;
 import be.intecbrussel.iddblog.service.RegisteredVisitorService;
 import be.intecbrussel.iddblog.service.WriterService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.repository.query.Param;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Calendar;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Controller
@@ -58,16 +58,9 @@ public class IndexController {
     }
 
     @GetMapping({"/", "/index"})
-    public String getIndex(Model model) {
+    public String getIndex( Model model , @RequestParam(name = "keyword", defaultValue = "") String keyword) {
         userContext(model);
-        List<WriterPost> writerPostList = writerService.findOrderByCreationDate(Calendar.getInstance().getTime());
-
-        if (writerPostList.size() >6) {
-            model.addAttribute("posts", writerPostList.subList(0, 6));
-        }
-        else model.addAttribute("posts", writerPostList);
-
-        return "index";
+        return showPostsByPage(model, keyword, 1, "creationDate", "desc");
     }
 
     @GetMapping("/about")
@@ -75,8 +68,40 @@ public class IndexController {
 
         userContext(model);
 
-        return "/about";
+        return "about";
     }
+
+    @RequestMapping("/page/{pageNumber}")
+    public String showPostsByPage( Model model, @Param("keyword") String keyword,
+                                  @PathVariable(name = "pageNumber") int currentPage,
+                                  @Param("sortField") String sortField,
+                                  @Param("sortDir") String sortDir) {
+
+        userContext(model);
+        if (currentPage >= 1 && sortField == null){
+            return "redirect:/index?keyword="+keyword;
+        }
+
+        Page<WriterPost> page = writerService.findWriterPostsByRegisteredVisitor(keyword, currentPage,sortField, sortDir);
+        List<WriterPost> posts = page.getContent();
+        int totalItems = page.getNumberOfElements();
+        int totalPages = page.getTotalPages();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+
+
+        model.addAttribute("posts", posts);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("totalItems", totalItems);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("sortDir", sortDir);
+        String reverseSortDir = sortDir.equals("asc") ? "desc" : "asc";
+        model.addAttribute("reverseSortDir", reverseSortDir);
+        model.addAttribute("formatter", formatter);
+        return "index";
+    }
+
 
 
     private void userContext(Model model) {

@@ -21,4 +21,6 @@ public interface WriterService {
     void updateWriterPost(WriterPost post);
 
     WriterPost findById(Long id);
+
+    Page<WriterPost> findWriterPostsByRegisteredVisitor(String keyword, int currentPage, String sortField, String sortDir);
 }

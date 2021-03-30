@@ -1,5 +1,4 @@
 ### Property application ###
-application.properties
 application-dev.yml
 application-prod.yml
 application-devMain.yml

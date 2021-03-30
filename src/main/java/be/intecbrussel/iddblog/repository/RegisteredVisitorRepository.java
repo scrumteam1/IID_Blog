@@ -25,11 +25,25 @@ public interface RegisteredVisitorRepository extends JpaRepository<RegisteredVis
 
     Page<RegisteredVisitor> findAll(Pageable pageable);
 
-
     @Query("select u from RegisteredVisitor u where " +
             "concat(u.id, u.username, u.emailAddress, u.firstName, u.lastName)" +
             " like %:keyword%")
     Page<RegisteredVisitor> findAll(@Param("keyword") String keyword, Pageable pageable);
+
+    @Query(value = "select u.* from `users` u\n" +
+            "left join `user_authority` ua on u.id = ua.user_id\n" +
+            "left outer join `authorities` a on a.id = ua.auth_id\n" +
+            "where a.authority != 'ADMIN'", nativeQuery = true)
+    Page<RegisteredVisitor> findAllExceptAdmin(Pageable pageable);
+
+    @Query(value = "select u.* from users u\n" +
+            "left join user_authority ua on u.id = ua.user_id\n" +
+            "left outer join authorities a on a.id = ua.auth_id\n" +
+            "where a.authority != 'ADMIN'\n" +
+            "and (u.id like concat('%',:keyword,'%') or u.username like concat('%',:keyword,'%') " +
+            "or u.email_address like concat('%',:keyword,'%') or u.first_name like concat('%',:keyword,'%') " +
+            "or u.last_name like concat('%',:keyword,'%'))", nativeQuery = true)
+    Page<RegisteredVisitor> findAllExceptAdmin(@Param("keyword") String keyword, Pageable pageable);
 
     @Modifying
     @Query("update RegisteredVisitor u set u.username = :username, u.firstName = :firstName, u.lastName = :lastName , " +
