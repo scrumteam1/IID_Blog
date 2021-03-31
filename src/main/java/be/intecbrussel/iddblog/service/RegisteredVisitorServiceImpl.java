@@ -88,10 +88,10 @@ public class RegisteredVisitorServiceImpl implements RegisteredVisitorService{
         sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
         Pageable pageable = PageRequest.of(pageNumber - 1 ,10, sort);
 
-        if(keyword != null) {
-            return registeredVisitorRepository.findAllExceptAdmin(keyword, pageable);
+        if(keyword != null && keyword != "") {
+            return registeredVisitorRepository.findAll(keyword, pageable);
         }
-        return registeredVisitorRepository.findAllExceptAdmin(pageable);
+        return registeredVisitorRepository.findAll(pageable);
     }
 
     @Override
